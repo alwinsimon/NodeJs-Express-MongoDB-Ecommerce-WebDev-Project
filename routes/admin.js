@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
+// ====================Route to Admin Dashboard====================
 router.get('/', function(req, res, next) {
 
   let products = [
@@ -38,6 +38,19 @@ router.get('/', function(req, res, next) {
   ]
 
   res.render('admin/view-products',{title:"Admin Panel",admin:true,products});
+});
+
+// ====================Route to Add NEW Product Page====================
+router.get('/add-product',(req,res)=>{
+
+  res.render('admin/add-product',{title:"Add product",admin:true})
+
+});
+
+router.post('/add-product',(req,res)=>{
+
+  console.log(req.body);
+
 });
 
 module.exports = router;
