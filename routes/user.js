@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 
   productHelper.getAllProducts().then((products)=>{
 
-    res.render('index', { title: 'Shopping Cart', products, admin:false });
+    res.render('user/view-products', { title: 'Shopping Cart', products, admin:false });
 
   })
 
