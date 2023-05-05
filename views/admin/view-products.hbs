@@ -16,10 +16,12 @@
 
             <thead>
                 <tr>
-                    <th scope="col">No</th>
+                    <th scope="col">Product Id</th>
+                    <th scope="col">Data Base Id</th>
                     <th scope="col">Product</th>
                     <th scope="col">Category</th>
                     <th scope="col">Description</th>
+                    <th scope="col">Price</th>
                     <th scope="col">Image</th>
                 </tr>
             </thead>
@@ -31,10 +33,12 @@
                 {{#each products}}
 
                 <tr>
-                    <th scope="row">{{this._id}}</th>
+                    <th scope="row">{{this.id}}</th>
+                    <td>{{this._id}}</td>
                     <td>{{this.name}}</td>
                     <td>{{this.category}}</td>
                     <td>{{this.description}}</td>
+                    <td>{{this.price}}</td>
                     <td><img style="width: 50px; height: 50px;" src="{{this.image}}" alt="{{this.name}}"></td>
                 </tr>
 

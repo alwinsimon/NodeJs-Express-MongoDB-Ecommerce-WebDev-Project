@@ -3,8 +3,10 @@
     <h1>Add Product</h1>
     <form id="add-product-form" action="/admin/add-product" method="post" enctype="multipart/form-data">
       <div class="form-group">
-        <label for="id">ID:</label>
-        <input type="text" class="form-control" id="id" name="id" required>
+        <label for="price">Product Id:</label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="id" name="id" min="0" step="1" required>
+        </div>
       </div>
       <div class="form-group">
         <label for="name">Name:</label>

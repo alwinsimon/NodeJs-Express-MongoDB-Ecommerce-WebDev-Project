@@ -1,11 +1,12 @@
 const db = require("../config/connection");
+const collections = require('../config/collections')
 
 
 module.exports = {
 
     addProduct:(product,callback)=>{
 
-        db.get().collection('products').insertOne(product).then((data)=>{
+        db.get().collection(collections.PRODUCT_COLLECTION).insertOne(product).then((data)=>{
 
             callback(data);
             /*In the above line, we are passing the object named data.
@@ -16,6 +17,17 @@ module.exports = {
             we can establish a relation between each product document in db and its image in server
             */
             
+        })
+
+    },
+    getAllProducts:()=>{
+
+        return new Promise(async (resolve,reject)=>{
+
+            let products = await db.get().collection(collections.PRODUCT_COLLECTION).find().toArray()
+
+            resolve(products);
+
         })
 
     }
