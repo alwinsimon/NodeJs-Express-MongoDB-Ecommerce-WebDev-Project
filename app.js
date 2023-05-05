@@ -5,7 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var hbs = require('express-handlebars');
 var fileUpload = require('express-fileupload');
+var db = require('./config/connection');
 
+
+// ====================Directory Path to Different Routes====================
 var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
 
@@ -22,6 +25,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
+
+//Establishing connection with db using connect function defined in config/connection path
+db.connect((err)=>{
+
+  if(err)
+  console.log("ERROR in establishing Database connection:" + err);
+  else
+  console.log("Database Connection Successfull: Database is LIVE");
+
+});
 
 // ====================ROUTES====================
 app.use('/', userRouter);
