@@ -64,7 +64,7 @@ router.post('/add-product',(req,res)=>{
 
       }else{
 
-        res.render('admin/add-product');
+        res.render('admin/add-product',{title:"Add product",admin:true});
 
       }
 
