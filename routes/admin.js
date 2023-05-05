@@ -1,5 +1,6 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const productHelper = require('../helpers/product-helpers');
 
 // ====================Route to Admin Dashboard====================
 router.get('/', function(req, res, next) {
@@ -49,8 +50,27 @@ router.get('/add-product',(req,res)=>{
 
 router.post('/add-product',(req,res)=>{
 
-  console.log(req.body);
-  console.log(req.files.image);
+  productHelper.addProduct(req.body,(result)=>{
+
+    let id = result.insertedId
+
+    let image = req.files.image;
+
+    image.mv('./public/product-images/' + id +'.jpg',(err,done)=>{
+
+      if(err){
+
+        console.log(err);
+
+      }else{
+
+        res.render('admin/add-product');
+
+      }
+
+    });
+
+  });
 
 });
 
