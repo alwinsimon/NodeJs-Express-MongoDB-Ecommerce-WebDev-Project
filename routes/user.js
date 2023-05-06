@@ -6,7 +6,7 @@ const userHelpers = require('../helpers/user-helpers');
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-  productHelper.getAllProducts().then((products)=>{
+  productHelpers.getAllProducts().then((products)=>{
 
     res.render('user/view-products', { title: 'Shopping Cart', products, admin:false });
 
@@ -17,6 +17,24 @@ router.get('/', function(req, res, next) {
 router.get('/login', (req,res)=>{
 
   res.render('user/login');
+
+})
+
+router.post('/login',(req,res)=>{
+
+  userHelpers.doLogin(req.body).then((response)=>{
+
+    if(response.status){
+
+      res.redirect('/');
+
+    }else{
+
+      res.redirect('/login');
+
+    }
+
+  })
 
 })
 
