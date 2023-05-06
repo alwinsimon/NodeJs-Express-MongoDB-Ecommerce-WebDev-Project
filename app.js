@@ -6,6 +6,7 @@ var logger = require('morgan');
 var hbs = require('express-handlebars');
 var fileUpload = require('express-fileupload');
 var db = require('./config/connection');
+var session = require('express-session');
 
 
 // ====================Directory Path to Different Routes====================
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
+app.use(session({secret:'KEY',cookie:{maxAge:60000}}))
 
 //Establishing connection with db using connect function defined in config/connection path
 db.connect((err)=>{

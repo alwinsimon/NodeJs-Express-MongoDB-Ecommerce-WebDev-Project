@@ -6,9 +6,11 @@ const userHelpers = require('../helpers/user-helpers');
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
+  let user = req.session.user //used for authenticating a user visit if user has already logged in earlier
+
   productHelpers.getAllProducts().then((products)=>{
 
-    res.render('user/view-products', { title: 'Shopping Cart', products, admin:false });
+    res.render('user/view-products', { title: 'Shopping Cart', products, admin:false, user });
 
   })
 
@@ -26,6 +28,10 @@ router.post('/login',(req,res)=>{
 
     if(response.status){
 
+      req.session.loggedIn = true;
+
+      req.session.user = response.user
+
       res.redirect('/');
 
     }else{
@@ -35,6 +41,14 @@ router.post('/login',(req,res)=>{
     }
 
   })
+
+})
+
+router.get('/logout',(req,res)=>{
+
+  req.session.destroy();
+
+  res.redirect('/')
 
 })
 

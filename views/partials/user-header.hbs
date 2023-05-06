@@ -21,11 +21,31 @@
                         <a class="nav-link" href="#">Orders</a>
                     </li>
                 </ul>
+
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" data-bs-target="#navbarTogglerDemo03" aria-haspopup="true" aria-expanded="false">Account</button>
+
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" data-bs-target="#navbarTogglerDemo03" aria-haspopup="true"
+                        aria-expanded="false">
+
+                        {{#if user}}
+                        Hey, {{user.name}}
+                        {{else}}
+                        Account
+                        {{/if}}
+
+                    </button>
+
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                        {{#if user}}
+                        <a class="dropdown-item" href="/logout">Log out</a>
+                        {{else}}
                         <a class="dropdown-item" href="/login">Log In</a>
+                        {{/if}}
+
                     </div>
+                    
                 </div>
             </div>
         </div>
