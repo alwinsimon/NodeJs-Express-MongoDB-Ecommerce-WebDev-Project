@@ -6,8 +6,6 @@ const productHelper = require('../helpers/product-helpers');
 router.get('/', function(req, res, next) {
 
   productHelper.getAllProducts().then((products)=>{
-
-    console.log(products);
    
     res.render('admin/view-products',{title:"Admin Panel",admin:true,products});
     
