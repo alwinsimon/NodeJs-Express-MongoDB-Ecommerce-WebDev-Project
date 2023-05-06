@@ -25,4 +25,10 @@ router.get('/signup', (req,res)=>{
 
 })
 
+router.post('/signup',(req,res)=>{
+
+  
+
+})
+
 module.exports = router;
