@@ -73,7 +73,7 @@ router.get('/edit-product/:id',(req,res)=>{
 
   let product = productHelper.getProductDetails(productID).then((productDetails)=>{
 
-    console.log(productDetails);
+    // console.log(productDetails);
 
     res.render('admin/edit-product',{title:"Edit product", admin:true, productDetails});
 
@@ -94,11 +94,11 @@ router.post('/edit-product/:id',(req,res)=>{
     res.redirect('/admin')
 
     // Fuction to update the image if new image is uploaded in the edit page
-    let image = req.files.image
+    if(req.files){
 
-    let id = req.params.id;
+      let id = req.params.id;
 
-    if(image){
+      let image = req.files.image
 
       image.mv('./public/product-images/' + id +'.jpg',(err,done)=>{
 
