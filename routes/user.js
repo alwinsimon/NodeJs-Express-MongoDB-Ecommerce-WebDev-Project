@@ -3,6 +3,21 @@ var router = express.Router();
 const productHelpers = require('../helpers/product-helpers');
 const userHelpers = require('../helpers/user-helpers');
 
+// Function to use as Middleware to verify if the request are made by a user or guest
+const verifyLogin = (req,res,next)=>{
+
+  if(req.session.loggedIn){
+
+    next();
+
+  }else{
+
+    res.redirect('/login')
+
+  }
+
+}
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
@@ -86,6 +101,12 @@ router.post('/signup',(req,res)=>{
     console.log(user);
 
   })
+
+})
+
+router.get('/cart', verifyLogin,(req,res)=>{
+
+  res.render('user/cart')
 
 })
 
