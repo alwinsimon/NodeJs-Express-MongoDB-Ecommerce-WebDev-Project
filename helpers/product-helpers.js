@@ -1,5 +1,9 @@
 const db = require("../config/connection");
-const collections = require('../config/collections')
+const collections = require('../config/collections');
+const ObjectId = require("mongodb").ObjectId;
+const path = require('path');
+const fs = require('fs');
+
 
 
 module.exports = {
@@ -29,6 +33,35 @@ module.exports = {
             resolve(products);
 
         })
+
+    },
+    deleteProduct: (productId, image) => {
+
+        return new Promise((resolve, reject) => {
+
+            //Function to delete the document from MongoDb collection
+            db.get().collection(collections.PRODUCT_COLLECTION).deleteOne({ _id: ObjectId(productId) }).then((deleteResult) => {
+
+                // Defining the path of the product image to be deleted
+                const imageName = image.concat('.jpg')
+                const imagePath = path.join(__dirname, '..', 'public', 'product-images', imageName);
+
+                // Function to Delete the image file from the server using the above defined path
+                fs.unlink(imagePath, (err) => {
+
+                    if (err) {
+                        console.error(`Error deleting file ${imagePath}: ${err}`);
+                    }
+                    
+                });
+
+                console.log(deleteResult);
+
+                resolve();
+
+            });
+
+        });
 
     }
 

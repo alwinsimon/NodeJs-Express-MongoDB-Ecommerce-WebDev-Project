@@ -47,4 +47,32 @@ router.post('/add-product',(req,res)=>{
 
 });
 
+
+// ====================Route to DELETE a PRODUCT====================
+
+router.get('/delete-product/:id',(req,res)=>{
+
+  let productId = req.params.id;
+
+  let productImageId = productId
+
+  productHelper.deleteProduct(productId,productImageId).then((response)=>{
+    // console.log(response);
+  })
+
+  res.redirect('/admin');
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = router;
