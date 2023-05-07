@@ -120,6 +120,13 @@
                 Please enter your password.
             </div>
         </div>
+
+        {{#if loginError}}
+        <div>
+            <p style="color: red;">{{loginError}}</p>
+        </div>
+        {{/if}}
+
         <div class="d-flex justify-content-center">
             <button type="submit" class="btn btn-primary me-2" style="border-radius: 10px;">Login</button>
             <a href="/signup" class="btn btn-secondary" style="border-radius: 10px; background-color: #007bff;">Sign up</a>

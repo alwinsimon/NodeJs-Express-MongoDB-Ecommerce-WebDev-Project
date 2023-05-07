@@ -14,12 +14,16 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Products</a>
                     </li>
+
+                    {{#if user}}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Carts</a>
+                        <a class="nav-link" href="#">Cart</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Orders</a>
                     </li>
+                    {{/if}}
+
                 </ul>
 
                 <div class="dropdown">
@@ -42,6 +46,7 @@
                         <a class="dropdown-item" href="/logout">Log out</a>
                         {{else}}
                         <a class="dropdown-item" href="/login">Log In</a>
+                        <a class="dropdown-item" href="/signup">Sign Up</a>
                         {{/if}}
 
                     </div>

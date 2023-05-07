@@ -51,7 +51,7 @@ module.exports = {
                         
                     }else{
 
-                        console.log("Incorrect password");
+                        console.log("Incorrect user password");
 
                         resolve({status:false});
 

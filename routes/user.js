@@ -24,7 +24,13 @@ router.get('/login', (req,res)=>{
 
   }else{
 
-    res.render('user/login');
+    res.render('user/login',{"loginError":req.session.logginErr});
+
+    req.session.logginErr = false; 
+    /*
+    Resetting the flag for checking if the login page post request was due to invalid username or password.
+    This is done so that the login page will show the message only once if there was a redirect to this page due to invalid credentials.
+    */
     
   }
 
@@ -43,6 +49,13 @@ router.post('/login',(req,res)=>{
       res.redirect('/');
 
     }else{
+
+      req.session.logginErr = "Invalid Username or Password!"; 
+      /*Setting a flag for keeping a record of the login error which happened due to user entering invalid credentials.
+       This flag will be checked in every login request so that we can display an error message in the case of reloading the login page due to invalid credentials entered by user.
+       This flag variable is stored in the session using req.session so that it will be accesible everywhere.
+       the name of this flag variable can be anything ie, this is NOT an predefined name in the session module.
+      */
 
       res.redirect('/login');
 
