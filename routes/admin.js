@@ -65,6 +65,57 @@ router.get('/delete-product/:id',(req,res)=>{
 })
 
 
+// ====================Routes to EDIT a PRODUCT====================
+
+router.get('/edit-product/:id',(req,res)=>{
+
+  let productID = req.params.id;
+
+  let product = productHelper.getProductDetails(productID).then((productDetails)=>{
+
+    console.log(productDetails);
+
+    res.render('admin/edit-product',{title:"Edit product", admin:true, productDetails});
+
+  })
+
+})
+
+router.post('/edit-product/:id',(req,res)=>{
+
+  let productId = req.params.id;
+
+  productHelper.updateProduct(productId,req.body).then(()=>{
+
+    /*
+    Redirect the user to admin page first, if there is any new image uploaded, update that in server after redirecting user.
+    This will prevent user from keeping the user waiting in the edit page itself till the image gets uploaded.
+    */
+    res.redirect('/admin')
+
+    // Fuction to update the image if new image is uploaded in the edit page
+    let image = req.files.image
+
+    let id = req.params.id;
+
+    if(image){
+
+      image.mv('./public/product-images/' + id +'.jpg',(err,done)=>{
+
+        if(err){
+  
+          console.log(err);
+  
+        }
+  
+      });
+
+    }
+
+  })
+
+})
+
 
 
 

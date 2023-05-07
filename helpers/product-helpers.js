@@ -63,6 +63,42 @@ module.exports = {
 
         });
 
+    },
+    getProductDetails:(productId)=>{
+
+        return new Promise((resolve,reject)=>{
+
+            db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectId(productId)}).then((product)=>{
+
+                resolve(product);
+
+            })
+
+        })
+
+    },
+    updateProduct:(productId,productDetails)=>{
+
+        return new Promise((resolve,reject)=>{
+
+            db.get().collection(collections.PRODUCT_COLLECTION)
+            .updateOne({_id:ObjectId(productId)},{
+                $set:{
+                    id:productDetails.id,
+                    name:productDetails.name,
+                    category:productDetails.category,
+                    description:productDetails.description,
+                    price:productDetails.price
+                }
+            }
+            ).then(()=>{
+
+                resolve();
+
+            })
+
+        })
+
     }
 
 }
