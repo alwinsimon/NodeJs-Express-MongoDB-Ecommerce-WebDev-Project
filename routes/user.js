@@ -100,6 +100,12 @@ router.post('/signup',(req,res)=>{
     
     console.log(user);
 
+    req.session.loggedIn = true;
+
+    req.session.user = user;
+
+    res.redirect('/');
+
   })
 
 })
