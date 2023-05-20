@@ -22,9 +22,10 @@ const verifyLogin = (req,res,next)=>{
 
 }
 
-/*=======================================USER - ROUTES=======================================*/
+/*=======================================USER ROUTES=======================================*/
 
-/* GET home page. */
+/* ========================HOME page======================== */
+
 router.get('/', function(req, res, next) {
 
   let user = req.session.user //used for authenticating a user visit if user has already logged in earlier
@@ -36,6 +37,8 @@ router.get('/', function(req, res, next) {
   })
 
 });
+
+/* ========================LOGIN/SIGN-UP ROUTES======================== */
 
 router.get('/login', (req,res)=>{
 
@@ -115,6 +118,8 @@ router.post('/signup',(req,res)=>{
   })
 
 })
+
+/* ========================CART ROUTES======================== */
 
 router.get('/cart', verifyLogin,(req,res)=>{
 
