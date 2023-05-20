@@ -1,6 +1,7 @@
 const db = require("../config/connection");
 const collections = require('../config/collections')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const ObjectId = require("mongodb").ObjectId;
 
 module.exports = {
 
@@ -68,6 +69,53 @@ module.exports = {
 
         })
 
+    },
+    addToCart:(productId, userId)=>{
+
+        return new Promise(async (resolve,reject)=>{
+
+            let userCart = await db.get().collection(collections.CART_COLLECTION).findOne({user:userId});
+
+            console.log(userCart);
+
+            if(userCart){
+
+                db.get().collection(collections.CART_COLLECTION)
+                .updateOne({ user: userId },
+
+                    {
+
+                        $push: { products: productId }
+
+                    }
+                )
+                .then(() => {
+
+                    resolve();
+
+                })
+
+            }else{
+
+                let cartObject = {
+                    
+                    user: userId,
+
+                    products: [productId]
+
+                }  
+
+                db.get().collection(collections.CART_COLLECTION)
+                .insertOne(cartObject)
+                .then(()=>{
+
+                    resolve();
+
+                })
+
+            }
+
+        })
     }
 
 }
