@@ -28,15 +28,23 @@ let PLATFORM_NAME = "GetMyDeal"
 
 /* ========================HOME page======================== */
 
-router.get('/', function(req, res, next) {
+router.get('/', async (req, res, next)=>{
 
   let user = req.session.user //used for authenticating a user visit if user has already logged in earlier
+
+  let cartCount = null;
+
+  if(user){
+
+    cartCount = await userHelpers.getCartCount(req.session.user._id);
+
+  }
 
   productHelpers.getAllProducts().then((products)=>{
 
     if(user){
 
-      res.render('user/view-products', { title: user.name +"'s " + PLATFORM_NAME, products, admin:false, user });
+      res.render('user/view-products', { title: user.name +"'s " + PLATFORM_NAME, products, admin:false, user, cartCount });
 
     }else{
 
@@ -135,11 +143,19 @@ router.get('/cart', verifyLogin, async (req,res)=>{
 
   let user = req.session.user //To pass user name to cart-page while rendering - used to display Custom title for page.
 
+  let cartCount = null;
+
+  if(user){
+
+    cartCount = await userHelpers.getCartCount(req.session.user._id);
+
+  }
+
   let cartItems = await userHelpers.getCartProducts(req.session.user._id);
 
   console.log(cartItems);
 
-  res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems })
+  res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount })
 
 })
 
