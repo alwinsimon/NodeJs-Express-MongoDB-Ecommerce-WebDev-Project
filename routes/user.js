@@ -24,6 +24,8 @@ const verifyLogin = (req,res,next)=>{
 
 /*=======================================USER ROUTES=======================================*/
 
+let PLATFORM_NAME = "GetMyDeal"
+
 /* ========================HOME page======================== */
 
 router.get('/', function(req, res, next) {
@@ -32,7 +34,15 @@ router.get('/', function(req, res, next) {
 
   productHelpers.getAllProducts().then((products)=>{
 
-    res.render('user/view-products', { title: 'Shopping Cart', products, admin:false, user });
+    if(user){
+
+      res.render('user/view-products', { title: user.name +"'s " + PLATFORM_NAME, products, admin:false, user });
+
+    }else{
+
+      res.render('user/view-products', { title:PLATFORM_NAME, products, admin:false, user });
+
+    }
 
   })
 
@@ -48,7 +58,7 @@ router.get('/login', (req,res)=>{
 
   }else{
 
-    res.render('user/login',{"loginError":req.session.logginErr});
+    res.render('user/login',{"loginError":req.session.logginErr, title:PLATFORM_NAME + " || Login", admin:false});
 
     req.session.logginErr = false; 
     /*
@@ -99,7 +109,7 @@ router.get('/logout',(req,res)=>{
 
 router.get('/signup', (req,res)=>{
 
-  res.render('user/signup');
+  res.render('user/signup',{title:PLATFORM_NAME + " || Sign-up", admin:false});
 
 })
 
@@ -121,9 +131,15 @@ router.post('/signup',(req,res)=>{
 
 /* ========================CART ROUTES======================== */
 
-router.get('/cart', verifyLogin,(req,res)=>{
+router.get('/cart', verifyLogin, async (req,res)=>{
 
-  res.render('user/cart')
+  let user = req.session.user //To pass user name to cart-page while rendering - used to display Custom title for page.
+
+  let cartItems = await userHelpers.getCartProducts(req.session.user._id);
+
+  console.log(cartItems);
+
+  res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user })
 
 })
 
