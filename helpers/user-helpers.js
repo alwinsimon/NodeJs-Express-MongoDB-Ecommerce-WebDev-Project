@@ -74,18 +74,18 @@ module.exports = {
 
         return new Promise(async (resolve,reject)=>{
 
-            let userCart = await db.get().collection(collections.CART_COLLECTION).findOne({user:userId});
+            let userCart = await db.get().collection(collections.CART_COLLECTION).findOne({user:ObjectId(userId)});
 
             // console.log(userCart);
 
             if(userCart){
 
                 db.get().collection(collections.CART_COLLECTION)
-                .updateOne({ user: userId },
+                .updateOne({ user: ObjectId(userId) },
 
                     {
 
-                        $push: { products: productId }
+                        $push: { products: ObjectId(productId) }
 
                     }
                 )
@@ -99,9 +99,9 @@ module.exports = {
 
                 let cartObject = {
                     
-                    user: userId,
+                    user: ObjectId(userId),
 
-                    products: [productId]
+                    products: [ObjectId(productId)]
 
                 }  
 
@@ -124,12 +124,12 @@ module.exports = {
             let cartItems = await db.get().collection(collections.CART_COLLECTION).aggregate([
                 
                 {
-                    $match:{user:userId}
+                    $match:{user:ObjectId(userId)}
                 },
                 {
                     $lookup:{
                         from:collections.PRODUCT_COLLECTION,
-                        let: { productList: { $map: { input: "$products", as: "p", in: { $toObjectId: "$$p" } } } },
+                        let: { productList: "$products" },
                         pipeline:[
                             {
                                 $match:{
