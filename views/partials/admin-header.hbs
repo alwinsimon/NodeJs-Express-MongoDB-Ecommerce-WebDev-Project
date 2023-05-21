@@ -1,31 +1,55 @@
-  {{!-- ==============================Admin HEADER - NAVBAR============================== --}}
-  <header>
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
-          aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <a class="navbar-brand" href="/admin">GetMyDeal Admin Dashboard</a>
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/admin" method="get" >All Products</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">All Orders</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">All Users</a>
-            </li>
-          </ul>
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
-        </div>
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
+        aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="/admin" style="font-weight: bold;" >GetMyDeal Admin</a>
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/admin">All Products</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">All Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">All Users</a>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
       </div>
-    </nav>
+    </div>
+  </nav>
+</header>
 
-  </header>
+<style>
+  .navbar-brand:hover {
+    color: #dc3545;
+  }
+
+  .navbar-nav .nav-link:hover {
+    color: #dc3545;
+    transform: scale(1.05);
+  }
+
+  .dropdown:hover .dropdown-menu {
+    display: block;
+    animation: fadeInDown 0.3s ease-in-out;
+  }
+
+  @keyframes fadeInDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
