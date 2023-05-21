@@ -139,7 +139,7 @@ router.get('/cart', verifyLogin, async (req,res)=>{
 
   console.log(cartItems);
 
-  res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user })
+  res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems })
 
 })
 

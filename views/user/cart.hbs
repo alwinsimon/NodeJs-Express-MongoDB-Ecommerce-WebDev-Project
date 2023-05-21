@@ -1,1 +1,37 @@
-<h2>Cart Page</h2>
+<div class="container table-container">
+
+<table class="table table-hover">
+
+    <thead class="thead-light">
+
+    <tr>
+        <th>Item</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th></th>
+    </tr>
+
+    </thead>
+
+    <tbody>
+
+    {{#each cartItems}}
+
+    <tr>
+        <td><img style="width: 70px;height: 70px;" src="/product-images/{{this._id}}.jpg" alt=""></td>
+        <td>{{this.name}}</td>
+        <td>{{this.description}}</td>
+        <td>{{this.price}}</td>
+        <td><button class="cart-item-count ml-3">-</button>50<button class="cart-item-count ml-3">+</button></td>
+        <td><a href="" class="btn btn-danger">Remove Item</a></td>
+    </tr>
+
+    {{/each}}
+
+    </tbody>
+
+</table>
+
+</div>
