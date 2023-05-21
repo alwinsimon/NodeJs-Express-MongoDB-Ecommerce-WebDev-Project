@@ -1,7 +1,7 @@
 <div style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
     <div style="width: 80%; background-color: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-        <h1 style="text-align: center;">{{user.name}}'s Cart</h1>
-        <table style="width: 100%; border-collapse: collapse;">
+        <h1 style="text-align: center;">Cart</h1>
+        <table id="cartTable" style="width: 100%; border-collapse: collapse;">
             <thead style="background-color: #f2f2f2;">
                 <tr>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Item</th>
@@ -14,16 +14,50 @@
             </thead>
             <tbody>
                 {{#each cartItems}}
-                <tr>
+                <tr class="cart-row">
                     <td><img style="width: 70px; height: 70px;" src="/product-images/{{this._id}}.jpg" alt=""></td>
                     <td>{{this.name}}</td>
                     <td>{{this.description}}</td>
                     <td>{{this.price}}</td>
-                    <td><button style="margin-left: 3px;" class="cart-item-count">-</button>50<button style="margin-left: 3px;" class="cart-item-count">+</button></td>
-                    <td><a href="" style="background-color: #dc3545; color: #fff; padding: 5px 10px; border: none; border-radius: 4px; text-decoration: none;">Remove Item</a></td>
+                    <td>
+                        <button class="quantity-btn minus">-</button>
+                        <span class="quantity">50</span>
+                        <button class="quantity-btn plus">+</button>
+                    </td>
+                    <td><a href="#" class="remove-item">Remove</a></td>
                 </tr>
                 {{/each}}
             </tbody>
         </table>
     </div>
 </div>
+
+<style>
+    /* Hover animation */
+    .cart-row:hover {
+        animation: row-hover 0.3s forwards;
+    }
+
+    @keyframes row-hover {
+        from {
+            transform: scale(1);
+            box-shadow: none;
+        }
+        to {
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+    }
+
+    /* Remove item button style */
+    .remove-item {
+        background-color: #dc3545;
+        color: #fff;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+</style>
