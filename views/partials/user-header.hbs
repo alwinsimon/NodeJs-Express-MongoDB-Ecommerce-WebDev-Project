@@ -5,16 +5,16 @@
                 aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="/" style="font-weight: bold;">GetyMyDeal</a>
+            <a class="navbar-brand" href="/" style="font-weight: bold;">GetMyDeal</a>
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Products</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/cart">Cart</a>
-                    </li>
                     {{#if user}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart">Cart<span class="badge badge-success">8</span></a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Orders</a>
                     </li>
@@ -47,7 +47,7 @@
 <style>
     .navbar-brand:hover {
         color: #dc3545;
-        font:bold
+        font-weight: bold;
     }
 
     .btn-primary:hover {
@@ -65,6 +65,9 @@
         animation: fadeInDown 0.3s ease-in-out;
     }
 
+  .badge {
+    color: green;
+  }
     @keyframes fadeInDown {
         0% {
             opacity: 0;
