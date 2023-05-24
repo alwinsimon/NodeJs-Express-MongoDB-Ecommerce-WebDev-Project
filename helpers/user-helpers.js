@@ -72,36 +72,79 @@ module.exports = {
     },
     addToCart:(productId, userId)=>{
 
+        // Creating a object to store the product and the product quantity inside the cart
+        let productObject = {
+
+            item:ObjectId(productId),
+
+            quantity: 1
+
+        }
+
         return new Promise(async (resolve,reject)=>{
 
+            // Checking if there is a Cart Existing for this user (using user id) in the cart collection
             let userCart = await db.get().collection(collections.CART_COLLECTION).findOne({user:ObjectId(userId)});
 
-            // console.log(userCart);
+            console.log(userCart);
 
-            if(userCart){
+            if(userCart){ // If there is a CART PRESENT for user, update the existing cart of the user
 
-                db.get().collection(collections.CART_COLLECTION)
-                .updateOne({ user: ObjectId(userId) },
+                /*
+                # Check if the productId provided already exist in any of the productObjects inside the products array of the user cart.
+                */
+                let productExist = userCart.products.findIndex(product => product.item == productId);
+                /*
+                # productExist will have the value of -1 if there is no product existing in the products array of user cart
+                # if product exists already, productExist will have the value of the index in which the product exists in the products array of user cart
+                */
 
-                    {
+                if(productExist !== -1){ // If the value of productExists is NOT EQUAL TO -1, which means there is the same product existing in products array inside user cart already.
 
-                        $push: { products: ObjectId(productId) }
+                    // Since the same product exists already, UPDATE (INCREMENT) the value of quantity inside the productObject
 
-                    }
-                )
-                .then(() => {
+                    db.get().collection(collections.CART_COLLECTION)
+                    .updateOne(
 
-                    resolve();
+                        {'products.item':ObjectId(productId)}, // Matching the same product in the products array of cart collection of the user
 
-                })
+                        {$inc:{'products.$.quantity':1}}
 
-            }else{
+                    ).then(()=>{
+
+                        resolve();
+
+                    })
+
+                    // console.log('CART EXISTS for user == Same Product exist for user == Quantity Modified');
+
+                }else{ // User have a cart in cart collection, but DON'T have the given product existing in the products array of user cart already.
+
+                    // Add the new product object to the products array of the usercart
+                    db.get().collection(collections.CART_COLLECTION)
+                    .updateOne(
+
+                        {user:ObjectId(userId)},
+
+                        {$push:{products:productObject}}
+
+                    ).then(()=>{
+
+                        resolve();
+
+                    })
+
+                    // console.log('CART EXISTS for user == Same Product DOSENT exist in cart == Product added to producs array');
+
+                }
+
+            }else{ // If there is NO EXISTING CART for the user, create new cart and insert the product to the cart
 
                 let cartObject = {
                     
                     user: ObjectId(userId),
 
-                    products: [ObjectId(productId)]
+                    products: [productObject]
 
                 }  
 
@@ -112,6 +155,8 @@ module.exports = {
                     resolve();
 
                 })
+
+                // console.log('New CART Created for user & New product added to cart:');
 
             }
 

@@ -125,7 +125,7 @@ router.post('/signup',(req,res)=>{
 
   userHelpers.doSignup(req.body).then((user)=>{
     
-    console.log(user);
+    // console.log(user);
 
     req.session.loggedIn = true;
 
@@ -153,7 +153,7 @@ router.get('/cart', verifyLogin, async (req,res)=>{
 
   let cartItems = await userHelpers.getCartProducts(req.session.user._id);
 
-  console.log(cartItems);
+  // console.log(cartItems);
 
   res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount })
 
