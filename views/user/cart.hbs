@@ -13,20 +13,30 @@
                 </tr>
             </thead>
             <tbody>
+
                 {{#each cartItems}}
-                <tr class="cart-row">
-                    <td><img style="width: 70px; height: 70px;" src="/product-images/{{this._id}}.jpg" alt=""></td>
-                    <td>{{this.name}}</td>
-                    <td>{{this.description}}</td>
-                    <td>{{this.price}}</td>
-                    <td>
-                        <button class="quantity-btn minus">-</button>
-                        <span class="quantity">50</span>
-                        <button class="quantity-btn plus">+</button>
-                    </td>
-                    <td><a href="#" class="remove-item">Remove</a></td>
-                </tr>
+
+                    <tr class="cart-row">
+
+                        {{#each this.product}}
+
+                            <td><img style="width: 70px; height: 70px;" src="/product-images/{{this._id}}.jpg" alt=""></td>
+                            <td>{{this.name}}</td>
+                            <td>{{this.description}}</td>
+                            <td>{{this.price}}</td>
+
+                        {{/each}}
+
+                        <td>
+                            <button class="quantity-btn minus">-</button>
+                            <span class="quantity">{{this.quantity}}</span>
+                            <button class="quantity-btn plus">+</button>
+                        </td>
+                        <td><a href="#" class="remove-item">Remove</a></td>
+                    </tr>
+
                 {{/each}}
+
             </tbody>
         </table>
     </div>

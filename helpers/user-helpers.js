@@ -169,28 +169,47 @@ module.exports = {
             let cartItems = await db.get().collection(collections.CART_COLLECTION).aggregate([
                 
                 {
+
                     $match:{user:ObjectId(userId)}
+
                 },
                 {
-                    $lookup:{
-                        from:collections.PRODUCT_COLLECTION,
-                        let: { productList: "$products" },
-                        pipeline:[
-                            {
-                                $match:{
-                                    $expr:{
-                                        $in:['$_id','$$productList']
-                                    }
-                                }
-                            }
-                        ],
-                        as:'cartItems'
+
+                    $unwind:'$products'
+
+                },
+                {
+
+                    $project:{
+
+                        item:'$products.item',
+
+                        quantity:'$products.quantity'
+
                     }
+
+                },
+                {
+
+                    $lookup:{
+
+                        from:collections.PRODUCT_COLLECTION,
+
+                        localField:'item',
+
+                        foreignField:'_id',
+
+                        as:'product'
+
+                    }
+
                 }
 
             ]).toArray()
 
-            resolve(cartItems[0].cartItems);
+            // console.log(cartItems);
+
+            resolve(cartItems);
  
         })
 
