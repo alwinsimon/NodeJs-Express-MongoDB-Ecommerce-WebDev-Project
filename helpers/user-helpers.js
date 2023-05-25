@@ -101,7 +101,7 @@ module.exports = {
             // Checking if there is a Cart Existing for this user (using user id) in the cart collection
             let userCart = await db.get().collection(collections.CART_COLLECTION).findOne({user:ObjectId(userId)});
 
-            console.log(userCart);
+            // console.log(userCart);
 
             if(userCart){ // If there is a CART PRESENT for user, update the existing cart of the user
 
@@ -280,38 +280,77 @@ module.exports = {
 
         })    
     },
-    changeCartQuantity:(cartData)=>{
+    changeCartProductQuantity:(cartData)=>{
 
-        console.log(cartData);
+        // console.log(cartData);
 
-        cartData.count = parseInt(cartData.count); // Convert the count received to integer for using in increment below
+        // Convert the count received to integer to using in incrementing or decrementing product quantity in DB
+        cartData.count = parseInt(cartData.count);
+
+        // Convert the quantity received to integer to using in incrementing or decrementing product quantity in CART PAGE
+        cartData.quantity = parseInt(cartData.quantity);
 
         return new Promise((resolve,reject)=>{
 
-            db.get().collection(collections.CART_COLLECTION)
-            .updateOne(
-                {
-                  _id: ObjectId(cartData.cart),
-                  "products.item": ObjectId(cartData.product),
-                },
+            if(cartData.quantity == 1 && cartData.count == -1){
+                // If the existing product quantity id 1 and decrement button clicked by user, remove the product from user cart
 
-                {
-                  $inc: { "products.$.quantity": cartData.count },
-                }
-                ).then((data)=>{
+                db.get().collection(collections.CART_COLLECTION)
+                .updateOne(
+                    {
 
-                    // console.log(data);
+                      _id: ObjectId(cartData.cart),
+                    
+                    },
+                    {
+                    
+                        $pull: { products:{item:ObjectId(cartData.product)} }, // Remove the product from user Cart
+                    
+                    }
+                    ).then((data)=>{
+    
+                        // console.log(data);
+    
+                        resolve({cartProductRemoved:true});
+                        // Send a status to Ajax call as boolean inside aobject, for indicating the product removal 
+    
+                    }).catch((err)=>{
+    
+                        console.log(err);
+    
+                        reject(err);
+    
+                    }
+                );
 
-                    resolve()
+            }else{ // Increment or decrement the product quantity in cart according to count
 
-                }).catch((err)=>{
+                db.get().collection(collections.CART_COLLECTION)
+                .updateOne(
+                    {
+                      _id: ObjectId(cartData.cart),
+                      "products.item": ObjectId(cartData.product),
+                    },
+    
+                    {
+                      $inc: { "products.$.quantity": cartData.count },
+                    }
+                    ).then((data)=>{
+    
+                        // console.log(data);
+    
+                        resolve(true)
+    
+                    }).catch((err)=>{
+    
+                        console.log(err);
+    
+                        reject(err);
+    
+                    }
+                );
 
-                    console.log(err);
-
-                    reject(err);
-
-                }
-            );
+            }
 
         })
 

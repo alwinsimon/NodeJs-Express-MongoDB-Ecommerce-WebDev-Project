@@ -3,6 +3,8 @@ var router = express.Router();
 const productHelpers = require('../helpers/product-helpers');
 const userHelpers = require('../helpers/user-helpers');
 
+require('dotenv').config(); // Module to Load environment variables from .env file
+
 
 
 /*=======================================MIDDLEWARES=======================================*/
@@ -24,7 +26,7 @@ const verifyLogin = (req,res,next)=>{
 
 /*=======================================USER ROUTES=======================================*/
 
-let PLATFORM_NAME = "GetMyDeal"
+let PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
 /* ========================HOME page======================== */
 
@@ -175,8 +177,14 @@ router.post('/change-product-quantity', (req,res,next)=>{
 
   // console.log(req.body);
 
-  userHelpers.changeCartQuantity(req.body).then(()=>{
+  userHelpers.changeCartProductQuantity(req.body).then((response)=>{
 
+    res.json(response); 
+    /* 
+    # Used JSON to send data back here as RESPONSE to AJAX Call from cart page
+    # As we are using AJAX there is no need of sending back a complete web page or redirecting to a webpage (which will load the page completely)
+    # We can configure the AJAX to use the data in JSON format for updating the specific element of webpage
+    */
   
   }).catch((err)=>{
 
