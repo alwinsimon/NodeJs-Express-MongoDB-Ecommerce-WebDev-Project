@@ -28,9 +28,9 @@
                         {{/each}}
 
                         <td>
-                            <button class="quantity-btn minus">-</button>
+                            <button class="quantity-btn minus" onclick="changeQuantity('{{this._id}}','{{#each this.product}}{{this._id}}{{/each}}', -1)">-</button>
                             <span class="quantity">{{this.quantity}}</span>
-                            <button class="quantity-btn plus">+</button>
+                            <button class="quantity-btn plus" onclick="changeQuantity('{{this._id}}','{{#each this.product}}{{this._id}}{{/each}}', 1)">+</button>
                         </td>
                         <td><a href="#" class="remove-item">Remove</a></td>
                     </tr>

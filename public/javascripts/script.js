@@ -1,4 +1,4 @@
-// JavaScript to make Ajax call for refreshing cart count
+// JavaScript to make Ajax call for refreshing cart count - called from cart page
 
 function addToCart(productId) {
 
@@ -25,5 +25,39 @@ function addToCart(productId) {
     }
 
   });
+
+}
+
+
+// JavaScript to make Ajax call for changing cart quantity - called from cart page
+
+function changeQuantity(cartId, productId, count){
+
+  // console.log('Change Quantity Function Called');
+  // The above message will be consoled in the browser console as it is happening at client side 
+
+  $.ajax({
+
+    url:'/change-product-quantity',
+
+    data:{
+
+      cart:cartId,
+
+      product:productId,
+
+      count:count
+
+    },
+
+    method:'post',
+
+    success:(response)=>{
+
+      alert(response);
+        
+    }
+
+  })
 
 }

@@ -161,13 +161,30 @@ router.get('/cart', verifyLogin, async (req,res)=>{
 
 router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
 
-  console.log("api call");
+  // console.log("api call");
 
   userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
 
     res.json({status:true});
 
   })
+
+})
+
+router.post('/change-product-quantity', (req,res,next)=>{
+
+  // console.log(req.body);
+
+  userHelpers.changeCartQuantity(req.body).then(()=>{
+
+  
+  }).catch((err)=>{
+
+    console.log(err);
+
+    reject(err);
+    
+  });
 
 })
 

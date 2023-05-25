@@ -19,9 +19,17 @@ module.exports = {
 
                 userCollection.findOne({_id: insertedId}).then((user)=>{
 
+                    // console.log(user);
+
                     resolve(user);
 
-                })
+                }).catch((err)=>{
+
+                    console.log(err);
+
+                    reject(err);
+                    
+                });
 
             })
 
@@ -57,7 +65,14 @@ module.exports = {
                         resolve({status:false});
 
                     }
-                })
+
+                }).catch((err)=>{
+
+                    console.log(err);
+
+                    reject(err);
+                    
+                });
 
             }else{
 
@@ -106,7 +121,7 @@ module.exports = {
                     db.get().collection(collections.CART_COLLECTION)
                     .updateOne(
 
-                        {'products.item':ObjectId(productId)}, // Matching the same product in the products array of cart collection of the user
+                        {user:ObjectId(userId),'products.item':ObjectId(productId)}, // Matching the same product in the products array of cart collection of the user
 
                         {$inc:{'products.$.quantity':1}}
 
@@ -114,7 +129,13 @@ module.exports = {
 
                         resolve();
 
-                    })
+                    }).catch((err)=>{
+
+                        console.log(err);
+    
+                        reject(err);
+                        
+                    });
 
                     // console.log('CART EXISTS for user == Same Product exist for user == Quantity Modified');
 
@@ -132,7 +153,13 @@ module.exports = {
 
                         resolve();
 
-                    })
+                    }).catch((err)=>{
+
+                        console.log(err);
+    
+                        reject(err);
+                        
+                    });
 
                     // console.log('CART EXISTS for user == Same Product DOSENT exist in cart == Product added to producs array');
 
@@ -150,11 +177,19 @@ module.exports = {
 
                 db.get().collection(collections.CART_COLLECTION)
                 .insertOne(cartObject)
-                .then(()=>{
+                .then((data)=>{
 
-                    resolve();
+                    // console.log(data);
 
-                })
+                    resolve()
+
+                }).catch((err)=>{
+
+                    console.log(err);
+
+                    reject(err);
+
+                });
 
                 // console.log('New CART Created for user & New product added to cart:');
 
@@ -231,6 +266,42 @@ module.exports = {
             resolve(count);
 
         })    
+    },
+    changeCartQuantity:(cartData)=>{
+
+        console.log(cartData);
+
+        cartData.count = parseInt(cartData.count); // Convert the count received to integer for using in increment below
+
+        return new Promise((resolve,reject)=>{
+
+            db.get().collection(collections.CART_COLLECTION)
+            .updateOne(
+                {
+                  _id: ObjectId(cartData.cart),
+                  "products.item": ObjectId(cartData.product),
+                },
+
+                {
+                  $inc: { "products.$.quantity": cartData.count },
+                }
+                ).then((data)=>{
+
+                    // console.log(data);
+
+                    resolve()
+
+                }).catch((err)=>{
+
+                    console.log(err);
+
+                    reject(err);
+
+                }
+            );
+
+        })
+
     }
 
 }
