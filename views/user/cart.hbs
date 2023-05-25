@@ -18,21 +18,18 @@
 
                     <tr class="cart-row">
 
-                        {{#each this.product}}
-
-                            <td><img style="width: 70px; height: 70px;" src="/product-images/{{this._id}}.jpg" alt=""></td>
-                            <td>{{this.name}}</td>
-                            <td>{{this.description}}</td>
-                            <td>{{this.price}}</td>
-
-                        {{/each}}
+                        <td><img style="width: 70px; height: 70px;" src="/product-images/{{this.product._id}}.jpg" alt=""></td>
+                        <td>{{this.product.name}}</td>
+                        <td>{{this.product.description}}</td>
+                        <td>{{this.product.price}}</td>
 
                         <td>
-                            <button class="quantity-btn minus" onclick="changeQuantity('{{this._id}}','{{#each this.product}}{{this._id}}{{/each}}', -1)">-</button>
-                            <span class="quantity">{{this.quantity}}</span>
-                            <button class="quantity-btn plus" onclick="changeQuantity('{{this._id}}','{{#each this.product}}{{this._id}}{{/each}}', 1)">+</button>
+                            <button class="quantity-btn minus" onclick="changeQuantity('{{this._id}}','{{this.product._id}}', -1)">-</button>
+                            <span class="quantity" id="{{this.product._id}}">{{this.quantity}}</span>
+                            <button class="quantity-btn plus" onclick="changeQuantity('{{this._id}}','{{this.product._id}}', 1)">+</button>
                         </td>
                         <td><a href="#" class="remove-item">Remove</a></td>
+
                     </tr>
 
                 {{/each}}

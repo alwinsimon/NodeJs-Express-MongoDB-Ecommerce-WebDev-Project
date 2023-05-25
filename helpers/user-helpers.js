@@ -238,6 +238,19 @@ module.exports = {
 
                     }
 
+                },
+                {
+
+                    $project:{
+
+                        item:1,
+
+                        quantity:1,
+
+                        product:{$arrayElemAt:['$product',0]}
+
+                    }
+
                 }
 
             ]).toArray()
