@@ -354,6 +354,41 @@ module.exports = {
 
         })
 
+    },
+    deleteProductFromCart:(productDetails)=>{
+
+        return new Promise((resolve,reject)=>{
+
+            db.get().collection(collections.CART_COLLECTION)
+            .updateOne(
+                {
+    
+                  _id: ObjectId(productDetails.cart),
+                
+                },
+                {
+                
+                    $pull: { products:{item:ObjectId(productDetails.product)} }, // Remove the product from user Cart
+                
+                }
+                ).then((data)=>{
+    
+                    // console.log(data);
+    
+                    resolve({cartProductRemoved:true});
+                    // Send a status to Ajax call as boolean inside aobject, for indicating the product removal 
+    
+                }).catch((err)=>{
+    
+                    console.log(err);
+    
+                    reject(err);
+    
+                }
+            );
+
+        })
+
     }
 
 }

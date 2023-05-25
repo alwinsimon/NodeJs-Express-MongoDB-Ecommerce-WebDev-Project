@@ -196,6 +196,29 @@ router.post('/change-product-quantity', (req,res,next)=>{
 
 })
 
+router.post('/delete-product-from-cart', (req,res,next)=>{
+
+  // console.log(req.body);
+
+  userHelpers.deleteProductFromCart(req.body).then((response)=>{
+
+    res.json(response); 
+    /* 
+    # Used JSON to send data back here as RESPONSE to AJAX Call from cart page
+    # As we are using AJAX there is no need of sending back a complete web page or redirecting to a webpage (which will load the page completely)
+    # We can configure the AJAX to use the data in JSON format for updating the specific element of webpage
+    */
+  
+  }).catch((err)=>{
+
+    console.log(err);
+
+    reject(err);
+    
+  });
+
+})
+
 
 
 module.exports = router;

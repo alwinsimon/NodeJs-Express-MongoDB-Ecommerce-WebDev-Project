@@ -81,3 +81,43 @@ function changeQuantity(cartId, productId, count){
   })
 
 }
+
+// JavaScript to make Ajax call for removing a product from cart - called from cart page
+
+function removeProductFromCart(cartId, productId){
+
+  // console.log('Remove product from cart Function Called');
+  // The above message will be consoled in the browser console as it is happening at client side
+
+  // AJAX Function for removing a product from cart
+
+  $.ajax({
+
+    url:'/delete-product-from-cart',
+
+    data:{
+
+      cart:cartId,
+
+      product:productId,
+
+
+    },
+
+    method:'post',
+
+    success:(response)=>{
+
+      if(response.cartProductRemoved){ // If the quantity of the product was 1 and if it was further decremented using the decrement function, then the product is removed from the cart as the quantity of the product would become zero
+
+        alert("Product removed from cart");
+
+        location.reload(); // Reload the entire page if there is a product removed from the cart - Later have to modify this code and have to update the table alone using Ajax
+
+      }
+        
+    }
+
+  })
+
+}
