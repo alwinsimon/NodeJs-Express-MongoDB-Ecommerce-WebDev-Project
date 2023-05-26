@@ -155,9 +155,12 @@ router.get('/cart', verifyLogin, async (req,res)=>{
 
   let cartItems = await userHelpers.getCartProducts(req.session.user._id);
 
-  // console.log(cartItems);
+  let cartValue = await userHelpers.getCartValue(user._id);
 
-  res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount })
+  // console.log(cartItems);
+  console.log(cartValue);
+
+  res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue });
 
 })
 
@@ -173,7 +176,7 @@ router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
 
 })
 
-router.post('/change-product-quantity', (req,res,next)=>{
+router.post('/change-product-quantity',verifyLogin, (req,res,next)=>{
 
   // console.log(req.body);
 
@@ -196,7 +199,7 @@ router.post('/change-product-quantity', (req,res,next)=>{
 
 })
 
-router.post('/delete-product-from-cart', (req,res,next)=>{
+router.post('/delete-product-from-cart',verifyLogin, (req,res,next)=>{
 
   // console.log(req.body);
 
@@ -216,6 +219,26 @@ router.post('/delete-product-from-cart', (req,res,next)=>{
     reject(err);
     
   });
+
+})
+
+/* ========================ORDER ROUTES======================== */
+
+router.get('/place-order',verifyLogin, async (req,res)=>{
+
+  let user = req.session.user //used for authenticating a user visit if user has already logged in earlier
+
+  // console.log(user._id);
+
+  let cartProducts = await userHelpers.getCartProducts(user._id);
+
+  let cartValue = await userHelpers.getCartValue(user._id);
+
+  // console.log(cartProducts);
+
+  // console.log(cartValue);
+
+  res.render('user/place-order',{ title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue});
 
 })
 

@@ -1,0 +1,66 @@
+<div
+    style="width: 80%; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+    <h1 style="font-size: 24px; text-align: center;">Place Order</h1>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+        <div style="flex: 1; padding-right: 20px;">
+            <form action="submit_order.php" method="POST">
+
+                <h4>Delivery Details</h4>
+                <hr>
+
+                <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;">Name:</label>
+                <input type="text" id="name" name="name" required
+                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+
+                <label for="address" style="font-weight: bold; display: block; margin-bottom: 5px;">Address:</label>
+                <input type="text" id="address" name="address" required
+                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+
+                <label for="mobile" style="font-weight: bold; display: block; margin-bottom: 5px;">Mobile:</label>
+                <input type="tel" id="mobile" name="mobile" required
+                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+
+                <label for="email" style="font-weight: bold; display: block; margin-bottom: 5px;">Email:</label>
+                <input type="email" id="email" name="email" required
+                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+
+                <label for="pin" style="font-weight: bold; display: block; margin-bottom: 5px;">Pin:</label>
+                <input type="text" id="pin" name="pin" required
+                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+            </form>
+        </div>
+
+        <div style="flex: 1; padding-left: 20px;">
+            <h2 style="margin-top: 0;">Order Summary</h2>
+
+            <hr>
+
+            {{#each cartProducts}}
+            
+            <p>{{this.product.name}} - {{this.quantity}} item</p>
+
+            {{/each}}
+
+            <hr>
+
+            <p>Total Order Amount:</p>
+            <h6>{{cartValue}}</h6>
+
+            <hr>
+
+            <h4>Payment Methods</h4>
+            <form action="submit_payment.php" method="POST">
+                <label>
+                    <input type="radio" name="payment" value="cod" required> Cash on Delivery (COD)
+                </label>
+                <label>
+                    <input type="radio" name="payment" value="online" required> Online Payment
+                </label>
+
+                <button type="submit"
+                    style="background-color: #4CAF50; color: #fff; border: none; padding: 10px 20px; border-radius: 3px; font-size: 16px; cursor: pointer; margin-top: 20px; width: 100%;">Checkout</button>
+            </form>
+        </div>
+    </div>
+</div>
