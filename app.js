@@ -9,6 +9,8 @@ var db = require('./config/connection');
 var session = require('express-session');
 var nocache = require('nocache');
 
+require('dotenv').config(); // Module to Load environment variables from .env file
+
 
 // ====================Directory Path to Different Routes====================
 var userRouter = require('./routes/user');
@@ -27,7 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileUpload());
-app.use(session({secret:'KEY',cookie:{maxAge:6000000}}))
+app.use(session({secret:process.env.SESSION_SECRET_KEY,cookie:{maxAge:6000000}}))
 app.use(nocache());
 
 //Establishing connection with db using connect function defined in config/connection path
