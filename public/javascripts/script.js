@@ -31,8 +31,9 @@ function addToCart(productId) {
 
 // JavaScript to make Ajax call for changing cart quantity - called from cart page
 
-function changeQuantity(cartId, productId, count){
+function changeQuantity(cartId, productId, userId, count){
 
+  // console.log(userId);
   // console.log('Change Quantity Function Called');
   // The above message will be consoled in the browser console as it is happening at client side
 
@@ -49,6 +50,8 @@ function changeQuantity(cartId, productId, count){
     url:'/change-product-quantity',
 
     data:{
+
+      userId:userId,
 
       cart:cartId,
 
@@ -72,7 +75,9 @@ function changeQuantity(cartId, productId, count){
 
       }else{ // Increment or decrement the value in the quantity using ajax
 
-        document.getElementById(productId).innerHTML = productQuantity + count
+        document.getElementById(productId).innerHTML = productQuantity + count;
+
+        document.getElementById('cart-total').innerHTML = response.cartValue;
 
       }
         

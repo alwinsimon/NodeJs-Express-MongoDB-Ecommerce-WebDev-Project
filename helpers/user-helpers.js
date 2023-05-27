@@ -339,7 +339,7 @@ module.exports = {
     
                         // console.log(data);
     
-                        resolve(true)
+                        resolve({status:true});
     
                     }).catch((err)=>{
     
@@ -471,7 +471,7 @@ module.exports = {
 
             ]).toArray();
 
-            console.log(totalCartValue[0]);
+            // console.log(totalCartValue[0]);
 
             resolve(totalCartValue[0].cartValue);
 

@@ -24,11 +24,11 @@
                         <td>{{this.product.price}}</td>
 
                         <td>
-                            <button class="quantity-btn minus" onclick="changeQuantity('{{this._id}}','{{this.product._id}}', -1)">-</button>
+                            <button class="quantity-btn minus" onclick="changeQuantity('{{this._id}}','{{this.product._id}}', '{{../user._id}}', -1)">-</button>
 
                             <span class="quantity" id="{{this.product._id}}">{{this.quantity}}</span>
 
-                            <button class="quantity-btn plus" onclick="changeQuantity('{{this._id}}','{{this.product._id}}', 1)">+</button>
+                            <button class="quantity-btn plus" onclick="changeQuantity('{{this._id}}','{{this.product._id}}', '{{../user._id}}', 1)">+</button>
 
                         </td>
                         
@@ -45,7 +45,7 @@
 
         <div class="float-right pr-5">
 
-            <h5 class="float-center mr-5">Total Cart amount: ₹ {{cartValue}} </h5>
+            <h5 class="float-center mr-5">Total Cart amount: ₹ <span id="cart-total">{{cartValue}}</span> </h5>
 
             <a href="/place-order" class="btn btn-success mt-3" style="width:100%;"><b>Place Order</b></a>
 

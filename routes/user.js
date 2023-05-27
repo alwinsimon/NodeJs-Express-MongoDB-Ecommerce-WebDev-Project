@@ -153,14 +153,40 @@ router.get('/cart', verifyLogin, async (req,res)=>{
 
   }
 
-  let cartItems = await userHelpers.getCartProducts(req.session.user._id);
+  if(cartCount > 0){  // If there is atleast 1 item in the database, then calculate fetch items and value from db
+    
+    let cartItems = await userHelpers.getCartProducts(req.session.user._id);
 
-  let cartValue = await userHelpers.getCartValue(user._id);
+    let cartValue = await userHelpers.getCartValue(user._id);
 
-  // console.log(cartItems);
-  console.log(cartValue);
+    // console.log(cartItems);
+    // console.log(cartValue);
 
-  res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue });
+    res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue });
+
+  }else{ // If there is no items in the cart - then redirect to a different page to avoid the query to database for cartitems and cartvalue
+
+    res.redirect('/empty-cart');
+
+  }
+
+})
+
+router.get('/empty-cart',verifyLogin, async (req,res)=>{
+
+  let user = req.session.user //To pass user name to the page while rendering - used to display Custom title for page.
+
+  if(user){
+
+    cartCount = await userHelpers.getCartCount(req.session.user._id);
+
+    res.render('user/empty-cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, user, cartCount });
+
+  }else{
+
+    res.render('user/empty-cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false });
+
+  }
 
 })
 
@@ -180,7 +206,11 @@ router.post('/change-product-quantity',verifyLogin, (req,res,next)=>{
 
   // console.log(req.body);
 
-  userHelpers.changeCartProductQuantity(req.body).then((response)=>{
+  userHelpers.changeCartProductQuantity(req.body).then( async (response)=>{
+
+    response.cartValue =  await userHelpers.getCartValue(req.body.userId); // Adding a cartValue feild to response object 
+
+    // console.log(response.cartValue);
 
     res.json(response); 
     /* 

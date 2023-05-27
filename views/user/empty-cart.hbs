@@ -1,0 +1,71 @@
+  <style>
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes countdown {
+      from {
+        width: 100%;
+      }
+      to {
+        width: 0%;
+      }
+    }
+
+    .container {
+      text-align: center;
+      animation: fade-in 1s ease;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .cart-icon {
+      font-size: 5rem;
+      color: #999;
+      animation: fade-in 1s ease;
+    }
+
+    p {
+      color: #999;
+      animation: fade-in 1s ease;
+    }
+
+    .countdown {
+      height: 10px;
+      background-color: #ddd;
+      margin-top: 2rem;
+      overflow: hidden;
+      animation: countdown 3s linear forwards;
+    }
+
+    .countdown-bar {
+      height: 100%;
+      background-color: #777;
+    }
+  </style>
+
+
+
+
+<div class="container">
+    <h1>Your Cart is Empty</h1>
+    <i class="fas fa-shopping-cart cart-icon"></i>
+    <p>Go ahead and add some items!</p>
+    <div class="countdown">
+        <div class="countdown-bar"></div>
+    </div>
+</div>
+
+<script>
+    // Redirect after 5 seconds
+    setTimeout(() => {
+        window.location.href = '/';
+    }, 3000);
+</script>
