@@ -1,3 +1,5 @@
+{{!-- ==============================Past Orders Page============================== --}}
+
 <div style="display: flex; justify-content: center; padding-top: 40px ; height: 100vh; margin: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
 
     <div style="width: 95%; background-color: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
@@ -33,7 +35,11 @@
                         <td>{{this.paymentMethod}}</td>
                         <td>{{this.orderStatus}}</td>
                         
-                        <td><a href="/ordered-product-details/{{this._id}}" class="btn btn-primary animate__animated animate__fadeInLeft">View Products</a></td>
+                        <td>
+                            <form method="POST" action="/ordered-product-details">
+                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">View Products</button>
+                            </form>
+                        </td>
 
                     </tr>
 

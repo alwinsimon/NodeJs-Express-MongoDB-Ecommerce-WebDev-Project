@@ -316,6 +316,24 @@ router.get('/orders',verifyLogin, async (req,res)=>{
 
 })
 
+router.post('/ordered-product-details',verifyLogin, async (req,res)=>{
+
+  let user = req.session.user // Used for storing user details for further use in this route
+
+  // console.log(req.body);
+
+  let orderId = req.body.orderId;
+
+  let productDetails = await userHelpers.getProductsInOrder(orderId);
+
+  let orderDate = await userHelpers.getOrderDate(orderId); // For passing order date to the page
+
+  // console.log(orderDate);
+
+  res.render('user/ordered-product-details',{ title: user.name +"'s " + PLATFORM_NAME + " || Ordered Product Details" , admin:false, user, productDetails, orderDate});
+
+})
+
 
 
 module.exports = router;

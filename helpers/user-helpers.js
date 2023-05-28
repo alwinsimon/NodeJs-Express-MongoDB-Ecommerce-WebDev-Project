@@ -574,6 +574,86 @@ module.exports = {
 
         })
 
+    },
+    getProductsInOrder:(orderId)=>{
+
+        return new Promise( async (resolve,reject)=>{
+
+            let productDetails = await db.get().collection(collections.ORDERS_COLLECTION).aggregate([
+                
+                {
+
+                    $match:{_id:ObjectId(orderId)}
+
+                },
+                {
+
+                    $unwind:'$products'
+
+                },
+                {
+
+                    $project:{
+
+                        item:'$products.item',
+
+                        quantity:'$products.quantity'
+
+                    }
+
+                },
+                {
+
+                    $lookup:{
+
+                        from:collections.PRODUCT_COLLECTION,
+
+                        localField:'item',
+
+                        foreignField:'_id',
+
+                        as:'product'
+
+                    }
+
+                },
+                {
+
+                    $project:{
+
+                        item:1,
+
+                        quantity:1,
+
+                        product:{$arrayElemAt:['$product',0]}
+
+                    }
+
+                }
+
+            ]).toArray();
+
+            // console.log(productDetails);
+
+            resolve(productDetails);
+ 
+        });
+
+    },
+    getOrderDate:(orderId)=>{
+
+        // console.log(userId);
+
+        return new Promise( async (resolve,reject)=>{
+
+            let orderDetails = await db.get().collection(collections.ORDERS_COLLECTION).find({_id:ObjectId(orderId)}).toArray();
+
+            // console.log(orderDetails[0].date);
+
+            resolve(orderDetails[0].date);
+
+        })
+
     }
 
 }
