@@ -477,6 +477,88 @@ module.exports = {
 
         });
 
+    },
+    getProductListForOrders:(userId)=>{
+
+        return new Promise( async(resolve,reject)=>{
+
+            let cart = await db.get().collection(collections.CART_COLLECTION).findOne({user:ObjectId(userId)});
+
+            if(cart){ // Send cart products if cart exist for user in db cart collection
+
+                resolve(cart.products);
+
+            }else{ // Send a status false (boolean), if cart dosen't exist for user in db cart collection
+
+                resolve(false);
+
+            }
+
+        })
+
+    },
+    placeOrder:(user,orderData,orderedProducts,totalOrderValue)=>{
+
+        // console.log(orderData);
+
+        let orderStatus = orderData['payment-method'] === 'COD' ? 'placed' : 'payment-pending'
+
+        let orderDetails = {
+
+            userId:user._id,
+
+            userName:user.name,
+
+            date: new Date(),
+        
+            orderValue:totalOrderValue,
+
+            paymentMethod:orderData['payment-method'],
+
+            orderStatus:orderStatus,
+
+            products:orderedProducts,
+
+            deliveryDetails:{
+
+                name:orderData.name,
+
+                address:orderData.address,
+
+                pincode:orderData.pin,
+
+                mobile:orderData.mobile,
+
+                email:orderData.email
+
+            }            
+        
+        }
+
+        // console.log(orderDetails);
+
+        return new Promise((resolve,reject)=>{
+
+            db.get().collection(collections.ORDERS_COLLECTION).insertOne(orderDetails).then((response)=>{
+
+                // console.log(response);
+
+                db.get().collection(collections.CART_COLLECTION).deleteOne({user:ObjectId(user._id)}).then((response)=>{
+
+                    // console.log(response);
+
+                    resolve();
+
+                })
+
+            }).catch((err)=>{
+    
+                console.log(err);
+
+                reject(err);
+
+            });
+        });
     }
 
 }

@@ -256,7 +256,7 @@ router.post('/delete-product-from-cart',verifyLogin, (req,res,next)=>{
 
 router.get('/place-order',verifyLogin, async (req,res)=>{
 
-  let user = req.session.user //used for authenticating a user visit if user has already logged in earlier
+  let user = req.session.user // Used for storing user details for further use in this route
 
   // console.log(user._id);
 
@@ -274,13 +274,43 @@ router.get('/place-order',verifyLogin, async (req,res)=>{
 
 router.post('/place-order',verifyLogin, async (req,res)=>{
 
-  let user = req.session.user //used for authenticating a user visit if user has already logged in earlier
+  let user = req.session.user // Used for storing user details for further use in this route
 
-  console.log(req.body);
+  let orderDetails = req.body;
+  // console.log(req.body);
 
-  res.json({status:'success'})
+  let orderedProducts = await userHelpers.getProductListForOrders(user._id);
+  // This variable will store the product details if cart exist for user, else will store a boolean value false returned by the function
 
+  if(orderedProducts){ // If there are products inside user cart , Proceed executing checkout functions
+
+    let totalOrderValue = await userHelpers.getCartValue(user._id);
+
+    userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue);
+
+    res.json({checkoutStatus:true});
+
+  }else{ // If there are NO products inside user cart , Send a status back in json
+
+    res.json({checkoutStatus:false});
+
+  }
   
+})
+
+router.get('/order-success',verifyLogin, async (req,res)=>{
+
+  let user = req.session.user // Used for storing user details for further use in this route
+
+  // console.log(user);
+
+
+  // console.log(cartProducts);
+
+  // console.log(cartValue);
+
+  res.render('user/order-success',{ title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
+
 })
 
 

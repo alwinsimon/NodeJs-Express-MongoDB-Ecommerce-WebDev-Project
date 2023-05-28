@@ -145,7 +145,15 @@ $('#checkout-form').submit((e)=>{
 
     success:(response)=>{
 
-      alert(response);
+      if(response.checkoutStatus){
+
+        location.href ='/order-success'
+
+      }else{
+
+        location.href ='/login'
+
+      }
 
     }
 

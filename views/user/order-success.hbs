@@ -1,0 +1,36 @@
+<!-- Order Placed Page -->
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 d-flex align-items-center justify-content-center vh-100">
+      <div class="text-center">
+        <h2 class="animate__animated animate__bounceInDown">Order Placed Successfully!</h2>
+        <p class="animate__animated animate__fadeIn">Thank you for your order. We have received your order and it is being processed.</p>
+        <div class="mt-4">
+          <a href="/" class="btn btn-primary animate__animated animate__fadeInLeft">Go to Home</a>
+          <a href="/orders" class="btn btn-secondary animate__animated animate__fadeInRight">View Orders</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Add interactivity and additional animations
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add a delay before fading in the buttons
+    setTimeout(function() {
+      var buttons = document.querySelectorAll('.btn');
+      buttons.forEach(function(button) {
+        button.classList.add('animate__fadeIn');
+      });
+    }, 500);
+
+    // Add a pulsating effect to the heading
+    var heading = document.querySelector('h2');
+    heading.addEventListener('animationiteration', function() {
+      heading.classList.remove('animate__pulse');
+      void heading.offsetWidth; // Trigger reflow to restart the animation
+      heading.classList.add('animate__pulse');
+    });
+  });
+</script>
