@@ -505,7 +505,7 @@ module.exports = {
 
         let orderDetails = {
 
-            userId:user._id,
+            userId:ObjectId(user._id),
 
             userName:user.name,
 
