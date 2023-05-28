@@ -126,3 +126,29 @@ function removeProductFromCart(cartId, productId){
   })
 
 }
+
+// JavaScript to make Ajax call for Checkout - called from place-order page
+
+$('#checkout-form').submit((e)=>{
+
+  e.preventDefault(); // To prevent default method of submitting form as here Ajax should be used here to submit the form based on the two different payment methods
+
+  // console.log("ajax call");
+
+  $.ajax({
+    
+    url:'/place-order',
+
+    method:'post',
+
+    data: $('#checkout-form').serialize(), // Here serialize function is used to get all the data from the form into the data feild of ajax call
+
+    success:(response)=>{
+
+      alert(response);
+
+    }
+
+  })
+
+})

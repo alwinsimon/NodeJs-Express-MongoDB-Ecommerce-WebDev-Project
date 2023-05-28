@@ -272,6 +272,17 @@ router.get('/place-order',verifyLogin, async (req,res)=>{
 
 })
 
+router.post('/place-order',verifyLogin, async (req,res)=>{
+
+  let user = req.session.user //used for authenticating a user visit if user has already logged in earlier
+
+  console.log(req.body);
+
+  res.json({status:'success'})
+
+  
+})
+
 
 
 module.exports = router;
