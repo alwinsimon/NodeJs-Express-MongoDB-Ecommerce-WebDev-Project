@@ -298,18 +298,21 @@ router.post('/place-order',verifyLogin, async (req,res)=>{
   
 })
 
-router.get('/order-success',verifyLogin, async (req,res)=>{
+router.get('/order-success',verifyLogin, (req,res)=>{
 
   let user = req.session.user // Used for storing user details for further use in this route
 
-  // console.log(user);
-
-
-  // console.log(cartProducts);
-
-  // console.log(cartValue);
-
   res.render('user/order-success',{ title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
+
+})
+
+router.get('/orders',verifyLogin, async (req,res)=>{
+
+  let user = req.session.user // Used for storing user details for further use in this route
+
+  let orderDetails = await userHelpers.getUserOrderHistory(user._id);
+
+  res.render('user/orders',{ title: user.name +"'s " + PLATFORM_NAME + " || Orders" , admin:false, user, orderDetails});
 
 })
 

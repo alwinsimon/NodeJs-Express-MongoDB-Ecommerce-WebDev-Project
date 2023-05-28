@@ -559,6 +559,21 @@ module.exports = {
 
             });
         });
+    },
+    getUserOrderHistory:(userId)=>{
+
+        // console.log(userId);
+
+        return new Promise( async (resolve,reject)=>{
+
+            let orderHistory = await db.get().collection(collections.ORDERS_COLLECTION).find({userId:ObjectId(userId)}).toArray();
+
+            // console.log(orderHistory);
+
+            resolve(orderHistory);
+
+        })
+
     }
 
 }
