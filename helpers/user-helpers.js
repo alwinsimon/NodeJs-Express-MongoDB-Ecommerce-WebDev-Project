@@ -25,9 +25,13 @@ module.exports = {
 
                 }).catch((err)=>{
 
-                    console.log(err);
+                    if(err){
 
-                    reject(err);
+                        console.log(err);
+
+                        reject(err);
+                        
+                    }
                     
                 });
 
@@ -68,9 +72,13 @@ module.exports = {
 
                 }).catch((err)=>{
 
-                    console.log(err);
+                    if(err){
 
-                    reject(err);
+                        console.log(err);
+
+                        reject(err);
+                        
+                    }
                     
                 });
 
@@ -131,9 +139,13 @@ module.exports = {
 
                     }).catch((err)=>{
 
-                        console.log(err);
+                        if(err){
+
+                            console.log(err);
     
-                        reject(err);
+                            reject(err);
+                            
+                        }
                         
                     });
 
@@ -155,9 +167,13 @@ module.exports = {
 
                     }).catch((err)=>{
 
-                        console.log(err);
+                        if(err){
+
+                            console.log(err);
     
-                        reject(err);
+                            reject(err);
+                            
+                        }
                         
                     });
 
@@ -185,9 +201,13 @@ module.exports = {
 
                 }).catch((err)=>{
 
-                    console.log(err);
+                    if(err){
 
-                    reject(err);
+                        console.log(err);
+
+                        reject(err);
+                        
+                    }
 
                 });
 
@@ -316,9 +336,13 @@ module.exports = {
     
                     }).catch((err)=>{
     
-                        console.log(err);
+                        if(err){
+
+                            console.log(err);
     
-                        reject(err);
+                            reject(err);
+                            
+                        }
     
                     }
                 );
@@ -343,9 +367,13 @@ module.exports = {
     
                     }).catch((err)=>{
     
-                        console.log(err);
+                        if(err){
+
+                            console.log(err);
     
-                        reject(err);
+                            reject(err);
+                            
+                        }
     
                     }
                 );
@@ -380,9 +408,13 @@ module.exports = {
     
                 }).catch((err)=>{
     
-                    console.log(err);
-    
-                    reject(err);
+                    if(err){
+
+                        console.log(err);
+
+                        reject(err);
+                        
+                    }
     
                 }
             );
@@ -553,7 +585,11 @@ module.exports = {
 
             }).catch((err)=>{
     
-                console.log(err);
+                if(err){
+
+                    console.log(err);
+
+                }
 
                 reject(err);
 
