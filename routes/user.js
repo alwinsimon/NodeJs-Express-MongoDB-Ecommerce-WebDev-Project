@@ -338,6 +338,14 @@ router.get('/order-success',verifyLogin, (req,res)=>{
 
 })
 
+router.get('/order-failed',verifyLogin, (req,res)=>{
+
+  let user = req.session.user // Used for storing user details for further use in this route
+
+  res.render('user/order-failed',{ title: user.name +"'s " + PLATFORM_NAME + " || Sorry, Order failed" , admin:false, user});
+
+})
+
 router.get('/orders',verifyLogin, async (req,res)=>{
 
   let user = req.session.user // Used for storing user details for further use in this route
