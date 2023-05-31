@@ -2,6 +2,22 @@ const db = require("../config/connection");
 const collections = require('../config/collections')
 const bcrypt = require('bcrypt');
 const ObjectId = require("mongodb").ObjectId;
+const Razorpay = require('razorpay');
+
+require('dotenv').config(); // Module to Load environment variables from .env file
+
+/*==============================Payment Gateway Configuration========== */
+
+// Payment Gateway - object of Razorpay
+
+var razorpayInstance = new Razorpay({
+
+    key_id: process.env.RAZORPAY_KEY_ID,
+
+    key_secret: process.env.RAZORPAY_SECRET_KEY
+
+});
+
 
 module.exports = {
 
@@ -533,7 +549,7 @@ module.exports = {
 
         // console.log(orderData);
 
-        let orderStatus = orderData['payment-method'] === 'COD' ? 'placed' : 'payment-pending'
+        let orderStatus = orderData['payment-method'] === 'COD' ? 'Order Placed' : 'Payment Pending'
 
         let orderDetails = {
 
@@ -571,17 +587,21 @@ module.exports = {
 
         return new Promise((resolve,reject)=>{
 
-            db.get().collection(collections.ORDERS_COLLECTION).insertOne(orderDetails).then((response)=>{
+            db.get().collection(collections.ORDERS_COLLECTION).insertOne(orderDetails).then((dbOrderDetails)=>{
 
-                // console.log(response);
+                let dbOrderId = dbOrderDetails.insertedId.toString(); 
+                // To return back the inserted Id of the order which is returned from Db to use in payment gateway order creation.
 
-                db.get().collection(collections.CART_COLLECTION).deleteOne({user:ObjectId(user._id)}).then((response)=>{
+                // console.log(dbOrderId);
 
-                    // console.log(response);
+                db.get().collection(collections.CART_COLLECTION).deleteOne({user:ObjectId(user._id)}).then((deleteResult)=>{
 
-                    resolve();
+                    // console.log(deleteResult);
+
+                    resolve(dbOrderId); // Returning back the order Id in orders collection of DB to use in payment gateway order creation
 
                 })
+
 
             }).catch((err)=>{
     
@@ -689,6 +709,124 @@ module.exports = {
             resolve(orderDetails[0].date);
 
         })
+
+    },
+    generateRazorpayOrder:(orderId,orderValue)=>{
+
+        orderValue = orderValue * 100; 
+        // To convert paisa into rupees as the Razorpay takes the amount in smallest currency unit (paisa) 
+        // Amount is in currency subunits. Default currency is INR. Hence, 1 refers to 1 paise, so here the amount is multiplied by 100 to convert it to rupees
+
+        return new Promise((resolve,reject)=>{
+
+            let orderDetails = {
+
+                amount: orderValue,
+                currency: "INR",
+                receipt: orderId
+
+            };
+
+            // console.log(orderDetails);
+
+            razorpayInstance.orders.create(orderDetails, function(err, orderDetails) {
+
+                if(err) {
+
+                    console.log('Order Creation Error from Razorpay: ' + err);
+
+                }else{
+
+                    console.log("New order created by Razorpay: " + orderDetails);
+
+                    resolve(orderDetails);
+
+                }
+
+            });
+
+        })
+
+    },
+    verifyOnlinePayment:(paymentData)=>{
+
+        console.log(paymentData);
+
+        return new Promise((resolve,reject)=>{
+
+            const crypto = require('crypto'); // Requiring crypto Module here for generating server signature for payments verification
+
+            let razorpaySecretKey = process.env.RAZORPAY_SECRET_KEY;
+
+            let hmac = crypto.createHmac('sha256', razorpaySecretKey); // Hashing Razorpay secret key using SHA-256 Algorithm
+        
+            hmac.update(paymentData['razorpayServerPaymentResponse[razorpay_order_id]'] + '|' + paymentData['razorpayServerPaymentResponse[razorpay_payment_id]']); 
+            // Updating the hash (re-hashing) by adding Razprpay payment Id and order Id received from client as response
+        
+            let serverGeneratedSignature = hmac.digest('hex');
+            // Converted the final hashed result into hexa code and saving it as server generated signature
+
+            let razorpayServerGeneratedSignatureFromClient = paymentData['razorpayServerPaymentResponse[razorpay_signature]']
+        
+            if(serverGeneratedSignature === razorpayServerGeneratedSignatureFromClient){ 
+                // Checking that is the signature generated in our server using the secret key we obtained by hashing secretkey,orderId & paymentId is same as the signature sent by the server 
+
+                // console.log("Payment Signature Verified");
+
+                resolve()
+        
+            }else{
+        
+                // console.log("Payment Signature Verification Failed");
+
+                reject()
+        
+            }
+
+        })
+
+    },
+    updateOnlineOrderPaymentStatus:(ordersCollectionId, onlinePaymentStatus)=>{
+
+        // console.log("updateOnlineOrderPaymentStatus Function Called");
+
+        return new Promise((resolve,reject)=>{
+
+            if(onlinePaymentStatus){
+
+                db.get().collection(collections.ORDERS_COLLECTION)
+                  .updateOne(
+
+                    { _id: ObjectId(ordersCollectionId) },
+
+                    { $set: { orderStatus: "Order Placed" } }
+
+                  ).then(() => {
+
+                    resolve();
+
+                  }
+
+                );
+
+            }else{
+
+                db.get().collection(collections.ORDERS_COLLECTION)
+                  .updateOne(
+
+                    { _id: ObjectId(ordersCollectionId) },
+
+                    { $set: { orderStatus: "Order Failed" } }
+
+                ).then(() => {
+                    
+                    resolve() 
+                    
+                });
+
+            }
+
+        });
 
     }
 

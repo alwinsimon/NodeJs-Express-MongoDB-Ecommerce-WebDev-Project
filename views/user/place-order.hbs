@@ -61,7 +61,7 @@
                     <input type="radio" name="payment-method" value="ONLINE" required> Online Payment
                 </label>
 
-                <button type="submit"
+                <button type="button" id="checkout-button"
                     style="background-color: #4CAF50; color: #fff; border: none; padding: 10px 20px; border-radius: 3px; font-size: 16px; cursor: pointer; margin-top: 20px; width: 100%;">Checkout</button>
 
             </div>
@@ -70,3 +70,10 @@
 
     </div>
 </div>
+
+
+{{!-- Script for using Razorpay Payment gateway functions --}}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+{{!-- Script for Ajax call for making payments when check-out button is clicked is defined in the common script.js file and hence will be loaded from there --}}

@@ -286,9 +286,41 @@ router.post('/place-order',verifyLogin, async (req,res)=>{
 
     let totalOrderValue = await userHelpers.getCartValue(user._id);
 
-    userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue);
+    userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue).then((orderId)=>{
 
-    res.json({checkoutStatus:true});
+      if(req.body['payment-method']==='COD'){
+
+        res.json({COD_CHECKOUT:true});
+  
+      }else if(req.body['payment-method']==='ONLINE'){
+  
+        userHelpers.generateRazorpayOrder(orderId,totalOrderValue).then((razorpayOrderDetails)=>{
+
+          // console.log(razorpayOrderDetails);
+
+          let razorpayKeyId = process.env.RAZORPAY_KEY_ID
+
+          res.json(
+
+            {
+              ONLINE_CHECKOUT:true,
+              userDetails:user,
+              userOrderRequestData:orderDetails,
+              orderDetails:razorpayOrderDetails,
+              razorpayKeyId:razorpayKeyId
+            }
+            
+          );
+
+        });
+  
+      }else{
+  
+        res.json({paymentStatus:false});
+
+      }
+
+    });
 
   }else{ // If there are NO products inside user cart , Send a status back in json
 
@@ -334,6 +366,56 @@ router.post('/ordered-product-details',verifyLogin, async (req,res)=>{
 
 })
 
+router.post('/verify-payment',(req,res)=>{
+
+  // console.log(req.body);
+
+  // The below verifyOnlinePayment function will match the signature returned by Razorpay with our server generated signature
+  userHelpers.verifyOnlinePayment(req.body).then(()=>{
+
+    // The below function updateOnlineOrderPaymentStatus will be called upon succesful verification of payment by verifyOnlinePayment above
+    // updateOnlineOrderPaymentStatus function will update the payment status in DB
+
+    let receiptId = req.body['serverOrderDetails[receipt]'];
+
+    let paymentSuccess = true;
+
+    userHelpers.updateOnlineOrderPaymentStatus(receiptId, paymentSuccess).then(()=>{
+
+      // Sending the receiptId to the above userHelper to modify the order status in the DB
+      // We have set the Receipt Id is same as the orders cart collection ID
+
+      res.json({status:true});
+
+      // console.log('Payment Succesful from Update online Orders');
+
+    })
+    
+
+  }).catch((err)=>{
+
+    if(err){
+      
+      console.log(err);
+
+      let paymentSuccess = false;
+
+      userHelpers.updateOnlineOrderPaymentStatus(receiptId, paymentSuccess).then(()=>{
+
+        // Sending the receiptId to the above userHelper to modify the order status in the DB
+        // We have set the Receipt Id is same as the orders cart collection ID
+
+        res.json({status:false});
+
+        // console.log('Payment Failed from Update online Orders');
+
+      })
+    
+    }
+
+  });
+
+})
 
 
 module.exports = router;
