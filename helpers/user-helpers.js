@@ -2,21 +2,15 @@ const db = require("../config/connection");
 const collections = require('../config/collections')
 const bcrypt = require('bcrypt');
 const ObjectId = require("mongodb").ObjectId;
-const Razorpay = require('razorpay');
+const paymentGateway = require('../config/connection')
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
+
 /*==============================Payment Gateway Configuration========== */
 
-// Payment Gateway - object of Razorpay
-
-var razorpayInstance = new Razorpay({
-
-    key_id: process.env.RAZORPAY_KEY_ID,
-
-    key_secret: process.env.RAZORPAY_SECRET_KEY
-
-});
+var razorpayInstance = paymentGateway.razorpayInstance; 
+// Creating an new instance of the Razorpay using the instance(object of Razorpay) that was created and exported from connection.js
 
 
 module.exports = {
@@ -737,7 +731,7 @@ module.exports = {
 
                 }else{
 
-                    console.log("New order created by Razorpay: " + orderDetails);
+                    // console.log("New order created by Razorpay: " + orderDetails);
 
                     resolve(orderDetails);
 
@@ -750,7 +744,7 @@ module.exports = {
     },
     verifyOnlinePayment:(paymentData)=>{
 
-        console.log(paymentData);
+        // console.log(paymentData);
 
         return new Promise((resolve,reject)=>{
 
