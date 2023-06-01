@@ -203,6 +203,8 @@ $(document).ready(function() {
         
         verifyPayment(response,orderDetails);
 
+        storePaymentResponseDataFromGateway(response);
+
       },
       "prefill": {
 
@@ -227,7 +229,7 @@ $(document).ready(function() {
     // If the payment failed for any reason, calling the pre-defined function "on" in Razorpay module using the object of Razorpay
     razorpayPayment.on('payment.failed', function (response){ // This function will receive the server response from Razorpay server as argument on FAILED payment
 
-      alert(response.error);
+      storePaymentResponseDataFromGateway(response);
 
     });
 
@@ -264,6 +266,20 @@ $(document).ready(function() {
         }
 
       }
+
+    })
+
+  }
+
+  function storePaymentResponseDataFromGateway(paymentDataFromGateway){
+    
+    $.ajax({
+
+      url:'/save-payment-data',
+
+      data:paymentDataFromGateway,
+
+      method:'POST'
 
     })
 

@@ -298,6 +298,9 @@ router.post('/place-order',verifyLogin, async (req,res)=>{
 
           // console.log(razorpayOrderDetails);
 
+          userHelpers.createPaymentHistory(user,orderId,orderDetails,totalOrderValue,razorpayOrderDetails);
+          // Creating a new document in payment history collection in the Database with all the available data of the placed order
+
           let razorpayKeyId = process.env.RAZORPAY_KEY_ID
 
           res.json(
@@ -374,7 +377,7 @@ router.post('/ordered-product-details',verifyLogin, async (req,res)=>{
 
 })
 
-router.post('/verify-payment',(req,res)=>{
+router.post('/verify-payment',verifyLogin, (req,res)=>{
 
   // console.log(req.body);
 
@@ -422,6 +425,46 @@ router.post('/verify-payment',(req,res)=>{
     }
 
   });
+
+})
+
+router.post('/save-payment-data',verifyLogin, async (req,res)=>{
+
+  let paymentGatewayResponse = req.body;
+
+  // console.log(paymentGatewayResponse);
+
+  if(req.body.razorpay_signature){
+
+    let orderId = req.body.razorpay_order_id;
+
+    let dbPaymentHistoryCollectionId = await userHelpers.getPaymentHistoryId(orderId);
+
+    // console.log(dbPaymentHistoryCollectionId);
+
+    userHelpers.updatePaymentHistory(dbPaymentHistoryCollectionId, paymentGatewayResponse).then(()=>{
+
+      res.json({status:true});
+
+    })
+
+  }else{
+
+    let failedPaymentData = req.body;
+
+    let orderId = failedPaymentData['error[metadata][order_id]'];
+
+    let dbPaymentHistoryCollectionId = await userHelpers.getPaymentHistoryId(orderId);
+
+    // console.log(dbPaymentHistoryCollectionId);
+
+    userHelpers.updatePaymentHistory(dbPaymentHistoryCollectionId, paymentGatewayResponse).then(()=>{
+
+      res.json({status:true});
+
+    })
+
+  }
 
 })
 

@@ -2,7 +2,7 @@ const db = require("../config/connection");
 const collections = require('../config/collections')
 const bcrypt = require('bcrypt');
 const ObjectId = require("mongodb").ObjectId;
-const paymentGateway = require('../config/connection')
+const paymentGateway = require('../config/connection');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -821,6 +821,98 @@ module.exports = {
             }
 
         });
+
+    },
+    createPaymentHistory:(userData,ordersCollectionId,checkoutData,orderValue,orderDataToRazorpay)=>{
+
+        return new Promise( (resolve,reject)=>{
+
+            let paymentData = {
+
+                userDetails : userData,
+
+                orderId : ordersCollectionId,
+
+                date: new Date(),
+
+                orderDetails : checkoutData,
+
+                amount : orderValue,
+
+                serverGeneratedOrderToPaymentGateway : orderDataToRazorpay
+            }
+
+            db.get().collection(collections.PAYMENT_HISTORY_COLLECTION).insertOne(paymentData)
+            .then(()=>{
+
+                resolve();
+
+            })
+
+        })
+
+    },
+    updatePaymentHistory:(paymentHistoryCollectionId, paymentDataFromGateway)=>{
+
+        return new Promise( (resolve,reject)=>{
+
+            db.get().collection(collections.PAYMENT_HISTORY_COLLECTION).updateOne(
+
+                {_id:paymentHistoryCollectionId},
+
+                { $set: { razorpayServerResponse: paymentDataFromGateway }}
+
+            ).then((data)=>{
+
+                // console.log(data);
+
+                resolve();
+
+            })
+
+        })
+
+    },
+    getPaymentHistoryId:(orderId)=>{
+
+        return new Promise( (resolve,reject)=>{
+
+            db.get().collection(collections.PAYMENT_HISTORY_COLLECTION).aggregate([
+
+                {
+                  $match: {"serverGeneratedOrderToPaymentGateway.id": orderId}
+                },
+                {
+                  $project: {_id: 1}
+                }
+
+            ]).toArray((error, result) => {
+
+                if (error) {
+
+                  console.error("Error:", error);
+
+                  reject(err);
+
+                } else if (result.length > 0) {
+
+                  let paymentHistoryId = result[0]._id;
+
+                  //   console.log("Retrieved paymentHistoryId:", paymentHistoryId);
+
+                  resolve(paymentHistoryId);
+   
+                } else {
+
+                  console.log("No document found with the specified criteria");
+
+                  reject(result);
+
+                }
+
+            });
+
+        })
 
     }
 
