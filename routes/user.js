@@ -260,17 +260,26 @@ router.get('/place-order',verifyLogin, async (req,res)=>{
 
   // console.log(user._id);
 
-  let cartProducts = await userHelpers.getCartProducts(user._id);
+  cartCount = await userHelpers.getCartCount(req.session.user._id);
 
-  let cartValue = await userHelpers.getCartValue(user._id);
+  if(cartCount > 0){
 
-  // console.log(cartProducts);
+    let cartProducts = await userHelpers.getCartProducts(user._id);
 
-  // console.log(cartValue);
+    let cartValue = await userHelpers.getCartValue(user._id);
 
-  res.render('user/place-order',{ title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue});
+    // console.log(cartProducts);
 
-})
+    // console.log(cartValue);
+
+    res.render('user/place-order',{ title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue});
+
+  }else{
+
+    res.redirect('/empty-cart');
+  }
+
+});
 
 router.post('/place-order',verifyLogin, async (req,res)=>{
 
