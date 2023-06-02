@@ -1,5 +1,6 @@
 module.exports = {
 
+    ADMIN_COLLECTION: 'platform admins',
     PRODUCT_COLLECTION : 'products',
     USER_COLLECTION: 'users',
     CART_COLLECTION: 'user cart',
