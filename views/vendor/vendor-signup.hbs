@@ -1,0 +1,146 @@
+<style>
+    body {
+        font-family: "Open Sans", sans-serif;
+        background-color: #f7f7f7;
+        color: #333333;
+    }
+
+    .form-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 5px;
+        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h2 {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .form-container input[type="text"],
+    .form-container input[type="email"],
+    .form-container input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: none;
+        border-radius: 3px;
+        background-color: #f0f0f0;
+        color: #333333;
+        font-size: 16px;
+        font-weight: 400;
+        transition: all 0.3s ease;
+    }
+
+    .form-container input[type="text"]:focus,
+    .form-container input[type="email"]:focus,
+    .form-container input[type="password"]:focus {
+        background-color: #e0e0e0;
+        outline: none;
+    }
+
+    .form-container button[type="submit"],
+    .form-container button[type="button"] {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        border: none;
+        border-radius: 3px;
+        background-color: #0275d8;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 400;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .form-container button[type="submit"]:hover,
+    .form-container button[type="button"]:hover {
+        background-color: #025aa5;
+    }
+
+    .form-container .form-switch {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .form-container .form-switch a {
+        color: #0275d8;
+        text-decoration: none;
+    }
+
+    .form-container .form-switch a:hover {
+        text-decoration: underline;
+    }
+
+    .form-container .error {
+        color: #d9534f;
+        font-size: 14px;
+        margin-top: -10px;
+        margin-bottom: 10px;
+    }
+
+    .form-container .success {
+        color: #5cb85c;
+        font-size: 14px;
+        margin-top: -10px;
+        margin-bottom: 10px;
+    }
+
+    .form-container .loading {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+</style>
+
+
+<body>
+    <div class="container mt-5">
+
+        <h2 style="text-align: center;">Welcome to {{PLATFORM_NAME}} Vendor Club</h2>
+        <br>
+        <h6 style="text-align: center;">Register as {{PLATFORM_NAME}} Vendor</h6>
+
+        <form id="signup-form" style="max-width: 500px; margin: 0 auto;" action="/vendor/signup" method="POST">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name" required style="border-radius: 10px;">
+                <div class="invalid-feedback" style="color: red;">
+                    Please enter your name.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" name="email" required style="border-radius: 10px;">
+                <div class="invalid-feedback" style="color: red;">
+                    Please enter a valid email address.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required
+                    style="border-radius: 10px;">
+                <div class="invalid-feedback" style="color: red;">
+                    Please enter your password.
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary me-2" style="border-radius: 10px;">Sign up</button>
+                <a href="/login" class="btn btn-secondary"
+                    style="border-radius: 10px; background-color: #007bff;">Login</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/additional-methods.min.js"></script>
+    <script src="signup.js"></script>
+</body>

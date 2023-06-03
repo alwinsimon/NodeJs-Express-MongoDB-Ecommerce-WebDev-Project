@@ -15,6 +15,7 @@ require('dotenv').config(); // Module to Load environment variables from .env fi
 // ====================Directory Path to Different Routes====================
 var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
+var vendorRouter = require('./routes/vendor');
 
 var app = express();
 
@@ -45,6 +46,7 @@ db.connect((err)=>{
 // ====================ROUTES====================
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
+app.use('/vendor', vendorRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

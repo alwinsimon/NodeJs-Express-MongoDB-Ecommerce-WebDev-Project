@@ -31,6 +31,8 @@
 {{!-- Code to determine which header file to choose according to the user type --}}
   {{#if admin}}
   {{>admin-header}}
+  {{else if vendor}}
+  {{>vendor-header}}
   {{else}}
   {{>user-header}}
   {{/if}}
