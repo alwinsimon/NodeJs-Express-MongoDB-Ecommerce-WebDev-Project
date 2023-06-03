@@ -5,7 +5,7 @@
         aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand" href="/admin" style="font-weight: bold;" >GetMyDeal Admin</a>
+      <a class="navbar-brand" href="/admin" style="font-weight: bold;" >{{PLATFORM_NAME}} Admin</a>
       <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
@@ -18,10 +18,25 @@
             <a class="nav-link" href="#">All Users</a>
           </li>
         </ul>
-        <form class="d-flex">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+            data-bs-target="#navbarTogglerDemo03" aria-haspopup="true" aria-expanded="false">
+            {{#if adminData}}
+            Hey, {{adminData.name}}
+            {{else}}
+            {{PLATFORM_NAME}}'s Admin
+            {{/if}}
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {{#if adminData}}
+            <form action="/admin/logout" method="post">
+              <button class="dropdown-item" type="submit">Log out</button>
+            </form>
+            {{else}}
+            <a class="dropdown-item" href="/admin/login">Log In</a>
+            {{/if}}
+          </div>
+        </div>
       </div>
     </div>
   </nav>

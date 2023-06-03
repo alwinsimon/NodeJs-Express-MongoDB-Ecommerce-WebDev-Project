@@ -27,7 +27,7 @@ const verifyAdminLogin = (req,res,next)=>{
 }
 
 
-/* ========================LOGIN ROUTES======================== */
+/* ========================LOGIN & LOGOUT ROUTES======================== */
 
 router.get('/login', (req,res)=>{
 
@@ -37,7 +37,7 @@ router.get('/login', (req,res)=>{
 
   }else{
 
-    res.render('admin/admin-login',{"loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", admin:true});
+    res.render('admin/admin-login',{"loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", admin:true, PLATFORM_NAME});
 
     req.session.adminLogginErr = false; 
     /*
@@ -92,10 +92,20 @@ router.post('/login',(req,res)=>{
 
 })
 
+router.post('/logout',(req,res)=>{
+
+  req.session.adminSession = false;
+
+  req.session.adminLoggedIn = false;
+
+  res.redirect('/admin')
+
+})
+
 // ====================Routes to Add New Admin====================
 router.get('/add-admin', verifyAdminLogin, (req, res)=>{
 
-  res.render('admin/add-admin',{title:PLATFORM_NAME + " || Add Admin", admin:true});
+  res.render('admin/add-admin',{title:PLATFORM_NAME + " || Add Admin", admin:true, PLATFORM_NAME});
 
 });
 
@@ -113,9 +123,11 @@ router.post('/add-admin', verifyAdminLogin, (req, res)=>{
 // ====================Route to Admin Dashboard====================
 router.get('/', verifyAdminLogin, (req, res)=>{
 
+  let adminData = req.session.adminSession;
+
   productHelper.getAllProducts().then((products)=>{
    
-    res.render('admin/view-products',{title:"Admin Panel",admin:true,products});
+    res.render('admin/view-products',{title: PLATFORM_NAME + " || Admin Panel", admin:true, adminData, PLATFORM_NAME, products});
     
   })
 
@@ -125,13 +137,17 @@ router.get('/', verifyAdminLogin, (req, res)=>{
 // ====================Route to Add NEW Product Page====================
 router.get('/add-product', verifyAdminLogin, (req,res)=>{
 
-  res.render('admin/add-product',{title:"Add product",admin:true})
+  let adminData = req.session.adminSession;
+
+  res.render('admin/add-product',{title: PLATFORM_NAME + " || Add Product",admin:true, adminData, PLATFORM_NAME})
 
 });
 
 router.post('/add-product', verifyAdminLogin, (req,res)=>{
 
   productHelper.addProduct(req.body,(result)=>{
+
+    let adminData = req.session.adminSession;
 
     let id = result.insertedId
 
@@ -145,7 +161,7 @@ router.post('/add-product', verifyAdminLogin, (req,res)=>{
 
       }else{
 
-        res.render('admin/add-product',{title:"Add product",admin:true});
+        res.render('admin/add-product',{title:"Add product",admin:true, adminData, PLATFORM_NAME});
 
       }
 
@@ -177,13 +193,15 @@ router.get('/delete-product/:id', verifyAdminLogin, (req,res)=>{
 
 router.get('/edit-product/:id', verifyAdminLogin, (req,res)=>{
 
+  let adminData = req.session.adminSession;
+
   let productID = req.params.id;
 
   let product = productHelper.getProductDetails(productID).then((productDetails)=>{
 
     // console.log(productDetails);
 
-    res.render('admin/edit-product',{title:"Edit product", admin:true, productDetails});
+    res.render('admin/edit-product',{title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails});
 
   })
 
