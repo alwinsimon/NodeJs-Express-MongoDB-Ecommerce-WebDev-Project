@@ -15,7 +15,7 @@ var razorpayInstance = paymentGateway.razorpayInstance;
 
 module.exports = {
 
-    doSignup:(userData)=>{
+    doUserSignup:(userData)=>{
 
         return new Promise(async (resolve,reject)=>{
 
@@ -27,11 +27,11 @@ module.exports = {
 
                 const insertedId = insertResult.insertedId;
 
-                userCollection.findOne({_id: insertedId}).then((user)=>{
+                userCollection.findOne({_id: insertedId}).then((userData)=>{
 
                     // console.log(user);
 
-                    resolve(user);
+                    resolve(userData);
 
                 }).catch((err)=>{
 
@@ -50,53 +50,45 @@ module.exports = {
         })
 
     },
-    doLogin:(userData)=>{
+    doUserLogin:(loginFormData)=>{
 
-        return new Promise(async (resolve,reject)=>{
+        let userAuthenticationResponse = {};
 
-            let response = {}
+        return new Promise( async (resolve,reject)=>{
 
-            let user = await db.get().collection(collections.USER_COLLECTION).findOne({email:userData.email});
+            let user = await db.get().collection(collections.USER_COLLECTION).findOne({email:loginFormData.email});
 
             if(user){
 
-                bcrypt.compare(userData.password,user.password).then((status)=>{
+                bcrypt.compare(loginFormData.password, user.password).then((verificationData)=>{
 
-                    if(status){
+                    if(verificationData){
 
-                        console.log("Login Success");
+                        userAuthenticationResponse.status = true;
 
-                        response.user = user //Setting the value of the response object declared above
+                        userAuthenticationResponse.userData = user;
 
-                        response.status = true //Setting the value of the response object declared above
+                        resolve(userAuthenticationResponse);
 
-                        resolve(response);
-                        
                     }else{
 
-                        console.log("Incorrect user password");
+                        userAuthenticationResponse.status = false;
 
-                        resolve({status:false});
+                        userAuthenticationResponse.passwordError = true;
+
+                        resolve(userAuthenticationResponse);
 
                     }
 
-                }).catch((err)=>{
-
-                    if(err){
-
-                        console.log(err);
-
-                        reject(err);
-                        
-                    }
-                    
-                });
+                })
 
             }else{
 
-                console.log("User dosent exist");
+                userAuthenticationResponse.status = false;
 
-                resolve({status:false});
+                userAuthenticationResponse.emailError = true;
+
+                resolve(userAuthenticationResponse);
 
             }
 

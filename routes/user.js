@@ -10,9 +10,9 @@ require('dotenv').config(); // Module to Load environment variables from .env fi
 /*=======================================MIDDLEWARES=======================================*/
 
 // Function to use as Middleware to verify if the request are made by a user or guest
-const verifyLogin = (req,res,next)=>{
+const verifyUserLogin = (req,res,next)=>{
 
-  if(req.session.loggedIn){
+  if(req.session.userLoggedIn){
 
     next();
 
@@ -32,13 +32,13 @@ let PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
 router.get('/', async (req, res, next)=>{
 
-  let user = req.session.user //used for authenticating a user visit if user has already logged in earlier
+  let user = req.session.userSession //used for authenticating a user visit if user has already logged in earlier
 
   let cartCount = null;
 
   if(user){
 
-    cartCount = await userHelpers.getCartCount(req.session.user._id);
+    cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
   }
 
@@ -50,7 +50,7 @@ router.get('/', async (req, res, next)=>{
 
     }else{
 
-      res.render('user/view-products', { title:PLATFORM_NAME, products, admin:false, user });
+      res.render('user/view-products', { title:PLATFORM_NAME, products, admin:false });
 
     }
 
@@ -62,15 +62,15 @@ router.get('/', async (req, res, next)=>{
 
 router.get('/login', (req,res)=>{
 
-  if(req.session.loggedIn){
+  if(req.session.userLoggedIn){
 
     res.redirect('/');
 
   }else{
 
-    res.render('user/login',{"loginError":req.session.logginErr, title:PLATFORM_NAME + " || Login", admin:false});
+    res.render('user/login',{"loginError":req.session.userLogginErr, title:PLATFORM_NAME + " || Login", admin:false});
 
-    req.session.logginErr = false; 
+    req.session.userLogginErr = false; 
     /*
     Resetting the flag for checking if the login page post request was due to invalid username or password.
     This is done so that the login page will show the message only once if there was a redirect to this page due to invalid credentials.
@@ -82,36 +82,52 @@ router.get('/login', (req,res)=>{
 
 router.post('/login',(req,res)=>{
 
-  userHelpers.doLogin(req.body).then((response)=>{
+  if(req.session.userLoggedIn){
 
-    if(response.status){
+    res.redirect('/');
 
-      req.session.loggedIn = true;
+  }else{
 
-      req.session.user = response.user
+    userHelpers.doUserLogin(req.body).then((doUserLoginResponse)=>{
 
-      res.redirect('/');
-
-    }else{
-
-      req.session.logginErr = "Invalid Username or Password!"; 
-      /*Setting a flag for keeping a record of the login error which happened due to user entering invalid credentials.
-       This flag will be checked in every login request so that we can display an error message in the case of reloading the login page due to invalid credentials entered by user.
-       This flag variable is stored in the session using req.session so that it will be accesible everywhere.
-       the name of this flag variable can be anything ie, this is NOT an predefined name in the session module.
-      */
-
-      res.redirect('/login');
-
-    }
-
-  })
+      if(doUserLoginResponse.status){
+  
+        req.session.userSession = doUserLoginResponse.userData; // Storing response from doAdminLogin function in session storage
+  
+        req.session.userLoggedIn = true;
+  
+        res.redirect('/');
+  
+      }else if(doUserLoginResponse.emailError){
+  
+        req.session.userLogginErr = "Email Invalid !!!"; 
+        /*Setting a flag for keeping a record of the login error which happened due to admin entering invalid credentials.
+         This flag will be checked in every login request so that we can display an error message in the case of reloading the login page due to invalid credentials entered by admin.
+         This flag variable is stored in the session using req.session so that it will be accesible everywhere.
+         The name of this flag variable can be anything ie, this is NOT an predefined name in the session module.
+        */
+  
+        res.redirect('/login');
+  
+      }else{
+  
+        req.session.userLogginErr = "Invalid Password Entered!!!";
+  
+        res.redirect('/login');
+  
+      }
+  
+    })
+    
+  }
 
 })
 
 router.get('/logout',(req,res)=>{
 
-  req.session.destroy();
+  req.session.userSession = false;
+
+  req.session.userLoggedIn = false;
 
   res.redirect('/')
 
@@ -125,13 +141,13 @@ router.get('/signup', (req,res)=>{
 
 router.post('/signup',(req,res)=>{
 
-  userHelpers.doSignup(req.body).then((user)=>{
+  userHelpers.doUserSignup(req.body).then((userData)=>{
     
     // console.log(user);
 
-    req.session.loggedIn = true;
+    req.session.userSession = userData;
 
-    req.session.user = user;
+    req.session.userLoggedIn = true;
 
     res.redirect('/');
 
@@ -141,21 +157,21 @@ router.post('/signup',(req,res)=>{
 
 /* ========================CART ROUTES======================== */
 
-router.get('/cart', verifyLogin, async (req,res)=>{
+router.get('/cart', verifyUserLogin, async (req,res)=>{
 
-  let user = req.session.user //To pass user name to cart-page while rendering - used to display Custom title for page.
+  let user = req.session.userSession //To pass user name to cart-page while rendering - used to display Custom title for page.
 
   let cartCount = null;
 
   if(user){
 
-    cartCount = await userHelpers.getCartCount(req.session.user._id);
+    cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
   }
 
   if(cartCount > 0){  // If there is atleast 1 item in the database, then calculate fetch items and value from db
     
-    let cartItems = await userHelpers.getCartProducts(req.session.user._id);
+    let cartItems = await userHelpers.getCartProducts(req.session.userSession._id);
 
     let cartValue = await userHelpers.getCartValue(user._id);
 
@@ -172,13 +188,13 @@ router.get('/cart', verifyLogin, async (req,res)=>{
 
 })
 
-router.get('/empty-cart',verifyLogin, async (req,res)=>{
+router.get('/empty-cart',verifyUserLogin, async (req,res)=>{
 
-  let user = req.session.user //To pass user name to the page while rendering - used to display Custom title for page.
+  let user = req.session.userSession //To pass user name to the page while rendering - used to display Custom title for page.
 
   if(user){
 
-    cartCount = await userHelpers.getCartCount(req.session.user._id);
+    cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
     res.render('user/empty-cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, user, cartCount });
 
@@ -190,11 +206,11 @@ router.get('/empty-cart',verifyLogin, async (req,res)=>{
 
 })
 
-router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
+router.get('/add-to-cart/:id',verifyUserLogin,(req,res)=>{
 
   // console.log("api call");
 
-  userHelpers.addToCart(req.params.id,req.session.user._id).then(()=>{
+  userHelpers.addToCart(req.params.id,req.session.userSession._id).then(()=>{
 
     res.json({status:true});
 
@@ -202,7 +218,7 @@ router.get('/add-to-cart/:id',verifyLogin,(req,res)=>{
 
 })
 
-router.post('/change-product-quantity',verifyLogin, (req,res,next)=>{
+router.post('/change-product-quantity',verifyUserLogin, (req,res,next)=>{
 
   // console.log(req.body);
 
@@ -229,7 +245,7 @@ router.post('/change-product-quantity',verifyLogin, (req,res,next)=>{
 
 })
 
-router.post('/delete-product-from-cart',verifyLogin, (req,res,next)=>{
+router.post('/delete-product-from-cart',verifyUserLogin, (req,res,next)=>{
 
   // console.log(req.body);
 
@@ -254,13 +270,13 @@ router.post('/delete-product-from-cart',verifyLogin, (req,res,next)=>{
 
 /* ========================ORDER ROUTES======================== */
 
-router.get('/place-order',verifyLogin, async (req,res)=>{
+router.get('/place-order',verifyUserLogin, async (req,res)=>{
 
-  let user = req.session.user // Used for storing user details for further use in this route
+  let user = req.session.userSession // Used for storing user details for further use in this route
 
   // console.log(user._id);
 
-  cartCount = await userHelpers.getCartCount(req.session.user._id);
+  cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
   if(cartCount > 0){
 
@@ -281,9 +297,9 @@ router.get('/place-order',verifyLogin, async (req,res)=>{
 
 });
 
-router.post('/place-order',verifyLogin, async (req,res)=>{
+router.post('/place-order',verifyUserLogin, async (req,res)=>{
 
-  let user = req.session.user // Used for storing user details for further use in this route
+  let user = req.session.userSession // Used for storing user details for further use in this route
 
   let orderDetails = req.body;
   // console.log(req.body);
@@ -342,25 +358,25 @@ router.post('/place-order',verifyLogin, async (req,res)=>{
   
 })
 
-router.get('/order-success',verifyLogin, (req,res)=>{
+router.get('/order-success',verifyUserLogin, (req,res)=>{
 
-  let user = req.session.user // Used for storing user details for further use in this route
+  let user = req.session.userSession // Used for storing user details for further use in this route
 
   res.render('user/order-success',{ title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
 
 })
 
-router.get('/order-failed',verifyLogin, (req,res)=>{
+router.get('/order-failed',verifyUserLogin, (req,res)=>{
 
-  let user = req.session.user // Used for storing user details for further use in this route
+  let user = req.session.userSession // Used for storing user details for further use in this route
 
   res.render('user/order-failed',{ title: user.name +"'s " + PLATFORM_NAME + " || Sorry, Order failed" , admin:false, user});
 
 })
 
-router.get('/orders',verifyLogin, async (req,res)=>{
+router.get('/orders',verifyUserLogin, async (req,res)=>{
 
-  let user = req.session.user // Used for storing user details for further use in this route
+  let user = req.session.userSession // Used for storing user details for further use in this route
 
   let orderDetails = await userHelpers.getUserOrderHistory(user._id);
 
@@ -368,9 +384,9 @@ router.get('/orders',verifyLogin, async (req,res)=>{
 
 })
 
-router.post('/ordered-product-details',verifyLogin, async (req,res)=>{
+router.post('/ordered-product-details',verifyUserLogin, async (req,res)=>{
 
-  let user = req.session.user // Used for storing user details for further use in this route
+  let user = req.session.userSession // Used for storing user details for further use in this route
 
   // console.log(req.body);
 
@@ -386,7 +402,7 @@ router.post('/ordered-product-details',verifyLogin, async (req,res)=>{
 
 })
 
-router.post('/verify-payment',verifyLogin, (req,res)=>{
+router.post('/verify-payment',verifyUserLogin, (req,res)=>{
 
   // console.log(req.body);
 
@@ -437,7 +453,7 @@ router.post('/verify-payment',verifyLogin, (req,res)=>{
 
 })
 
-router.post('/save-payment-data',verifyLogin, async (req,res)=>{
+router.post('/save-payment-data',verifyUserLogin, async (req,res)=>{
 
   let paymentGatewayResponse = req.body;
 

@@ -55,7 +55,7 @@ module.exports = {
                     
                 });
 
-                console.log(deleteResult);
+                // console.log(deleteResult);
 
                 resolve();
 
