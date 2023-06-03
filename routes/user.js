@@ -123,7 +123,7 @@ router.post('/login',(req,res)=>{
 
 })
 
-router.get('/logout',(req,res)=>{
+router.post('/logout',(req,res)=>{
 
   req.session.userSession = false;
 
