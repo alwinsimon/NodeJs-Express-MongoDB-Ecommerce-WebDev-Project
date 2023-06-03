@@ -1,0 +1,81 @@
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
+                aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="/" style="font-weight: bold;">GetyMyDeal Vendor</a>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/vendor/products">Listed Products</a>
+                    </li>
+                    {{#if vendor}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/vendor/orders">All Orders</a>
+                    </li>
+                    {{/if}}
+                </ul>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" data-bs-target="#navbarTogglerDemo03" aria-haspopup="true"
+                        aria-expanded="false">
+                        {{#if vendorData}}
+                        Hey, {{vendorData.name}}
+                        {{else}}
+                        {{PLATFORM_NAME}} Vendor
+                        {{/if}}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {{#if vendorData}}
+                        <form action="/vendor/logout" method="POST">
+                            <button class="dropdown-item" type="submit">Log out</button>
+                        </form>
+                        {{else}}
+                        <a class="dropdown-item" href="/vendor/login">Log In</a>
+                        <a class="dropdown-item" href="/vendor/signup">Sign Up</a>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<style>
+    .navbar-brand:hover {
+        color: #dc3545;
+        font:bold
+    }
+
+    .badge {
+        color: green;
+    }
+
+    .btn-primary:hover {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .navbar-nav .nav-link:hover {
+        color: #dc3545;
+        transform: scale(1.05);
+    }
+
+    .dropdown:hover .dropdown-menu {
+        display: block;
+        animation: fadeInDown 0.3s ease-in-out;
+    }
+
+    @keyframes fadeInDown {
+        0% {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
