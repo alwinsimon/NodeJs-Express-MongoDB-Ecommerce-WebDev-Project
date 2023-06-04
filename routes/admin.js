@@ -135,11 +135,13 @@ router.get('/', verifyAdminLogin, (req, res)=>{
 });
 
 // ====================Route to Add NEW Product Page====================
-router.get('/add-product', verifyAdminLogin, (req,res)=>{
+router.get('/add-product', verifyAdminLogin, async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
-  res.render('admin/add-product',{title: PLATFORM_NAME + " || Add Product",admin:true, adminData, PLATFORM_NAME})
+  let productCategories = await adminHelper.getProductCategories();
+
+  res.render('admin/add-product',{title: PLATFORM_NAME + " || Add Product",admin:true, adminData, PLATFORM_NAME, productCategories})
 
 });
 
