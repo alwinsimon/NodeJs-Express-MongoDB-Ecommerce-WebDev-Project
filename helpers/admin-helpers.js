@@ -210,7 +210,70 @@ module.exports = {
   
         });
 
-    }
+  },
+  getAllUsers : ()=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        let platformUsers = await db.get().collection(collections.USER_COLLECTION).find({}).toArray();
+
+        platformUsers = platformUsers.map(user => {
+
+          const joinedOnIST = moment(user.joinedOn).tz('Asia/Kolkata').format('DD-MMM-YYYY h:mm A');
+        
+          return { ...user, joinedOn: joinedOnIST + ' IST' };
+          
+        });
+        
+        resolve(platformUsers);
+  
+
+      } catch (error) {
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  changeUserBlockStatus : (userId)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        let user = await db.get().collection(collections.USER_COLLECTION).findOne({_id:ObjectId(userId)});
+
+        if(user.blocked){ // If the user is already blocked => UN-BLOCK
+
+          await db.get().collection(collections.USER_COLLECTION).updateOne({_id:ObjectId(userId)}, {$set:{blocked:false}}).then((result)=>{
+
+            resolve(result);
+  
+          })
+
+        }else{ // If the user is NOT BLOCKED => BLOCK
+
+          await db.get().collection(collections.USER_COLLECTION).updateOne({_id:ObjectId(userId)}, {$set:{blocked:true}}).then((result)=>{
+
+            resolve(result);
+  
+          })
+
+        }
+
+      } catch (error) {
+
+        reject(error);
+
+      }
+
+    });
+
+  }
       
       
 

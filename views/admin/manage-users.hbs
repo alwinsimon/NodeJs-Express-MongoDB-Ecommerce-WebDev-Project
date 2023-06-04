@@ -1,0 +1,55 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<section>
+    <div class="container">
+
+        <div class="row mt-4">
+            <h3 class="text-center">Manage Users</h3>
+        </div>
+
+        {{!-- ====================TABLE==================== --}}
+
+        <table class="table mt-4">
+            {{!-- ==========Table Header========== --}}
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Database Id</th>
+                    <th scope="col">Joined on</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+
+            {{!-- ==========Table Body========== --}}
+            <tbody>
+                {{#each platformUserData}}
+                <tr>
+                    <th scope="row">{{this.name}}</th>
+                    <td>{{this.email}}</td>
+                    <td>{{this._id}}</td>
+                    <td>{{this.joinedOn}}</td>
+                    <td>
+                        {{#if this.blocked}}
+                            <i class="fas fa-lock text-danger"></i> Blocked
+                        {{else}}
+                            <i class="fas fa-check-circle text-success"></i> Active
+                        {{/if}}
+                    </td>
+                    <td>
+                        <form id="change-user-status-form" action="/admin/change-user-status" method="POST">
+                            <input type="hidden" name="userId" value="{{this._id}}">
+                            {{#if this.blocked}}
+                                <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure that you want to Un-Block {{this.name}} ?')">Unblock</button>
+                            {{else}}
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure that you want to Block {{this.name}} ?')">Block</button>
+                            {{/if}}
+                        </form>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</section>
