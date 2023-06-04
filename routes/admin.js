@@ -193,19 +193,17 @@ router.get('/delete-product/:id', verifyAdminLogin, (req,res)=>{
 
 // ====================Routes to EDIT a PRODUCT====================
 
-router.get('/edit-product/:id', verifyAdminLogin, (req,res)=>{
+router.get('/edit-product/:id', verifyAdminLogin, async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
   let productID = req.params.id;
 
-  let product = productHelper.getProductDetails(productID).then((productDetails)=>{
+  let productDetails = await productHelper.getProductDetails(productID);
 
-    // console.log(productDetails);
+  let productCategories = await adminHelper.getProductCategories();
 
-    res.render('admin/edit-product',{title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails});
-
-  })
+  res.render('admin/edit-product',{title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategories});
 
 })
 
