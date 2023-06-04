@@ -2,7 +2,10 @@ const db = require("../config/connection");
 const collections = require('../config/collections')
 const bcrypt = require('bcrypt');
 const ObjectId = require("mongodb").ObjectId;
+const path = require('path');
+const fs = require('fs');
 const paymentGateway = require('../config/connection');
+const moment = require('moment-timezone'); // Module to modify the time to various time zones
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -71,6 +74,144 @@ module.exports = {
 
         });
 
+    },
+    addProductCategory:(categoryDetails)=>{
+
+        return new Promise((resolve,reject)=>{
+
+            db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION)
+            .insertOne(categoryDetails).then((response)=>{
+
+                resolve(response.insertedId);
+
+            })
+            .catch((err)=>{
+
+                if(err){
+
+                    console.log(err);
+
+                    reject(err);
+                    
+                }
+                    
+            });
+
+        })
+
+    },
+    getProductCategories: () => {
+
+        return new Promise(async (resolve, reject) => {
+
+          try {
+
+            let productCategories = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).find({}).toArray();
+      
+            productCategories = productCategories.map(category => { // For Converting the time from DB to IST
+
+              const createdOnIST = moment(category.createdOn)
+              .tz('Asia/Kolkata')
+              .format('DD-MMM-YYYY h:mm A');
+      
+              return { ...category, createdOn: createdOnIST + ' IST' };
+
+            });
+      
+            resolve(productCategories);
+
+          } catch (error) {
+
+            reject(error);
+
+          }
+
+        });
+
+    },
+    getProductCategoryDetails: (categoryId) => {
+
+        return new Promise( async (resolve, reject) => {
+
+          try {
+
+            let categoryDetails = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).findOne({_id:ObjectId(categoryId)});
+
+            resolve(categoryDetails);
+
+          } catch (error) {
+
+            reject(error);
+
+          }
+
+        });
+
+    },
+    updateProductCategory: (categoryId, newData)=>{
+
+        return new Promise( async (resolve, reject) => {
+
+            try {
+  
+              await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).updateOne({_id:ObjectId(categoryId)}, {$set:newData}).then((result)=>{
+
+                resolve(result);
+
+              })
+        
+  
+            } catch (error) {
+  
+              reject(error);
+  
+            }
+  
+        });
+
+    },
+    deleteProductCategory : (categoryId)=>{
+
+        return new Promise( async (resolve, reject) => {
+
+            try {
+  
+              await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).deleteOne({_id:ObjectId(categoryId)}).then((result)=>{
+
+                let imageId = categoryId;
+
+                // Defining the path of the product image to be deleted
+                const imageName = imageId.concat('.jpg')
+                const imagePath = path.join(__dirname, '..', 'public', 'product-category-images', imageName);
+
+                // Function to Delete the image file from the server using the above defined path
+                fs.unlink(imagePath, (err) => {
+
+                    if (err) {
+
+                        reject(err);
+
+                        console.error(`Error deleting file ${imagePath}: ${err}`);
+                    }else{
+
+                        resolve(result);
+                    }
+                    
+                });
+
+              })
+        
+  
+            } catch (error) {
+  
+              reject(error);
+  
+            }
+  
+        });
+
     }
+      
+      
 
 }

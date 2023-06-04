@@ -17,6 +17,7 @@
     "express-session": "^1.17.3",
     "hbs": "^4.2.0",
     "http-errors": "~1.6.3",
+    "moment-timezone": "^0.5.43",
     "mongodb": "4.4",
     "morgan": "~1.9.1",
     "nocache": "^3.0.4",
