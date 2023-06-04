@@ -21,6 +21,10 @@ module.exports = {
 
             userData.password = await bcrypt.hash(userData.password,10);
 
+            userData.joinedOn = new Date();
+
+            userData.blocked = false;
+
             const userCollection = db.get().collection(collections.USER_COLLECTION);
 
             userCollection.insertOne(userData).then((insertResult)=>{

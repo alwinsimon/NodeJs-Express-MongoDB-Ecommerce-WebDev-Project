@@ -18,6 +18,10 @@ module.exports = {
 
             vendorSignupFormData.password = await bcrypt.hash(vendorSignupFormData.password,10);
 
+            vendorSignupFormData.joinedOn = new Date();
+
+            vendorSignupFormData.blocked = false;
+
             const vendorCollection = db.get().collection(collections.VENDOR_COLLECTION);
 
             vendorCollection.insertOne(vendorSignupFormData).then((insertResult)=>{

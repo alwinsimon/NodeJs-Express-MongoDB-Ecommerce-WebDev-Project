@@ -245,7 +245,7 @@ router.post('/edit-product/:id', verifyAdminLogin, (req,res)=>{
 
 // ====================Routes for PRODUCT CATEGORIES====================
 
-router.get('/product-categories', verifyAdminLogin, async (req,res)=>{
+router.get('/manage-product-categories', verifyAdminLogin, async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
@@ -339,7 +339,7 @@ router.post('/edit-product-category/:categoryId', verifyAdminLogin, async (req,r
 
   adminHelper.updateProductCategory(categoryId, updatedData).then(()=>{
 
-    res.redirect('/admin/product-categories');
+    res.redirect('/admin/manage-product-categories');
 
   })
 
@@ -351,12 +351,38 @@ router.post('/delete-product-category/:categoryId', verifyAdminLogin, async (req
 
   adminHelper.deleteProductCategory(categoryId).then(()=>{
 
-    res.redirect('/admin/product-categories');
+    res.redirect('/admin/manage-product-categories');
 
   })
 
 });
 
+
+// ====================Routes to Manage Users====================
+
+router.get('/manage-users', verifyAdminLogin, async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  adminHelper.getAllUsers().then((platformUserData)=>{
+
+    res.render('admin/manage-users', {title: PLATFORM_NAME + " || Manage Users", admin:true, adminData, platformUserData});
+
+  })
+
+});
+
+router.post('/change-user-status', verifyAdminLogin, async (req,res)=>{
+
+  let userId = req.body.userId;
+
+  adminHelper.changeUserBlockStatus(userId).then(()=>{
+
+    res.redirect('/admin/manage-users');
+
+  })
+
+});
 
 
 
