@@ -14,7 +14,12 @@
       </div>
       <div class="form-group">
         <label for="category">Category:</label>
-        <input type="text" class="form-control" id="category" name="category" required>
+        <select class="form-control" id="category" name="category" required>
+          <option value="" disabled selected>Select category</option>
+          {{#each productCategories}}
+          <option value="{{this.name}}">{{this.name}}</option>
+          {{/each}}
+        </select>
       </div>
       <div class="form-group">
         <label for="description">Description:</label>
