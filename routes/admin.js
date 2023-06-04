@@ -243,6 +243,120 @@ router.post('/edit-product/:id', verifyAdminLogin, (req,res)=>{
 })
 
 
+// ====================Routes for PRODUCT CATEGORIES====================
+
+router.get('/product-categories', verifyAdminLogin, async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let productCategories = await adminHelper.getProductCategories();
+
+  res.render('admin/view-product-categories', {title: PLATFORM_NAME + " || Product Categories", admin:true, adminData, productCategories});
+
+});
+
+router.get('/add-new-product-category', verifyAdminLogin, (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  res.render('admin/add-product-category', {title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData});
+
+});
+
+router.post('/add-new-product-category', verifyAdminLogin, (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let categoryDetails = req.body;
+
+  categoryDetails.creatorDetails = {
+
+    name:adminData.name,
+
+    id: adminData._id
+
+  }
+
+  categoryDetails.createdOn = new Date();
+
+  adminHelper.addProductCategory(categoryDetails).then((categoryId)=>{
+
+    let id = categoryId;
+
+    if(req.files){
+
+      let image = req.files['category-image'];
+
+      image.mv('./public/product-category-images/' + id +'.jpg',(err,done)=>{
+
+        if(err){
+
+          console.log(err);
+
+        }else{
+
+          res.redirect('/admin/add-new-product-category');
+
+        }
+
+      });
+
+    }
+
+  })
+
+})
+
+router.get('/edit-product-category/:categoryId', verifyAdminLogin, async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let categoryId = req.params.categoryId;
+
+  adminHelper.getProductCategoryDetails(categoryId).then((productCategoryData)=>{
+
+    res.render('admin/edit-product-category', {title: PLATFORM_NAME + " || Edit Product Category", admin:true, adminData, productCategoryData});
+
+  })
+
+});
+
+router.post('/edit-product-category/:categoryId', verifyAdminLogin, async (req,res)=>{
+
+  let categoryId = req.params.categoryId;
+
+  let updatedData = {
+
+    categoryId : req.body.categoryId,
+
+    name : req.body.name,
+
+    description : req.body.description,
+
+    updatedOn: new Date()
+
+  }
+
+  adminHelper.updateProductCategory(categoryId, updatedData).then(()=>{
+
+    res.redirect('/admin/product-categories');
+
+  })
+
+});
+
+router.post('/delete-product-category/:categoryId', verifyAdminLogin, async (req,res)=>{
+
+  let categoryId = req.params.categoryId;
+
+  adminHelper.deleteProductCategory(categoryId).then(()=>{
+
+    res.redirect('/admin/product-categories');
+
+  })
+
+});
+
 
 
 

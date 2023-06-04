@@ -1,0 +1,64 @@
+<section>
+
+    <div class="container">
+
+        <div class="row mt-4 justify-content-end">
+
+            <form action="/admin/add-new-product-category" method="GET" class="col-md-2">
+                <button class="btn btn-success" type="submit">Add Category</button>
+            </form>
+
+        </div>
+
+        {{!-- ====================TABLE==================== --}}
+
+        <table class="table mt-4">
+
+            {{!-- ==========Table Header========== --}}
+
+            <thead>
+                <tr>
+                    <th scope="col">Category Id</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Created By</th>
+                    <th scope="col">Created On</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+
+            {{!-- ==========Table Body========== --}}
+
+            <tbody>
+
+                {{#each productCategories}}
+
+                <tr>
+                    <th scope="row">{{this.categoryId}}</th>
+                    <td>{{this.name}}</td>
+                    <td>{{this.description}}</td>
+                    <th scope="row">{{this.creatorDetails.name}}</th>
+                    <th scope="row">{{this.createdOn}}</th>
+                    <td><img style="width: 50px; height: 50px" src="/product-category-images/{{this._id}}.jpg" alt="{{this.name}}"></td>
+                    <td>
+                        
+                        <form action="/admin/edit-product-category/{{this._id}}" method="GET" class="col-md-2">
+                            <button class="btn btn-success" type="submit">EDIT</button>
+                        </form>
+                        <form action="/admin/delete-product-category/{{this._id}}" method="POST" class="col-md-2">
+                            <button class="btn btn-danger" onclick="return confirm('Are you sure that you want to delete {{this.name}} category?')" type="submit">DELETE</button>
+                        </form>
+
+                    </td>
+                </tr>
+
+                {{/each}}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
