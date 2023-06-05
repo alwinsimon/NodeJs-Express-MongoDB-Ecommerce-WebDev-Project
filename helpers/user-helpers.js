@@ -6,6 +6,8 @@ const paymentGateway = require('../config/connection');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
+const twilio = require('twilio') (process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
 
 /*==============================Payment Gateway Configuration========== */
 
@@ -15,6 +17,89 @@ var razorpayInstance = paymentGateway.razorpayInstance;
 
 module.exports = {
 
+    createUserSignUpOtp : (requestData)=>{
+
+        return new Promise( async (resolve, reject) => {
+
+            try {
+
+                const verifySid = process.env.TWILIO_VERIFY_SID;
+
+                let userPhone = '+91' + requestData.phone;
+
+                twilio.verify.v2.services(verifySid).verifications
+                .create({ to: userPhone, channel: "sms" })
+                .then((verificationData) => {
+
+                    // console.log(verificationData);
+
+                    if(verificationData.status === 'pending'){
+
+                        verificationData.statusMessageSent = true;
+
+                        resolve(verificationData);
+
+                    }else{
+
+                        verificationData.statusMessageSent = false;
+
+                        reject(verificationData);
+
+                    }
+                
+                });
+      
+            } catch (error) {
+      
+              reject(error);
+      
+            }
+      
+        });
+
+    },
+    verifyUserSignUpOtp : (otpFromUser, userPhoneNumber)=>{
+
+        const verifySid = process.env.TWILIO_VERIFY_SID;
+
+        userPhoneNumber = "+91" + userPhoneNumber;
+
+        return new Promise( async (resolve, reject) => {
+
+            try {
+      
+                twilio.verify.v2.services(verifySid).verificationChecks
+                .create({ to: userPhoneNumber, code: otpFromUser })
+                .then((verificationResult) => {
+                    
+                    // console.log(verificationResult.status);
+
+                    if(verificationResult.status === "approved"){
+
+                        verificationResult.verified = true;
+
+                        resolve(verificationResult);
+
+                    }else{
+
+                        verificationResult.verified = false;
+
+                        verificationResult.otpErrorMessage = "In-correct OTP Provided, Please enter correct OTP";
+
+                        resolve(verificationResult);
+                    }
+                
+                });
+      
+            } catch (error) {
+      
+              reject(error);
+      
+            }
+      
+        });
+
+    },
     doUserSignup:(userData)=>{
 
         return new Promise(async (resolve,reject)=>{
