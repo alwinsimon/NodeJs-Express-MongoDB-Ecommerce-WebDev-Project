@@ -166,7 +166,15 @@ router.post('/signup',(req,res)=>{
 
 router.get('/verify-user-signup', (req,res)=>{
 
-  res.render('user/sign-in-otp-validation',{title:PLATFORM_NAME + " || Verify Sign-Up OTP", user:true});
+  if(req.session.userSignupData){
+
+    res.render('user/sign-in-otp-validation',{title:PLATFORM_NAME + " || Verify Sign-Up OTP", user:true});
+
+  }else{
+
+    res.redirect('/signup');
+
+  }
 
 })
 
