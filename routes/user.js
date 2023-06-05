@@ -218,6 +218,32 @@ router.post('/verify-user-signup', (req,res)=>{
 })
 
 
+/* ========================Single Product Page Route======================== */
+
+router.get('/product-details/:id', (req, res) => {
+  let user = req.session.userSession;
+  let productId = req.params.id;
+
+  productHelpers.getProductDetails(productId).then(async (productDetails) => {
+    if (user) {
+
+      cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+
+      res.render('user/single-product-page', { title: user.name + "'s " + PLATFORM_NAME + " || " + productDetails.name, admin: false, user: true, user, cartCount, productDetails });
+
+    } else {
+
+      res.render('user/single-product-page', { title: PLATFORM_NAME + " || " + productDetails.name, admin:false, productDetails });
+      
+    }
+  }).catch((err) => {
+    console.log(err);
+    res.redirect('/error-page'); // Redirect to an error page if there was an error
+  });
+});
+
+
+
 /* ========================CART ROUTES======================== */
 
 router.get('/cart', verifyUserLogin, async (req,res)=>{
