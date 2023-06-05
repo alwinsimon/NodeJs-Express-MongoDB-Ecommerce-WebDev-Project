@@ -1,39 +1,27 @@
 {{!-- ==============================View Products============================== --}}
 
 <section>
-
   <div class="container mt-5">
-
     <div class="row">
-
       {{#each products}}
-
       <div class="col-md-3 p-3">
-
         <div class="card" style="width: 15rem; height: 23rem;">
-
-          <img src="/product-images/{{this._id}}.jpg" class="card-img-top" alt="{{this.name}}" style="height:10rem; width:12.5rem;">
-
+          <img src="/product-images/{{this._id}}.jpg" class="card-img-top" alt="{{this.name}}" style="height:10rem; width:12.5rem;" onclick="viewProduct('{{this._id}}')">
           <div class="card-body">
-
-            <h5 class="card-title">{{this.name}}</h5>
-
+            <h5 class="card-title" onclick="viewProduct('{{this._id}}')">{{this.name}}</h5>
             <p class="card-text">{{this.description}}</p>
-
             <p class="card-text"> ₹ {{this.price}}</p>
-
-            <button onclick="addToCart('{{this._id}}')" class="btn btn-primary">Add to cart</button>
-
+            <button class="btn btn-primary" onclick="addToCart('{{this._id}}')">Add to Cart</button>
           </div>
-
         </div>
-
       </div>
-
       {{/each}}
-
     </div>
-
   </div>
-
 </section>
+
+<script>
+  function viewProduct(id) {
+    window.location.href = '/product-details/' + id;
+  }
+</script>

@@ -1,0 +1,8 @@
+{{!-- Code for the single product display page --}}
+<div class="product-container" style="display: flex; flex-direction: column; align-items: center;">
+  <img src="/product-images/{{productDetails._id}}.jpg" alt="Product Image" class="product-image" style="width: 200px; height: 200px; margin-bottom: 20px;">
+  <h2 class="product-name" style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">{{productDetails.name}}</h2>
+  <p class="product-description" style="margin-bottom: 10px;">{{productDetails.description}}</p>
+  <p class="product-price" style="font-size: 18px; margin-bottom: 20px;"> ₹ {{productDetails.price}}</p>
+  <button class="add-to-cart-button" style="padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">Add to Cart</button>
+</div>
