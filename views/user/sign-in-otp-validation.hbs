@@ -1,0 +1,48 @@
+<style>
+  .form-container {
+    width: 300px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .form-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  .form-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>SMS OTP Validation</h2>
+    <form id="otp-form" action="/verify-user-signup" method="post">
+      <label for="otp">Enter OTP:</label>
+      <input type="text" id="otp" name="otp" placeholder="Enter the OTP received via SMS">
+    {{#if otpError}}
+    <div>
+        <p style="color: red;">{{otpError}}</p>
+    </div>
+    {{/if}}
+      <button type="submit">Verify OTP</button>
+    </form>
+  </div>
+
+  <script>
+    function verifyOTP() {
+      // Submit the form programmatically
+      document.getElementById("otp-form").submit();
+    }
+  </script>
+</body>

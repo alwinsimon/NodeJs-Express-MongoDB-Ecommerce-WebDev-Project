@@ -58,7 +58,7 @@ router.get('/', async (req, res, next)=>{
 
 });
 
-/* ========================LOGIN/SIGN-UP ROUTES======================== */
+/* ========================USER LOGIN / LOGOUT ROUTES======================== */
 
 router.get('/login', (req,res)=>{
 
@@ -133,27 +133,82 @@ router.post('/logout',(req,res)=>{
 
 })
 
+
+/* ========================USER SIGN-UP ROUTES======================== */
+
 router.get('/signup', (req,res)=>{
 
-  res.render('user/signup',{title:PLATFORM_NAME + " || Sign-up", admin:false});
+  res.render('user/signup',{title:PLATFORM_NAME + " || Sign-up", user:true});
 
 })
 
 router.post('/signup',(req,res)=>{
 
-  userHelpers.doUserSignup(req.body).then((userData)=>{
-    
-    // console.log(user);
+  req.session.userSignupData = req.body;
 
-    req.session.userSession = userData;
+  userHelpers.createUserSignUpOtp(req.body).then((response)=>{
 
-    req.session.userLoggedIn = true;
+    if(response.statusMessageSent){
 
-    res.redirect('/');
+      res.redirect('/verify-user-signup');
+
+    }else{
+
+      let signUpErrMessage = "Unable to sent OTP to the provided phone number, Please re-check the number!";
+
+      res.render('user/signup',{title:PLATFORM_NAME + " || Sign-up", user:true, signUpErrMessage});
+
+    }
 
   })
 
 })
+
+router.get('/verify-user-signup', (req,res)=>{
+
+  res.render('user/sign-in-otp-validation',{title:PLATFORM_NAME + " || Verify Sign-Up OTP", user:true});
+
+})
+
+router.post('/verify-user-signup', (req,res)=>{
+
+  let otpFromUser = req.body.otp;
+
+  let userSignUpRequestData = req.session.userSignupData;
+
+  let userPhoneNumber = userSignUpRequestData.phone;
+
+  userHelpers.verifyUserSignUpOtp(otpFromUser, userPhoneNumber).then((verificationData)=>{
+
+    if(verificationData.verified){
+
+      userHelpers.doUserSignup(userSignUpRequestData).then((userData)=>{
+    
+        // console.log(user);
+    
+        req.session.userSession = userData;
+    
+        req.session.userLoggedIn = true;
+
+        delete req.session.userSignupData;
+        // Deleting the userData that was stored in session after the user succesfully sign-In (To prevent session storage being unnecassarily used)
+    
+        res.redirect('/');
+    
+      })
+
+    }else{
+
+      let otpError = verificationData.otpErrorMessage
+
+      res.render('user/sign-in-otp-validation',{title:PLATFORM_NAME + " || Verify OTP", user:true, otpError});
+
+    }
+
+  })
+
+})
+
 
 /* ========================CART ROUTES======================== */
 

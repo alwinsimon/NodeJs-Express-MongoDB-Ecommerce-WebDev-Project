@@ -22,6 +22,7 @@
     "morgan": "~1.9.1",
     "nocache": "^3.0.4",
     "nodemon": "^2.0.22",
-    "razorpay": "^2.8.6"
+    "razorpay": "^2.8.6",
+    "twilio": "^4.11.2"
   }
 }
