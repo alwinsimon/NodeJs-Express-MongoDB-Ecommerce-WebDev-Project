@@ -15,9 +15,9 @@
       <div class="form-group">
         <label for="category">Category:</label>
         <select class="form-control" id="category" name="category" required>
-          <option value="{{productDetails.category}}" selected>{{productDetails.category}}</option>
-          {{#each productCategories}}
-          <option value="{{this.name}}">{{this.name}}</option>
+          <option value="{{productCategory.id}}" selected>{{productCategory.name}}</option>
+          {{#each allProductCategories}}
+          <option value="{{this._id}}">{{this.name}}</option>
           {{/each}}
         </select>
       </div>

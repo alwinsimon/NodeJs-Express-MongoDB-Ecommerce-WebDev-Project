@@ -17,7 +17,7 @@
         <select class="form-control" id="category" name="category" required>
           <option value="" disabled selected>Select category</option>
           {{#each productCategories}}
-          <option value="{{this.name}}">{{this.name}}</option>
+          <option value="{{this._id}}">{{this.name}}</option>
           {{/each}}
         </select>
       </div>

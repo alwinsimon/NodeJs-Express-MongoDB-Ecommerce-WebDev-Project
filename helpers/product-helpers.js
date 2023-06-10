@@ -99,6 +99,68 @@ module.exports = {
 
         })
 
+    },
+    getProductCategoryById: (productID) => {
+
+        return new Promise((resolve, reject) => {
+
+          try {
+
+                db.get().collection(collections.PRODUCT_COLLECTION)
+                .findOne({ _id: ObjectId(productID) })
+                .then((product) => {
+
+                    if (product) {
+
+                        db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION)
+                        .findOne({ _id: ObjectId(product.category) })
+                        .then((category) => {
+                            if (category) {
+
+                                const result = {
+                                    _id: category._id,
+                                    name: category.name
+                                };
+
+                                resolve(result);
+
+                            } else {
+
+                                resolve(null); // Category not found
+
+                            }
+                        })
+                        .catch((error) => {
+
+                            reject(error);
+
+                        });
+
+                    } else {
+
+                        resolve(null); // Product not found
+
+                    }
+                
+                })
+                .catch((error) => {
+
+                    reject(error);
+
+                });
+
+            } catch (error) {
+
+                reject(error);
+
+            }
+
+        });
+
     }
+      
+      
+      
+      
 
 }
