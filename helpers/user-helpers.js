@@ -3,6 +3,7 @@ const collections = require('../config/collections')
 const bcrypt = require('bcrypt');
 const ObjectId = require("mongodb").ObjectId;
 const paymentGateway = require('../config/connection');
+const moment = require('moment-timezone'); // Module to modify the time to various time zones
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -724,11 +725,28 @@ module.exports = {
 
         return new Promise( async (resolve,reject)=>{
 
-            let orderHistory = await db.get().collection(collections.ORDERS_COLLECTION).find({userId:ObjectId(userId)}).toArray();
+            try {
 
-            // console.log(orderHistory);
+                let orderHistory = await db.get().collection(collections.ORDERS_COLLECTION).find({userId:ObjectId(userId)}).toArray();
+          
+                orderHistory = orderHistory.map(history => { // For Converting the time from DB to IST
+    
+                  const createdOnIST = moment(history.date)
+                  .tz('Asia/Kolkata')
+                  .format('DD-MMM-YYYY h:mm A');
+          
+                  return { ...history, date: createdOnIST + " IST"};
+    
+                });
+          
+                resolve(orderHistory);
+    
+            } catch (error) {
 
-            resolve(orderHistory);
+            reject(error);
+
+            }
+
 
         })
 
