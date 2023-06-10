@@ -10,19 +10,45 @@ require('dotenv').config(); // Module to Load environment variables from .env fi
 /*=======================================MIDDLEWARES=======================================*/
 
 // Function to use as Middleware to verify if the request are made by a user or guest
-const verifyUserLogin = (req,res,next)=>{
+const verifyUserLogin = async (req,res,next)=>{
 
-  if(req.session.userLoggedIn){
+if(req.session.userLoggedIn){
 
-    next();
+  /* 
+  Updating the user session everytime (when a loggedIn user makes any kind of request) with the data from DB so that if the user was blocked by Admin,
+  The userSession data will be updated with data from DB with the change in blocked Status in the very next time user makes a request if he's loggedIn already. 
+  This prevents user to do any action if he was blocked by admin even when he was having a active session.
+  */
+  await userHelpers.getUserData(req.session.userSession._id).then((currentUserData)=>{
+    
+    req.session.userSession = currentUserData;
+
+  });
+
+  if(req.session.userSession.blocked){
+
+    delete req.session.userLoggedIn;
+
+    delete req.session.userSession;
+
+    req.session.userLogginErr = "We are extremely sorry to inform that your account has been temporarily suspended - Please contact the Site Admin for resolution";
+    
+    res.redirect('/login');
 
   }else{
 
-    res.redirect('/login')
+    next();
 
   }
 
+}else{
+
+  res.redirect('/login');
+
 }
+
+}
+
 
 /*=======================================USER ROUTES=======================================*/
 
@@ -70,7 +96,7 @@ router.get('/login', (req,res)=>{
 
     res.render('user/login',{"loginError":req.session.userLogginErr, title:PLATFORM_NAME + " || Login", admin:false});
 
-    req.session.userLogginErr = false; 
+    delete req.session.userLogginErr; 
     /*
     Resetting the flag for checking if the login page post request was due to invalid username or password.
     This is done so that the login page will show the message only once if there was a redirect to this page due to invalid credentials.
@@ -109,12 +135,28 @@ router.post('/login',(req,res)=>{
   
         res.redirect('/login');
   
-      }else{
+      }else if(doUserLoginResponse.passwordError){
   
         req.session.userLogginErr = "Invalid Password Entered!!!";
   
         res.redirect('/login');
   
+      }else if(doUserLoginResponse.blockedUser) {
+
+        // If the user is blocked
+
+        req.session.blockedUser = true;
+
+        req.session.userLogginErr = "We are extremely sorry to inform that your account has been temporarily suspended - Please contact the Site Admin for resolution";
+  
+        res.redirect('/login');
+
+      }else{
+
+        req.session.userLogginErr = "oops! something went wrong and we couldn't process your login request - please contact site admin for resolution";
+  
+        res.redirect('/login');
+
       }
   
     })
@@ -123,11 +165,11 @@ router.post('/login',(req,res)=>{
 
 })
 
-router.post('/logout',(req,res)=>{
+router.post('/logout', verifyUserLogin, (req,res)=>{
 
-  req.session.userSession = false;
+  delete req.session.userSession;
 
-  req.session.userLoggedIn = false;
+  delete req.session.userLoggedIn;
 
   res.redirect('/')
 
