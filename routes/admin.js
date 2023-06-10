@@ -201,9 +201,11 @@ router.get('/edit-product/:id', verifyAdminLogin, async (req,res)=>{
 
   let productDetails = await productHelper.getProductDetails(productID);
 
-  let productCategories = await adminHelper.getProductCategories();
+  let productCategory = await productHelper.getProductCategoryById(productID); // Product category of this product to display
 
-  res.render('admin/edit-product',{title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategories});
+  let allProductCategories = await adminHelper.getProductCategories();
+
+  res.render('admin/edit-product',{title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategory, allProductCategories});
 
 })
 
