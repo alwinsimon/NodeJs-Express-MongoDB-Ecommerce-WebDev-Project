@@ -149,27 +149,43 @@ module.exports = {
 
             if(user){
 
-                bcrypt.compare(loginFormData.password, user.password).then((verificationData)=>{
+                if(user.blocked){
 
-                    if(verificationData){
+                    // If the user IS A Blocked user
 
-                        userAuthenticationResponse.status = true;
+                    userAuthenticationResponse.status = false;
+    
+                    userAuthenticationResponse.blockedUser = true;
 
-                        userAuthenticationResponse.userData = user;
+                    resolve(userAuthenticationResponse);
 
-                        resolve(userAuthenticationResponse);
+                }else{
 
-                    }else{
+                    // If the user is NOT a Blocked user
 
-                        userAuthenticationResponse.status = false;
+                    bcrypt.compare(loginFormData.password, user.password).then((verificationData)=>{
 
-                        userAuthenticationResponse.passwordError = true;
+                        if(verificationData){
+    
+                            userAuthenticationResponse.status = true;
+    
+                            userAuthenticationResponse.userData = user;
+    
+                            resolve(userAuthenticationResponse);
+    
+                        }else{
+    
+                            userAuthenticationResponse.status = false;
+    
+                            userAuthenticationResponse.passwordError = true;
+    
+                            resolve(userAuthenticationResponse);
+    
+                        }
+    
+                    })
 
-                        resolve(userAuthenticationResponse);
-
-                    }
-
-                })
+                }
 
             }else{
 
@@ -180,6 +196,17 @@ module.exports = {
                 resolve(userAuthenticationResponse);
 
             }
+
+        })
+
+    },
+    getUserData : (userId)=>{
+        
+        return new Promise( async (resolve,reject)=>{
+
+            let currentUserData = await db.get().collection(collections.USER_COLLECTION).findOne({_id : ObjectId(userId)});
+
+            resolve(currentUserData);
 
         })
 
