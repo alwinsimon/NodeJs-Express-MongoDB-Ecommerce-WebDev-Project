@@ -1,6 +1,6 @@
 {
-  "name": "week-9-webdev-project",
-  "version": "0.0.0",
+  "name": "node-js-express-ecommerce-webdev-project",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
