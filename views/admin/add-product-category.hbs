@@ -5,6 +5,11 @@
     <h1>Add Product Category</h1>
 
     <form id="add-product-category-form" action="/admin/add-new-product-category" method="POST" enctype="multipart/form-data">
+      {{#if categoryExistsErr}}
+      <div>
+        <p style="color: red;">{{categoryExistsErr}}</p>
+      </div>
+      {{/if}}
       <div class="form-group">
         <label for="category Id">Category Id:</label>
         <div class="input-group">

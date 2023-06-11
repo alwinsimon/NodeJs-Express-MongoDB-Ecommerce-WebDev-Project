@@ -261,47 +261,73 @@ router.get('/add-new-product-category', verifyAdminLogin, (req,res)=>{
 
   let adminData = req.session.adminSession;
 
-  res.render('admin/add-product-category', {title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData});
+  if(req.session.adminSession.categoryExistsErr){
+
+    let categoryExistsErr = req.session.adminSession.categoryExistsErr;
+
+    res.render('admin/add-product-category', {title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData, categoryExistsErr});
+
+    delete req.session.adminSession.categoryExistsErr;
+
+  }else{
+    
+    res.render('admin/add-product-category', {title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData});
+
+  }
 
 });
 
-router.post('/add-new-product-category', verifyAdminLogin, (req,res)=>{
+router.post('/add-new-product-category', verifyAdminLogin, async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
   let categoryDetails = req.body;
 
-  categoryDetails.creatorDetails = {
+  await adminHelper.checkProductCategoryExists(categoryDetails.name).then((response)=>{
 
-    name:adminData.name,
+    if(response.status){ // The Product category Already Exist - Denying the addition of category to prevent Duplication
+      
+      req.session.adminSession.categoryExistsErr = response.message; // Storing the error message in Admin session for displaying to Admin
 
-    id: adminData._id
+      res.redirect('/admin/add-new-product-category')
 
-  }
+    }else{ // Product category Dosen't exist - Adding the Product Category
 
-  categoryDetails.createdOn = new Date();
+      categoryDetails.creatorDetails = {
 
-  adminHelper.addProductCategory(categoryDetails).then((categoryId)=>{
-
-    let id = categoryId;
-
-    if(req.files){
-
-      let image = req.files['category-image'];
-
-      image.mv('./public/product-category-images/' + id +'.jpg',(err,done)=>{
-
-        if(err){
-
-          console.log(err);
-
-        }else{
-
-          res.redirect('/admin/add-new-product-category');
-
+        name:adminData.name,
+    
+        id: adminData._id
+    
+      }
+    
+      categoryDetails.createdOn = new Date();
+    
+      adminHelper.addProductCategory(categoryDetails).then((categoryId)=>{
+    
+        let id = categoryId;
+    
+        if(req.files){
+    
+          let image = req.files['category-image'];
+    
+          image.mv('./public/product-category-images/' + id +'.jpg',(err,done)=>{
+    
+            if(err){
+    
+              console.log(err);
+    
+            }else{
+    
+              res.redirect('/admin/add-new-product-category');
+    
+            }
+    
+          });
+    
         }
-
-      });
+    
+      })
 
     }
 
