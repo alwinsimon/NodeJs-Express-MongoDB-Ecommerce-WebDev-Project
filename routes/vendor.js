@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const productHelper = require('../helpers/product-helpers');
 const vendorHelper = require('../helpers/vendor-helpers');
+const vendorMiddlewares = require('../middlewares/vendorMiddlewares');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -12,19 +13,7 @@ let PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 /*=======================================MIDDLEWARES=======================================*/
 
 // Function to use as Middleware to verify if the request are made by a user or guest
-const verifyVendorLogin = (req,res,next)=>{
-
-  if(req.session.vendorLoggedIn){
-
-    next();
-
-  }else{
-
-    res.redirect('/vendor/login')
-
-  }
-
-}
+const verifyVendorLogin = vendorMiddlewares.verifyVendorLogin;
 
 /* ========================VENDOR SIGN-UP ROUTES======================== */
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const productHelper = require('../helpers/product-helpers');
 const adminHelper = require('../helpers/admin-helpers');
+const adminMiddlewares = require('../middlewares/adminMiddlewares');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -11,20 +12,8 @@ let PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
 /*=======================================MIDDLEWARES=======================================*/
 
-// Function to use as Middleware to verify if the request are made by a user or guest
-const verifyAdminLogin = (req,res,next)=>{
-
-  if(req.session.adminLoggedIn){
-
-    next();
-
-  }else{
-
-    res.redirect('/admin/login')
-
-  }
-
-}
+// Middleware to verify if the requests are made by admin
+const verifyAdminLogin = adminMiddlewares.verifyAdminLogin;
 
 
 /* ========================LOGIN & LOGOUT ROUTES======================== */
