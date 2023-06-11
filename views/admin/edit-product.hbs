@@ -15,7 +15,7 @@
       <div class="form-group">
         <label for="category">Category:</label>
         <select class="form-control" id="category" name="category" required>
-          <option value="{{productCategory.id}}" selected>{{productCategory.name}}</option>
+          <option value="{{productCategory._id}}" selected>{{productCategory.name}}</option>
           {{#each allProductCategories}}
           <option value="{{this._id}}">{{this.name}}</option>
           {{/each}}
@@ -61,32 +61,3 @@
   }
 
 </script>
-
-
-{{!-- <!-- Preview Modal -->
-<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="previewModalLabel">Product Preview</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6">
-            <img src="#" id="previewImage" class="img-fluid" alt="Product Image">
-          </div>
-          <div class="col-md-6">
-            <h4 id="previewName">Product Name</h4>
-            <p id="previewCategory">Product Category</p>
-            <p id="previewDescription">Product Description</p>
-            <p id="previewPrice">Product Price</p>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div> --}}
