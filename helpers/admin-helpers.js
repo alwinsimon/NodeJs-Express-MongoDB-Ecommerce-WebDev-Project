@@ -100,6 +100,35 @@ module.exports = {
     })
 
   },
+  checkProductCategoryExists: (categoryName)=>{
+
+    return new Promise( async (resolve,reject)=>{
+
+      let productCategory = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).find({name:categoryName}).toArray();
+
+      if(productCategory[0]){  // Product category already exist in DB
+
+        let response = {
+          status:true,
+          message: "Product Category Already Exists - New category Addition FAILED"
+        }
+
+        resolve(response);
+
+      }else{ // Product category DOSEN'T exist in DB
+
+        let response = {
+          status:false,
+          message: "Product Category Dosen't Exist"
+        }
+
+        resolve(response);
+
+      }
+
+    })
+
+  },
   getProductCategories: () => {
 
     return new Promise(async (resolve, reject) => {
