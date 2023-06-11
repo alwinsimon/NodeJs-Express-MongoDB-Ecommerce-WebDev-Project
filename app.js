@@ -1,29 +1,43 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var hbs = require('express-handlebars');
-var fileUpload = require('express-fileupload');
-var db = require('./config/connection');
-var session = require('express-session');
-var nocache = require('nocache');
+/* ==================== Node JS Express - Ecommerce - Webdev - Project ==================== */
+
+
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const hbs = require('express-handlebars');
+const fileUpload = require('express-fileupload');
+const db = require('./config/externalConnectionsConfig');
+const session = require('express-session');
+const nocache = require('nocache');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
 
-// ====================Directory Path to Different Routes====================
-var userRouter = require('./routes/user');
-var adminRouter = require('./routes/admin');
-var vendorRouter = require('./routes/vendor');
+// ====================Establishing connection with db using connect function defined in config/connection path====================
+db.connect((err)=>{
 
-var app = express();
+  if(err){
+    console.log("ERROR in establishing Database connection:" , err);
+  }else{
+    console.log("Database Connection Successfull: Database is LIVE");
+  }
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
+});
+
+
+// ====================Express Instance Setup====================
+const app = express();
+
+
+// ====================View Engine Setup====================
+app.set('views', path.join(__dirname, '/app/views'));
 app.set('view engine', 'hbs');
-app.engine('hbs',hbs({extname:'hbs',defaultLayout:'layout',layoutsDir: __dirname+'/views/layout/',partialsDir: __dirname+'/views/partials/'}));
+app.engine('hbs',hbs({extname:'hbs',defaultLayout:'layout',layoutsDir: __dirname+'/app/views/layout/',partialsDir: __dirname+'/app/views/partials/'}));
 
+
+// ====================Application-Level Middlewares====================
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -33,28 +47,29 @@ app.use(fileUpload());
 app.use(session({secret:process.env.SESSION_SECRET_KEY,cookie:{maxAge:6000000}}))
 app.use(nocache());
 
-//Establishing connection with db using connect function defined in config/connection path
-db.connect((err)=>{
 
-  if(err)
-  console.log("ERROR in establishing Database connection:" + err);
-  else
-  console.log("Database Connection Successfull: Database is LIVE");
+// ====================Directory Path to Different Routes====================
+const userRouter = require('./routes/user');
+const adminRouter = require('./routes/admin');
+const vendorRouter = require('./routes/vendor');
 
-});
 
 // ====================ROUTES====================
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
 app.use('/vendor', vendorRouter);
 
+
+// ====================404 Not Found Middleware====================
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
+
+// ====================Error-handling Middleware====================
 app.use(function(err, req, res, next) {
+
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -62,6 +77,7 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+
 });
 
 module.exports = app;

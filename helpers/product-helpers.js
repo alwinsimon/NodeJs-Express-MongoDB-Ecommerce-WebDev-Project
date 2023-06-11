@@ -1,5 +1,5 @@
-const db = require("../config/connection");
-const collections = require('../config/collections');
+const db = require("../config/externalConnectionsConfig");
+const collections = require('../config/databaseCollectionsConfig');
 const ObjectId = require("mongodb").ObjectId;
 const path = require('path');
 const fs = require('fs');
