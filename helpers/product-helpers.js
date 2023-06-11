@@ -24,15 +24,61 @@ module.exports = {
         })
 
     },
-    getAllProducts:()=>{
+    getAllProducts: () => {
+        
+        return new Promise( async (resolve, reject) => {
 
-        return new Promise(async (resolve,reject)=>{
+          try {
 
-            let products = await db.get().collection(collections.PRODUCT_COLLECTION).find().toArray()
+                const products = await db.get().collection(collections.PRODUCT_COLLECTION).find().toArray();
+        
+                const categoryIds = products.map((product) => ObjectId(product.category));
 
-            resolve(products);
+                const categories = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION)
+                .find({ _id: { $in: categoryIds } }).toArray();
 
-        })
+                // console.log(categories);
+        
+                const categoryMap = categories.reduce((map, category) => {
+                
+                    map[category._id.toString()] = category;
+                    
+                    return map;
+
+                }, {});
+
+                // console.log(categoryMap);
+        
+                const result = products.map((product) => {
+
+                const categoryId = product.category.toString();
+
+                const category = categoryMap[categoryId];
+
+                return {
+                    _id: product._id.toString(),
+                    id: product.id,
+                    name: product.name,
+                    description: product.description,
+                    price: product.price,
+                    category: category ? { _id: category._id.toString(), name: category.name } : null,
+                };
+
+                });
+        
+                // console.log(result);
+                
+                resolve(result);
+
+            } catch (error) {
+
+                console.log(error);
+
+                reject(error);
+
+            }
+
+        });
 
     },
     deleteProduct: (productId, image) => {
