@@ -91,23 +91,23 @@ const vendorLogOutPOST = (req,res)=>{
 
 const vendorSignUpGET = (req,res)=>{
 
-    res.render('vendor/vendor-signup',{title:PLATFORM_NAME + " || Vendor Sign-up", vendor:true, PLATFORM_NAME});
+  res.render('vendor/vendor-signup',{title:PLATFORM_NAME + " || Vendor Sign-up", vendor:true, PLATFORM_NAME});
   
 }
   
 const vendorSignUpPOST = (req,res)=>{
 
-    vendorHelper.doVendorSignup(req.body).then((vendorData)=>{
-        
-        // console.log(user);
+  vendorHelper.doVendorSignup(req.body).then((vendorData)=>{
+      
+    // console.log(user);
 
-        req.session.vendorSession = vendorData;
+    req.session.vendorSession = vendorData;
 
-        req.session.vendorLoggedIn = true;
+    req.session.vendorLoggedIn = true;
 
-        res.redirect('/vendor');
+    res.redirect('/vendor');
 
-    })
+  })
 
 }
 
@@ -134,11 +134,11 @@ const vendorDashboardGET =  (req, res)=>{
 
 module.exports = {
 
-    vendorLogInGET,
-    vendorLogInPOST,
-    vendorLogOutPOST,
-    vendorSignUpGET,
-    vendorSignUpPOST,
-    vendorDashboardGET
+  vendorLogInGET,
+  vendorLogInPOST,
+  vendorLogOutPOST,
+  vendorSignUpGET,
+  vendorSignUpPOST,
+  vendorDashboardGET
 
 }
