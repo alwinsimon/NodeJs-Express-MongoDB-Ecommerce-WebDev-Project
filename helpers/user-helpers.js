@@ -1,18 +1,18 @@
-const db = require("../config/connection");
-const collections = require('../config/collections')
+const db = require("../config/externalConnectionsConfig");
+const collections = require('../config/databaseCollectionsConfig');
 const bcrypt = require('bcrypt');
 const ObjectId = require("mongodb").ObjectId;
-const paymentGateway = require('../config/connection');
+const paymentGateway = require("../config/externalConnectionsConfig");
 const moment = require('moment-timezone'); // Module to modify the time to various time zones
+const twilio = require("../config/externalConnectionsConfig");
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
-const twilio = require('twilio') (process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 
 /*==============================Payment Gateway Configuration========== */
 
-var razorpayInstance = paymentGateway.razorpayInstance; 
+const razorpayInstance = paymentGateway.razorpayInstance; 
 // Creating an new instance of the Razorpay using the instance(object of Razorpay) that was created and exported from connection.js
 
 
@@ -24,12 +24,9 @@ module.exports = {
 
             try {
 
-                const verifySid = process.env.TWILIO_VERIFY_SID;
-
                 let userPhone = '+91' + requestData.phone;
 
-                twilio.verify.v2.services(verifySid).verifications
-                .create({ to: userPhone, channel: "sms" })
+                twilio.sendOTPwithTwilio({ to: userPhone, channel: "sms" })
                 .then((verificationData) => {
 
                     // console.log(verificationData);
@@ -61,16 +58,13 @@ module.exports = {
     },
     verifyUserSignUpOtp : (otpFromUser, userPhoneNumber)=>{
 
-        const verifySid = process.env.TWILIO_VERIFY_SID;
-
         userPhoneNumber = "+91" + userPhoneNumber;
 
         return new Promise( async (resolve, reject) => {
 
             try {
       
-                twilio.verify.v2.services(verifySid).verificationChecks
-                .create({ to: userPhoneNumber, code: otpFromUser })
+                twilio.verifyOTPwithTwilio({ to: userPhoneNumber, code: otpFromUser })
                 .then((verificationResult) => {
                     
                     // console.log(verificationResult.status);

@@ -1,10 +1,10 @@
-const db = require("../config/connection");
-const collections = require('../config/collections')
+const db = require("../config/externalConnectionsConfig");
+const collections = require('../config/databaseCollectionsConfig')
 const bcrypt = require('bcrypt');
 const ObjectId = require("mongodb").ObjectId;
 const path = require('path');
 const fs = require('fs');
-const paymentGateway = require('../config/connection');
+const paymentGateway = require("../config/externalConnectionsConfig");
 const moment = require('moment-timezone'); // Module to modify the time to various time zones
 
 require('dotenv').config(); // Module to Load environment variables from .env file
