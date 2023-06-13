@@ -123,7 +123,7 @@ const editProductPOST = (req,res)=>{
 }
   
   
-// ====================Routes for PRODUCT CATEGORIES====================
+// ====================Controllers for PRODUCT CATEGORIES====================
   
 const productCategoriesGET = async (req,res)=>{
   
