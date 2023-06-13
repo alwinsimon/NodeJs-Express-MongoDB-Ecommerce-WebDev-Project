@@ -3,13 +3,6 @@ const router = express.Router();
 const adminMiddlewares = require('../middlewares/adminMiddlewares');
 const adminController = require('../app/controllers/adminController');
 const productController = require('../app/controllers/productController');
-const productHelper = require('../helpers/product-helpers');
-const adminHelper = require('../helpers/admin-helpers');
-
-require('dotenv').config(); // Module to Load environment variables from .env file
-
-
-let PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
 
 /*=======================================MIDDLEWARES=======================================*/
@@ -38,7 +31,17 @@ router.post('/add-admin', verifyAdminLogin, adminController.addNewAdminPOST);
 router.get('/', verifyAdminLogin, adminController.adminDashboardGET);
 
 
+// ====================Routes to Manage Users====================
+
+router.get('/manage-users', verifyAdminLogin, adminController.manageUsersGET);
+
+router.post('/change-user-status', verifyAdminLogin, adminController.changeUserStatusPOST);
+
+
+/* ========================================================PRODUCT ROUTES======================================================== */
+
 // ====================Route to Add NEW Product Page====================
+
 router.get('/add-product', verifyAdminLogin, productController.addProductGET);
 
 router.post('/add-product', verifyAdminLogin, productController.addProductPOST);
@@ -69,16 +72,6 @@ router.get('/edit-product-category/:categoryId', verifyAdminLogin, productContro
 router.post('/edit-product-category/:categoryId', verifyAdminLogin, productController.editProductCategoryPOST);
 
 router.post('/delete-product-category/:categoryId', verifyAdminLogin, productController.deleteProductCategoryPOST);
-
-
-// ====================Routes to Manage Users====================
-
-router.get('/manage-users', verifyAdminLogin, adminController.manageUsersGET);
-
-router.post('/change-user-status', verifyAdminLogin, adminController.changeUserStatusPOST);
-
-
-
 
 
 
