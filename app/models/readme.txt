@@ -1,0 +1,1 @@
+Since there was no ODM used in this project, Database schema was not implemented.
