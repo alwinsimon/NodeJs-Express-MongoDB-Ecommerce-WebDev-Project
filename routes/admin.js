@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const adminMiddlewares = require('../middlewares/adminMiddlewares');
+const adminController = require('../app/controllers/adminController');
+const productController = require('../app/controllers/productController');
 const productHelper = require('../helpers/product-helpers');
 const adminHelper = require('../helpers/admin-helpers');
-const adminMiddlewares = require('../middlewares/adminMiddlewares');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -18,110 +20,23 @@ const verifyAdminLogin = adminMiddlewares.verifyAdminLogin;
 
 /* ========================LOGIN & LOGOUT ROUTES======================== */
 
-router.get('/login', (req,res)=>{
+router.get('/login', adminController.logInGET);
 
-  if(req.session.adminSession){
+router.post('/login', adminController.logInPOST);
 
-    res.redirect('/admin');
-
-  }else{
-
-    res.render('admin/admin-login',{"loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", admin:true, PLATFORM_NAME});
-
-    req.session.adminLogginErr = false; 
-    /*
-    Resetting the flag for checking if the login page post request was due to invalid username or password.
-    This is done so that the login page will show the message only once if there was a redirect to this page due to invalid credentials.
-    */
-    
-  }
-
-})
-
-router.post('/login',(req,res)=>{
-
-  if(req.session.adminLoggedIn){
-
-    res.redirect('/admin');
-
-  }else{
-
-    adminHelper.doAdminLogin(req.body).then((doAdminLoginResponse)=>{
-
-      if(doAdminLoginResponse.status){
-  
-        req.session.adminSession = doAdminLoginResponse.adminData; // Storing response from doAdminLogin function in session storage
-  
-        req.session.adminLoggedIn = true;
-  
-        res.redirect('/admin');
-  
-      }else if(doAdminLoginResponse.emailError){
-  
-        req.session.adminLogginErr = "Admin Email Invalid !!!"; 
-        /*Setting a flag for keeping a record of the login error which happened due to admin entering invalid credentials.
-         This flag will be checked in every login request so that we can display an error message in the case of reloading the login page due to invalid credentials entered by admin.
-         This flag variable is stored in the session using req.session so that it will be accesible everywhere.
-         The name of this flag variable can be anything ie, this is NOT an predefined name in the session module.
-        */
-  
-        res.redirect('/admin/login');
-  
-      }else{
-  
-        req.session.adminLogginErr = "Incorrect Password Entered!!!";
-  
-        res.redirect('/admin/login');
-  
-      }
-  
-    })
-    
-  }
-
-})
-
-router.post('/logout',(req,res)=>{
-
-  req.session.adminSession = false;
-
-  req.session.adminLoggedIn = false;
-
-  res.redirect('/admin')
-
-})
-
-// ====================Routes to Add New Admin====================
-router.get('/add-admin', verifyAdminLogin, (req, res)=>{
-
-  res.render('admin/add-admin',{title:PLATFORM_NAME + " || Add Admin", admin:true, PLATFORM_NAME});
-
-});
-
-router.post('/add-admin', verifyAdminLogin, (req, res)=>{
-
-  adminHelper.addNewAdmin(req.body).then((result)=>{
-   
-    res.redirect('/admin/add-admin');
-    
-  })
+router.post('/logout', adminController.logOutPOST);
 
 
-});
+/* ====================Routes to Add New Admin==================== */
+
+router.get('/add-admin', verifyAdminLogin, adminController.addNewAdminGET);
+
+router.post('/add-admin', verifyAdminLogin, adminController.addNewAdminPOST);
+
 
 // ====================Route to Admin Dashboard====================
-router.get('/', verifyAdminLogin, (req, res)=>{
+router.get('/', verifyAdminLogin, adminController.adminDashboardGET);
 
-  let adminData = req.session.adminSession;
-
-  productHelper.getAllProducts().then((products)=>{
-   
-    res.render('admin/view-products',{title: PLATFORM_NAME + " || Admin Panel", admin:true, adminData, PLATFORM_NAME, products});
-    
-  })
-
-
-});
 
 // ====================Route to Add NEW Product Page====================
 router.get('/add-product', verifyAdminLogin, async (req,res)=>{
@@ -377,29 +292,9 @@ router.post('/delete-product-category/:categoryId', verifyAdminLogin, async (req
 
 // ====================Routes to Manage Users====================
 
-router.get('/manage-users', verifyAdminLogin, async (req,res)=>{
+router.get('/manage-users', verifyAdminLogin, adminController.manageUsersGET);
 
-  let adminData = req.session.adminSession;
-
-  adminHelper.getAllUsers().then((platformUserData)=>{
-
-    res.render('admin/manage-users', {title: PLATFORM_NAME + " || Manage Users", admin:true, adminData, platformUserData});
-
-  })
-
-});
-
-router.post('/change-user-status', verifyAdminLogin, async (req,res)=>{
-
-  let userId = req.body.userId;
-
-  adminHelper.changeUserBlockStatus(userId).then(()=>{
-
-    res.redirect('/admin/manage-users');
-
-  })
-
-});
+router.post('/change-user-status', verifyAdminLogin, adminController.changeUserStatusPOST);
 
 
 
