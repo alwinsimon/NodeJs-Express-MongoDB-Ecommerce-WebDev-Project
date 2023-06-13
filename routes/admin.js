@@ -11,6 +11,9 @@ const productController = require('../app/controllers/productController');
 const verifyAdminLogin = adminMiddlewares.verifyAdminLogin;
 
 
+/*=================================================ADMIN ROUTES=================================================*/
+
+
 /* ========================LOGIN & LOGOUT ROUTES======================== */
 
 router.get('/login', adminController.logInGET);
