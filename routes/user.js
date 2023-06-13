@@ -3,8 +3,6 @@ var router = express.Router();
 const userController = require('../app/controllers/userController');
 const userMiddlewares = require('../middlewares/userMiddlewares');
 
-require('dotenv').config(); // Module to Load environment variables from .env file
-
 
 
 /*=======================================MIDDLEWARES=======================================*/
