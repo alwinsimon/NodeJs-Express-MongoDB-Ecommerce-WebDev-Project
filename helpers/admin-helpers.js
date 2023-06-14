@@ -313,6 +313,16 @@ module.exports = {
 
         let platformOrders = await db.get().collection(collections.ORDERS_COLLECTION).find({}).toArray();
 
+        platformOrders = platformOrders.map(order => {
+
+          const { date, ...rest } = order;
+
+          const orderedAtIST = moment(date).tz('Asia/Kolkata').format('DD-MMM-YYYY h:mm A');
+
+          return { ...rest, date: orderedAtIST + ' IST' };
+          
+        });
+
         console.log(platformOrders);
         
         resolve(platformOrders);

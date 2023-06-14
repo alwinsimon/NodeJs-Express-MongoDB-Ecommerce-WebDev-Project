@@ -20,7 +20,7 @@ const logInGET = (req,res)=>{
 
   }else{
 
-    res.render('admin/admin-login',{"loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", admin:true, PLATFORM_NAME});
+    res.render('admin/admin-login',{"loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", PLATFORM_NAME, admin:true});
 
     req.session.adminLogginErr = false; 
     /*
@@ -94,7 +94,7 @@ const adminDashboardGET =  (req, res)=>{
 
   productHelper.getAllProducts().then((products)=>{
     
-    res.render('admin/view-products',{title: PLATFORM_NAME + " || Admin Panel", admin:true, adminData, PLATFORM_NAME, products});
+    res.render('admin/view-products',{title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, admin:true, adminData, PLATFORM_NAME, products});
     
   })
   
@@ -105,7 +105,7 @@ const adminDashboardGET =  (req, res)=>{
 
 const addNewAdminGET = (req, res)=>{
 
-  res.render('admin/add-admin',{title:PLATFORM_NAME + " || Add Admin", admin:true, PLATFORM_NAME});
+  res.render('admin/add-admin',{title:PLATFORM_NAME + " || Add Admin", PLATFORM_NAME, admin:true});
   
 };
   
@@ -128,7 +128,7 @@ const manageUsersGET = async (req,res)=>{
 
   adminHelper.getAllUsers().then((platformUserData)=>{
 
-    res.render('admin/manage-users', {title: PLATFORM_NAME + " || Manage Users", admin:true, adminData, platformUserData});
+    res.render('admin/manage-users', {title: PLATFORM_NAME + " || Manage Users", PLATFORM_NAME, admin:true, adminData, platformUserData});
 
   })
   
@@ -157,7 +157,7 @@ const manageOrdersGET = async (req,res)=>{
 
   await adminHelper.getAllOrders().then((platformOrderData)=>{
 
-    res.render('admin/admin-order-summary', {title: PLATFORM_NAME + " || Manage Orders", admin:true, adminData, platformOrderData});
+    res.render('admin/admin-order-summary', {title: PLATFORM_NAME + " || Manage Orders", PLATFORM_NAME, admin:true, adminData, platformOrderData});
 
   })
   

@@ -11,11 +11,12 @@
             <thead style="background-color: #f2f2f2;">
                 <tr>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Date</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Address</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">PIN Code</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">User</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Order Id</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Phone Number</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Total Amount</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Address</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Payment Method</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Amount</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Order Status</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Actions</th>
                 </tr>
@@ -23,16 +24,17 @@
 
             <tbody>
 
-                {{#each orderDetails}}
+                {{#each platformOrderData}}
 
                     <tr class="cart-row">
 
                         <td>{{this.date}}</td>
-                        <td>{{this.deliveryDetails.address}}</td>
-                        <td>{{this.deliveryDetails.pincode}}</td>
+                        <td>{{this.userName}}</td>
+                        <td>{{this._id}}</td>
                         <td>{{this.deliveryDetails.mobile}}</td>
-                        <td>{{this.orderValue}}</td>
+                        <td>{{this.deliveryDetails.address}}</td>
                         <td>{{this.paymentMethod}}</td>
+                        <td>{{this.orderValue}}</td>
                         <td>{{this.orderStatus}}</td>
                         
                         <td>
