@@ -77,6 +77,11 @@ router.post('/edit-product-category/:categoryId', verifyAdminLogin, productContr
 router.post('/delete-product-category/:categoryId', verifyAdminLogin, productController.deleteProductCategoryPOST);
 
 
+// ====================Routes for Managing Orders====================
+
+router.get('/order-summary', verifyAdminLogin, adminController.manageOrdersGET);
+
+
 
 
 

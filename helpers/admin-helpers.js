@@ -304,6 +304,28 @@ module.exports = {
 
     });
 
+  },
+  getAllOrders : ()=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        let platformOrders = await db.get().collection(collections.ORDERS_COLLECTION).find({}).toArray();
+
+        console.log(platformOrders);
+        
+        resolve(platformOrders);
+  
+
+      } catch (error) {
+
+        reject(error);
+
+      }
+
+    });
+
   }
       
       

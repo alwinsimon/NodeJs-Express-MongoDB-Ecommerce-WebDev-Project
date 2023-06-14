@@ -75,6 +75,8 @@ router.post('/verify-payment',verifyUserLogin, userController.verifyPaymentPOST)
 
 router.post('/save-payment-data',verifyUserLogin, userController.savePaymentDataPOST);
 
+router.post('/order-cancellation-request',verifyUserLogin, userController.orderCancellationRequestPOST);
+
 
 
 

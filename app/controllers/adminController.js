@@ -149,6 +149,20 @@ const changeUserStatusPOST = async (req,res)=>{
 };
 
 
+// ====================Controller for Managing Orders====================
+
+const manageOrdersGET = async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  await adminHelper.getAllOrders().then((platformOrderData)=>{
+
+    res.render('admin/admin-order-summary', {title: PLATFORM_NAME + " || Manage Orders", admin:true, adminData, platformOrderData});
+
+  })
+  
+};
+
 
 
 
@@ -168,6 +182,7 @@ module.exports = {
   addNewAdminGET,
   addNewAdminPOST,
   manageUsersGET,
-  changeUserStatusPOST
+  changeUserStatusPOST,
+  manageOrdersGET
 
 }

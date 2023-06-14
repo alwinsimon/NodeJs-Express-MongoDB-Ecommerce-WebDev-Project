@@ -5,6 +5,7 @@ const ObjectId = require("mongodb").ObjectId;
 const paymentGateway = require("../config/externalConnectionsConfig");
 const moment = require('moment-timezone'); // Module to modify the time to various time zones
 const twilio = require("../config/externalConnectionsConfig");
+const { reject } = require("bluebird");
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -1031,6 +1032,35 @@ module.exports = {
                 }
 
             });
+
+        })
+
+    },
+    requestOrderCancellation : (orderId)=>{
+        
+        return new Promise( async (resolve,reject)=>{
+
+            try {
+
+                let OrderDetails = await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+                    
+                    {_id:ObjectId(orderId)},
+                    
+                    { $set: { cancellationStatus: "Pending Admin Approval" }}
+
+                ).then((response)=>{
+
+                    resolve(response);
+
+                })
+    
+            } catch (error) {
+
+                console.log("Error from requestOrderCancellation userHelper: " , error);
+
+                reject(error);
+
+            }
 
         })
 
