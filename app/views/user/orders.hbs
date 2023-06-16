@@ -17,6 +17,7 @@
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Total Amount</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Payment Method</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Order Status</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Details</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Actions</th>
                 </tr>
             </thead>
@@ -41,7 +42,17 @@
                                 <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">View Products</button>
                             </form>
 
-                            {{#if this.cancellationStatus }}
+                        </td>
+
+                        <td>
+
+                            {{#if this.cancelledOrder }}
+
+                            <form method="POST" action="/cancelled-order-details">
+                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">Cancelled Order Details</button>
+                            </form>
+
+                            {{else if this.cancellationStatus }}
 
                             <form method="POST" action="/order-cancellation-status">
                                 <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">Cancellation Status</button>

@@ -18,6 +18,7 @@
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Payment Method</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Amount</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Order Status</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Details</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Actions</th>
                 </tr>
             </thead>
@@ -43,16 +44,26 @@
                                 <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">View Products</button>
                             </form>
 
-                            {{#if this.cancellationStatus }}
+                        </td>
 
-                            <form method="POST" action="/admin/order-cancellation-status">
-                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">Review Cancellation Request</button>
+                        <td>
+
+                            {{#if this.cancelledOrder }}
+
+                            <form method="POST" action="/admin/cancelled-order-details">
+                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">Cancelled Order Details</button>
+                            </form>
+
+                            {{else if this.cancellationStatus }}
+
+                            <form method="POST" action="/admin/review-order-cancellation-request">
+                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft" onclick="return confirm('Are you sure that you want to cancel this order ?')">Review Cancellation Request</button>
                             </form>
 
                             {{else}}
 
-                            <form method="POST" action="/order-cancellation-request">
-                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">Cancel Order</button>
+                            <form method="POST" action="/admin/admin-side-order-cancellation">
+                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft" onclick="return confirm('Are you sure that you want to cancel this order ?')">Cancel Order</button>
                             </form>
 
                             {{/if}}
