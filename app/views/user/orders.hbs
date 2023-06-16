@@ -50,7 +50,7 @@
                             {{else}}
 
                             <form method="POST" action="/order-cancellation-request">
-                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">Cancel Order</button>
+                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft" onclick="return confirm('Are you sure that you want to cancel this order ?')">Cancel Order</button>
                             </form>
 
                             {{/if}}
