@@ -323,7 +323,7 @@ module.exports = {
           
         });
 
-        console.log(platformOrders);
+        // console.log(platformOrders);
         
         resolve(platformOrders);
   
