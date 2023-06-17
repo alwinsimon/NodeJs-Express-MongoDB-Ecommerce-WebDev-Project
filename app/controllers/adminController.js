@@ -1,8 +1,8 @@
 /*======================================= ADMIN CONTROLLERS =======================================*/
 
 const path = require('path');
-const productHelper = require(path.join(__dirname,'..','..','/helpers/product-helpers'));
-const adminHelper = require(path.join(__dirname,'..','..','/helpers/admin-helpers'));
+const productHelpers = require(path.join(__dirname,'..','..','/helpers/product-helpers'));
+const adminHelpers = require(path.join(__dirname,'..','..','/helpers/admin-helpers'));
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -40,7 +40,7 @@ const logInPOST = (req,res)=>{
 
   }else{
 
-    adminHelper.doAdminLogin(req.body).then((doAdminLoginResponse)=>{
+    adminHelpers.doAdminLogin(req.body).then((doAdminLoginResponse)=>{
 
       if(doAdminLoginResponse.status){
   
@@ -92,7 +92,7 @@ const adminDashboardGET =  (req, res)=>{
   
   let adminData = req.session.adminSession;
 
-  productHelper.getAllProducts().then((products)=>{
+  productHelpers.getAllProducts().then((products)=>{
     
     res.render('admin/view-products',{title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, admin:true, adminData, PLATFORM_NAME, products});
     
@@ -111,7 +111,7 @@ const addNewAdminGET = (req, res)=>{
   
 const addNewAdminPOST =  (req, res)=>{
   
-  adminHelper.addNewAdmin(req.body).then((result)=>{
+  adminHelpers.addNewAdmin(req.body).then((result)=>{
     
     res.redirect('/admin/add-admin');
     
@@ -126,7 +126,7 @@ const manageUsersGET = async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
-  adminHelper.getAllUsers().then((platformUserData)=>{
+  adminHelpers.getAllUsers().then((platformUserData)=>{
 
     res.render('admin/manage-users', {title: PLATFORM_NAME + " || Manage Users", PLATFORM_NAME, admin:true, adminData, platformUserData});
 
@@ -140,7 +140,7 @@ const changeUserStatusPOST = async (req,res)=>{
   
   let userId = req.body.userId;
 
-  adminHelper.changeUserBlockStatus(userId).then(()=>{
+  adminHelpers.changeUserBlockStatus(userId).then(()=>{
 
     res.redirect('/admin/manage-users');
 
@@ -155,7 +155,7 @@ const manageOrdersGET = async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
-  await adminHelper.getAllOrders().then((platformOrderData)=>{
+  await adminHelpers.getAllOrders().then((platformOrderData)=>{
 
     res.render('admin/admin-order-summary', {title: PLATFORM_NAME + " || Manage Orders", PLATFORM_NAME, admin:true, adminData, platformOrderData});
 
@@ -163,6 +163,85 @@ const manageOrdersGET = async (req,res)=>{
   
 };
 
+const singleOrderDetailsPOST = async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let orderId = req.body.orderId;
+
+  let orderDetails = await adminHelpers.getSingleOrderData(orderId);
+
+  let productDetails = await adminHelpers.getSingleOrderDataForOrdersDisplay(orderId);
+
+  if(orderDetails.cancellationStatus === "Pending Admin Approval"){
+
+    res.render('admin/admin-single-order-summary', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
+
+  }else if( orderDetails.cancelledOrder ){
+
+    let cancelledOrderDetails = {
+
+      orderDate : orderDetails.date,
+      cancelledOrder: true
+
+    };
+
+    res.render('admin/admin-single-order-summary', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, cancelledOrderDetails, productDetails});
+
+  }else{
+
+    let orderDate = orderDetails.date;
+
+    res.render('admin/admin-single-order-summary', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDate, productDetails});
+
+  }
+  
+};
+
+
+// ====================Controllers for Managing Order CANCELLATION====================
+
+const orderCancellationGET = async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let orderId = req.body.orderId;
+
+  let orderDetails = await adminHelpers.getSingleOrderData(orderId);
+
+  let productDetails = await adminHelpers.getSingleOrderDataForOrdersDisplay(orderId);
+
+  res.render('admin/admin-side-order-cancellation-request', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
+  
+};
+
+const approveOrderCancellationPOST = async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let orderId = req.body.orderId;
+
+  await adminHelpers.manageOrderCancellation(orderId,true).then((response)=>{
+
+    res.redirect('/admin/order-summary');
+
+  })
+  
+};
+
+const rejectOrderCancellationPOST = async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let orderId = req.body.orderId;
+
+  await adminHelpers.manageOrderCancellation(orderId,false).then((response)=>{
+
+    res.redirect('/admin/order-summary');
+
+  })
+  
+};
 
 
 
@@ -183,6 +262,10 @@ module.exports = {
   addNewAdminPOST,
   manageUsersGET,
   changeUserStatusPOST,
-  manageOrdersGET
+  manageOrdersGET,
+  singleOrderDetailsPOST,
+  orderCancellationGET,
+  approveOrderCancellationPOST,
+  rejectOrderCancellationPOST
 
 }
