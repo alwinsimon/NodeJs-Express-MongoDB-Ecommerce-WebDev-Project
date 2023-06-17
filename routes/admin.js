@@ -86,7 +86,7 @@ router.post('/single-order-details', verifyAdminLogin, adminController.singleOrd
 
 // ====================Routes for Managing Order CANCELLATION====================
 
-router.post('/review-order-cancellation-request', verifyAdminLogin, adminController.orderCancellationGET);
+router.post('/review-order-cancellation-request', verifyAdminLogin, adminController.orderCancellationPOST);
 
 router.post('/approve-order-cancellation-request', verifyAdminLogin, adminController.approveOrderCancellationPOST);
 

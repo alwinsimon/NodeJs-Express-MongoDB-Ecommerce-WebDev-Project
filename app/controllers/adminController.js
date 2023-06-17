@@ -201,7 +201,7 @@ const singleOrderDetailsPOST = async (req,res)=>{
 
 // ====================Controllers for Managing Order CANCELLATION====================
 
-const orderCancellationGET = async (req,res)=>{
+const orderCancellationPOST = async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
@@ -264,7 +264,7 @@ module.exports = {
   changeUserStatusPOST,
   manageOrdersGET,
   singleOrderDetailsPOST,
-  orderCancellationGET,
+  orderCancellationPOST,
   approveOrderCancellationPOST,
   rejectOrderCancellationPOST
 
