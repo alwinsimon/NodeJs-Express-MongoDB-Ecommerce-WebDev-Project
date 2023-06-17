@@ -1,8 +1,7 @@
 /*======================================= USER CONTROLLERS =======================================*/
 
-const path = require('path');
-const productHelpers = require(path.join(__dirname,'..','..','/helpers/product-helpers'));
-const userHelpers = require(path.join(__dirname,'..','..','/helpers/user-helpers'));
+const productHelpers = require('../../helpers/product-helpers');
+const userHelpers = require('../../helpers/admin-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
