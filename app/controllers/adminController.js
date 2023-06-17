@@ -1,8 +1,7 @@
 /*======================================= ADMIN CONTROLLERS =======================================*/
 
-const path = require('path');
-const productHelpers = require(path.join(__dirname,'..','..','/helpers/product-helpers'));
-const adminHelpers = require(path.join(__dirname,'..','..','/helpers/admin-helpers'));
+const productHelpers = require('../../helpers/product-helpers');
+const adminHelpers = require('../../helpers/admin-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -201,7 +200,7 @@ const singleOrderDetailsPOST = async (req,res)=>{
 
 // ====================Controllers for Managing Order CANCELLATION====================
 
-const orderCancellationGET = async (req,res)=>{
+const orderCancellationPOST = async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
@@ -264,7 +263,7 @@ module.exports = {
   changeUserStatusPOST,
   manageOrdersGET,
   singleOrderDetailsPOST,
-  orderCancellationGET,
+  orderCancellationPOST,
   approveOrderCancellationPOST,
   rejectOrderCancellationPOST
 

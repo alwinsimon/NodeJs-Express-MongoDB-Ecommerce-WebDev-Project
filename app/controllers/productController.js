@@ -1,8 +1,7 @@
 /*======================================= PRODUCT CONTROLLERS =======================================*/
 
-const path = require('path');
-const productHelper = require(path.join(__dirname,'..','..','/helpers/product-helpers'));
-const adminHelper = require(path.join(__dirname,'..','..','/helpers/admin-helpers'));
+const productHelpers = require('../../helpers/product-helpers');
+const adminHelpers = require('../../helpers/admin-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -17,7 +16,7 @@ const addProductGET = async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
-  let productCategories = await adminHelper.getProductCategories();
+  let productCategories = await adminHelpers.getProductCategories();
 
   res.render('admin/add-product',{title: PLATFORM_NAME + " || Add Product",admin:true, adminData, PLATFORM_NAME, productCategories});
   
@@ -25,7 +24,7 @@ const addProductGET = async (req,res)=>{
   
 const addProductPOST = (req,res)=>{
   
-  productHelper.addProduct(req.body,(result)=>{
+  productHelpers.addProduct(req.body,(result)=>{
 
     let adminData = req.session.adminSession;
 
@@ -60,7 +59,7 @@ const deleteProductGET = (req,res)=>{
 
   let productImageId = productId
 
-  productHelper.deleteProduct(productId,productImageId).then((response)=>{
+  productHelpers.deleteProduct(productId,productImageId).then((response)=>{
     // console.log(response);
   })
 
@@ -77,11 +76,11 @@ const editProductGET = async (req,res)=>{
 
   let productID = req.params.id;
 
-  let productDetails = await productHelper.getProductDetails(productID);
+  let productDetails = await productHelpers.getProductDetails(productID);
 
-  let productCategory = await productHelper.getProductCategoryById(productID); // Product category of this product to display
+  let productCategory = await productHelpers.getProductCategoryById(productID); // Product category of this product to display
 
-  let allProductCategories = await adminHelper.getProductCategories();
+  let allProductCategories = await adminHelpers.getProductCategories();
 
   res.render('admin/edit-product',{title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategory, allProductCategories});
   
@@ -91,7 +90,7 @@ const editProductPOST = (req,res)=>{
   
   let productId = req.params.id;
 
-  productHelper.updateProduct(productId,req.body).then(()=>{
+  productHelpers.updateProduct(productId,req.body).then(()=>{
 
     /*
     Redirect the user to admin page first, if there is any new image uploaded, update that in server after redirecting user.
@@ -129,7 +128,7 @@ const productCategoriesGET = async (req,res)=>{
   
   let adminData = req.session.adminSession;
 
-  let productCategories = await adminHelper.getProductCategories();
+  let productCategories = await adminHelpers.getProductCategories();
 
   res.render('admin/view-product-categories', {title: PLATFORM_NAME + " || Product Categories", admin:true, adminData, productCategories});
   
@@ -161,7 +160,7 @@ const addProductCategoryPOST = async (req,res)=>{
 
   let categoryDetails = req.body;
 
-  await adminHelper.checkProductCategoryExists(categoryDetails.name).then((response)=>{
+  await adminHelpers.checkProductCategoryExists(categoryDetails.name).then((response)=>{
 
     if(response.status){ // The Product category Already Exist - Denying the addition of category to prevent Duplication
       
@@ -181,7 +180,7 @@ const addProductCategoryPOST = async (req,res)=>{
     
       categoryDetails.createdOn = new Date();
     
-      adminHelper.addProductCategory(categoryDetails).then((categoryId)=>{
+      adminHelpers.addProductCategory(categoryDetails).then((categoryId)=>{
     
         let id = categoryId;
     
@@ -219,7 +218,7 @@ const editProductCategoryGET = async (req,res)=>{
 
   let categoryId = req.params.categoryId;
 
-  adminHelper.getProductCategoryDetails(categoryId).then((productCategoryData)=>{
+  adminHelpers.getProductCategoryDetails(categoryId).then((productCategoryData)=>{
 
     res.render('admin/edit-product-category', {title: PLATFORM_NAME + " || Edit Product Category", admin:true, adminData, productCategoryData});
 
@@ -243,7 +242,7 @@ const editProductCategoryPOST = async (req,res)=>{
 
   }
 
-  adminHelper.updateProductCategory(categoryId, updatedData).then(()=>{
+  adminHelpers.updateProductCategory(categoryId, updatedData).then(()=>{
 
     res.redirect('/admin/manage-product-categories');
 
@@ -255,7 +254,7 @@ const deleteProductCategoryPOST = async (req,res)=>{
   
   let categoryId = req.params.categoryId;
 
-  adminHelper.deleteProductCategory(categoryId).then(()=>{
+  adminHelpers.deleteProductCategory(categoryId).then(()=>{
 
     res.redirect('/admin/manage-product-categories');
 
