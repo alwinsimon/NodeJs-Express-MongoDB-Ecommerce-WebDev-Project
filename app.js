@@ -7,6 +7,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const hbs = require('express-handlebars');
+const handlebarsHelpers = require('handlebars-helpers');
 const fileUpload = require('express-fileupload');
 const db = require('./config/externalConnectionsConfig');
 const session = require('express-session');
@@ -34,7 +35,7 @@ const app = express();
 // ====================View Engine Setup====================
 app.set('views', path.join(__dirname, '/app/views'));
 app.set('view engine', 'hbs');
-app.engine('hbs',hbs({extname:'hbs',defaultLayout:'layout',layoutsDir: __dirname+'/app/views/layout/',partialsDir: __dirname+'/app/views/partials/'}));
+app.engine('hbs',hbs({extname:'hbs',defaultLayout:'layout',layoutsDir: __dirname+'/app/views/layout/',partialsDir: __dirname+'/app/views/partials/', helpers: handlebarsHelpers()}));
 
 
 // ====================Application-Level Middlewares====================
