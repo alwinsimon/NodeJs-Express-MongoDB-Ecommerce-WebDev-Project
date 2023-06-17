@@ -371,6 +371,8 @@ const userOrdersGET = async (req,res)=>{
 
   let orderDetails = await userHelpers.getUserOrderHistory(user._id);
 
+  // console.log(orderDetails);
+
   res.render('user/orders',{ title: user.name +"'s " + PLATFORM_NAME + " || Orders" , admin:false, user, orderDetails});
   
 }
@@ -588,6 +590,24 @@ const savePaymentDataPOST = async (req,res)=>{
   
 }
 
+const orderCancellationRequestPOST = async (req,res)=>{
+
+  let orderId = req.body.orderId;
+
+  await userHelpers.requestOrderCancellation(orderId).then((response)=>{
+
+    res.redirect('/orders');
+
+  }).catch((err) => {
+
+    console.log("Error from orderCancellationRequestPOST controller: " , err);
+
+    res.redirect('/error-page'); // Redirect to an error page if there was an error
+
+  });
+
+}
+
 
 
 
@@ -621,6 +641,7 @@ module.exports = {
   orderSuccessGET,
   orderFailedGET,
   verifyPaymentPOST,
-  savePaymentDataPOST
+  savePaymentDataPOST,
+  orderCancellationRequestPOST
 
 }

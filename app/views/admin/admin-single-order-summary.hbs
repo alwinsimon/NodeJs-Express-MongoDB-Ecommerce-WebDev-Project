@@ -1,0 +1,57 @@
+{{!-- ============================== Admin Single Order Info Page============================== --}}
+
+<section>
+  <div class="container mt-5">
+    <h1 class="text-center">Product Details of Order</h1>
+
+    <hr>
+    <br>
+
+    {{#if cancelledOrderDetails.cancelledOrder}}
+      <p class="text-center" style="color: red;">Cancelled Order</p>
+    {{/if}}
+
+    <br>
+
+    <p class="text-center">Order Date & Time:</p>
+
+    {{#if orderDetails}}
+    <p class="text-center"><span class="order-date">{{orderDetails.date}}</span></p>
+    {{/if}}
+
+    {{#if cancelledOrderDetails}}
+    <p class="text-center"><span class="order-date">{{cancelledOrderDetails.orderDate}}</span></p>
+    {{/if}}
+
+    {{#if orderDate}}
+    <p class="text-center"><span class="order-date">{{orderDate}}</span></p>
+    {{/if}}
+
+    <br>
+    <br>
+
+    <div class="row justify-content-center">
+      {{#each productDetails}}
+        <div class="col-md-4" style="width: 15rem; height: 23rem;">
+          <div class="card mb-4">
+            <img src="/product-images/{{this.product._id}}.jpg" class="card-img-top" alt="{{this.product.name}}">
+            <div class="card-body">
+              <h5 class="card-title">{{this.product.name}}</h5>
+              <p class="card-text">{{this.product.description}}</p>
+              <p class="card-text">Price: ₹ {{this.product.price}}</p>
+              <p class="card-text">Quantity: {{this.quantity}}</p>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+  </div>
+</section>
+
+
