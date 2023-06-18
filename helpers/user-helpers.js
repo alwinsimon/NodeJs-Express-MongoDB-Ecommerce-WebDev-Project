@@ -723,6 +723,22 @@ module.exports = {
             try {
 
                 let orderHistory = await db.get().collection(collections.ORDERS_COLLECTION).find({userId:ObjectId(userId)}).toArray();
+
+                orderHistory.forEach((order) => { // Code to check and verify if the order is eligible for Return
+
+                    const currentDate = new Date();
+
+                    const orderDate = new Date(order.date);
+
+                    const diffInDays = Math.floor(
+
+                      (currentDate - orderDate) / (1000 * 60 * 60 * 24)
+
+                    );
+
+                    order.returnEligible = diffInDays <= 10; // Value will be true if LHS is less than or equal to RHS
+
+                });
           
                 orderHistory = orderHistory.map(history => { // For Converting the time from DB to IST
     
@@ -733,6 +749,8 @@ module.exports = {
                   return { ...history, date: createdOnIST + " IST"};
     
                 });
+
+                console.log(orderHistory);
           
                 resolve(orderHistory);
     
