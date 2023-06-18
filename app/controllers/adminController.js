@@ -172,30 +172,29 @@ const singleOrderDetailsPOST = async (req,res)=>{
 
   let productDetails = await adminHelpers.getSingleOrderDataForOrdersDisplay(orderId);
 
-  if(orderDetails.cancellationStatus === "Pending Admin Approval"){
-
-    res.render('admin/admin-single-order-summary', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
-
-  }else if( orderDetails.cancelledOrder ){
-
-    let cancelledOrderDetails = {
-
-      orderDate : orderDetails.date,
-      cancelledOrder: true
-
-    };
-
-    res.render('admin/admin-single-order-summary', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, cancelledOrderDetails, productDetails});
-
-  }else{
-
-    let orderDate = orderDetails.date;
-
-    res.render('admin/admin-single-order-summary', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDate, productDetails});
-
-  }
+  res.render('admin/admin-single-order-summary', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
   
 };
+
+
+// ====================Controllers for Updating Order STATUS====================
+
+const changeOrderStatusPOST = async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let orderId = req.body.orderId;
+
+  let orderStatus = req.body.status;
+
+  await adminHelpers.updateOrderStatus(orderId, orderStatus).then((response)=>{
+
+    res.send({status:true});
+
+  })
+  
+};
+
 
 
 // ====================Controllers for Managing Order CANCELLATION====================
@@ -220,7 +219,7 @@ const approveOrderCancellationPOST = async (req,res)=>{
 
   let orderId = req.body.orderId;
 
-  await adminHelpers.manageOrderCancellation(orderId,true).then((response)=>{
+  await adminHelpers.manageOrderCancellation(orderId,true, false).then((response)=>{
 
     res.redirect('/admin/order-summary');
 
@@ -234,13 +233,30 @@ const rejectOrderCancellationPOST = async (req,res)=>{
 
   let orderId = req.body.orderId;
 
-  await adminHelpers.manageOrderCancellation(orderId,false).then((response)=>{
+  await adminHelpers.manageOrderCancellation(orderId,false, false).then((response)=>{
 
     res.redirect('/admin/order-summary');
 
   })
   
 };
+
+const adminSideOrderCancellationPOST = async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let orderId = req.body.orderId;
+
+  await adminHelpers.manageOrderCancellation(orderId, true, true).then((response)=>{
+
+    res.redirect('/admin/order-summary');
+
+  })
+  
+};
+
+
+// ====================Controllers for Managing Order RETURN ====================
 
 
 
@@ -265,6 +281,8 @@ module.exports = {
   singleOrderDetailsPOST,
   orderCancellationPOST,
   approveOrderCancellationPOST,
-  rejectOrderCancellationPOST
+  rejectOrderCancellationPOST,
+  changeOrderStatusPOST,
+  adminSideOrderCancellationPOST
 
 }

@@ -1,7 +1,7 @@
 /*======================================= VENDOR CONTROLLERS =======================================*/
 
 const productHelpers = require('../../helpers/product-helpers');
-const vendorHelper = require(path.join(__dirname,'..','..','/helpers/vendor-helpers'));
+const vendorHelper = require('../../helpers/vendor-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 

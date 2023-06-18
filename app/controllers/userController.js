@@ -1,7 +1,7 @@
 /*======================================= USER CONTROLLERS =======================================*/
 
 const productHelpers = require('../../helpers/product-helpers');
-const userHelpers = require('../../helpers/admin-helpers');
+const userHelpers = require('../../helpers/user-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
