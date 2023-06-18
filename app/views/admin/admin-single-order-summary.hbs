@@ -7,7 +7,7 @@
     <hr>
     <br>
 
-    {{#if cancelledOrderDetails.cancelledOrder}}
+    {{#if orderDetails.cancelledOrder}}
       <p class="text-center" style="color: red;">Cancelled Order</p>
     {{/if}}
 
@@ -15,17 +15,8 @@
 
     <p class="text-center">Order Date & Time:</p>
 
-    {{#if orderDetails}}
     <p class="text-center"><span class="order-date">{{orderDetails.date}}</span></p>
-    {{/if}}
 
-    {{#if cancelledOrderDetails}}
-    <p class="text-center"><span class="order-date">{{cancelledOrderDetails.orderDate}}</span></p>
-    {{/if}}
-
-    {{#if orderDate}}
-    <p class="text-center"><span class="order-date">{{orderDate}}</span></p>
-    {{/if}}
 
     <br>
     <br>

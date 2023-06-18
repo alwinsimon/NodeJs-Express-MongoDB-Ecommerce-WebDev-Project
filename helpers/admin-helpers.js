@@ -434,7 +434,47 @@ module.exports = {
     });
 
   },
-  manageOrderCancellation : (orderId, approve)=>{
+  updateOrderStatus: (orderId,status)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        if(status === "shipped"){
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {orderStatus: "Order Shipped"}}
+            
+          );
+          
+        }else if (status === "delivered"){
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {orderStatus: "Delivered"}}
+            
+          );
+
+        }
+        
+        resolve();
+  
+
+      } catch (error) {
+
+        console.log("Error from updateOrderStatus Admin Helper : " , error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  manageOrderCancellation : (orderId, approve, adminRequest)=>{
 
     return new Promise( async (resolve, reject) => {
 
@@ -442,12 +482,25 @@ module.exports = {
 
         if(approve){
 
-          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+          if(adminRequest){
+
+            await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
             
-            {_id : ObjectId(orderId)},
-            {$set: {cancelledOrder: true, cancellationStatus: "Cancellation Request Approved"}}
+              {_id : ObjectId(orderId)},
+              {$set: {cancelledOrder: true, cancellationStatus: "Cancelled by Platform", orderStatus: "Cancelled"}}
+              
+            );
+
+          }else{
+
+            await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
             
-          );
+              {_id : ObjectId(orderId)},
+              {$set: {cancelledOrder: true, cancellationStatus: "Cancellation Request Approved", orderStatus: "Cancelled"}}
+              
+            );
+
+          }
           
         }else{
 
