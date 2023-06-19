@@ -53,7 +53,7 @@
 
     {{!-- Code for Admin side Order Cancellation request approval or rejection - Only displayed if there is cancellation request pending for this order --}}
     
-    {{#if orderDetails.cancellationStatus }}
+    {{#if (eq orderDetails.cancellationStatus 'Pending Admin Approval')}}
 
       <div class="row justify-content-center">
 
@@ -82,10 +82,85 @@
       <br>
       <br>
       <br>
+
+    {{else if (eq orderDetails.returnStatus 'Pending Admin Approval')}}
+                            
+      <div class="row justify-content-center">
+
+        <div class="col-md-4">
+
+          <button class="btn btn-success btn-lg" onclick="changeReturnStatus('{{orderDetails._id}}', 'Approve Return')">Approve Order Return</button>
+
+        </div>
+
+        <div class="col-md-4">
+
+          <button class="btn btn-danger btn-lg" onclick="changeReturnStatus('{{orderDetails._id}}', 'Reject Return')">Reject Order Return</button>
+
+        </div>
+
+      </div>
+                               
+
+      <br>
+      <br>
+      <br>
       
     {{/if}}
 
   </div>
+
 </section>
+
+
+
+
+<script>
+
+  function changeReturnStatus(orderId, status) {
+
+    if (confirm(`Are you sure that you want to ${status} Request?`)) {
+
+      fetch('/admin/change-order-return-status', {
+
+        method: 'POST',
+
+        headers: {'Content-Type': 'application/json'},
+
+        body: JSON.stringify({
+
+          orderId: orderId,
+          
+          status: status
+
+        })
+
+      })
+      .then(response => {
+
+        if (response.status) {
+
+          window.location.href = '/admin/order-summary';
+
+        } else {
+
+          console.error('Failed updating return status');
+          /* This will be displayed on browser Console */
+
+        }
+
+      })
+      .catch(error => {
+
+        console.error('Error updating return status:', error);
+        /* This will be displayed on browser Console */
+
+      }); 
+
+    }
+
+  }
+
+</script>
 
 

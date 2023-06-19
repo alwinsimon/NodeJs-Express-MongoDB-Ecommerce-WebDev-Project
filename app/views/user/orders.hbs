@@ -12,11 +12,11 @@
                 <tr>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Date</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Address</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">PIN Code</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Phone Number</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Total Amount</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Payment Method</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Order Status</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">PIN</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Phone</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Amount</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Payment</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Details</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Actions</th>
                 </tr>
@@ -36,6 +36,7 @@
                         <td>{{this.paymentMethod}}</td>
                         <td>{{this.orderStatus}}</td>
                         
+                        {{!-- ======================== Details ======================== --}}
                         <td>
 
                             <form method="POST" action="/ordered-product-details">
@@ -46,23 +47,49 @@
 
                         <td>
 
-                            {{#if this.cancelledOrder }}
+                            {{#if (eq this.cancellationStatus 'Pending Admin Approval') }}
 
-                            <form method="POST" action="/cancelled-order-details">
-                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">Cancelled Order Details</button>
-                            </form>
+                                <button class="btn btn-outline-warning animate__animated animate__fadeInLeft">Pending Cancellation Approval</button>
 
-                            {{else if this.cancellationStatus }}
+                            {{else if (eq this.cancellationStatus 'Cancellation Request Approved')}}
 
-                            <form method="POST" action="/order-cancellation-status">
-                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">Cancellation Status</button>
-                            </form>
+                                <button class="btn btn-outline-success animate__animated animate__fadeInLeft">Cancellation Approved</button>
 
-                            {{else}}
+                            {{else if (eq this.cancellationStatus 'Cancellation Request Rejected')}}
 
-                            <form method="POST" action="/order-cancellation-request">
-                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft" onclick="return confirm('Are you sure that you want to cancel this order ?')">Cancel Order</button>
-                            </form>
+                                <button class="btn btn-outline-danger animate__animated animate__fadeInLeft">Cancellation Rejected</button>
+
+                            {{else if (eq this.returnStatus 'Pending Admin Approval')}}
+
+                                <button class="btn btn-outline-warning animate__animated animate__fadeInLeft">Pending Return Approval</button>
+
+                            {{else if (eq this.returnStatus 'Return Request Approved')}}
+
+                                <button class="btn btn-outline-success animate__animated animate__fadeInLeft">Return Approved</button>
+                            
+                            {{else if (eq this.returnStatus 'Return Request Declined')}}
+
+                                <button class="btn btn-outline-danger animate__animated animate__fadeInLeft">Return Rejected</button>
+                            
+                            {{else if (and (eq this.orderStatus 'Delivered') (eq this.returnEligible false ) )}}
+
+                                <button class="btn btn-outline-secondary animate__animated animate__fadeInLeft">Return Period Over</button>
+                            
+                            {{else if (eq this.orderStatus 'Cancelled') }}
+                            
+                                <button class="btn btn-outline-secondary animate__animated animate__fadeInLeft">Cancelled Order</button>
+
+                            {{else if (or (eq this.orderStatus 'Order Placed') (eq this.orderStatus 'Order Shipped') )}}
+
+                                <form method="POST" action="/order-cancellation-request">
+                                    <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-danger animate__animated animate__fadeInLeft" onclick="return confirm('Are you sure that you want to cancel this order ?')">Cancel Order</button>
+                                </form>
+                            
+                            {{else if (and (eq this.orderStatus 'Delivered') (eq this.returnEligible true ) )}}
+
+                                <form method="POST" action="/order-return-request">
+                                    <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-danger animate__animated animate__fadeInLeft" onclick="return confirm('Are you sure that you want to return this order ?')">Return Order</button>
+                                </form>
 
                             {{/if}}
 
