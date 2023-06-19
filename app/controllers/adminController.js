@@ -258,6 +258,46 @@ const adminSideOrderCancellationPOST = async (req,res)=>{
 
 // ====================Controllers for Managing Order RETURN ====================
 
+const orderReturnPOST = async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let orderId = req.body.orderId;
+
+  let orderDetails = await adminHelpers.getSingleOrderData(orderId);
+
+  let productDetails = await adminHelpers.getSingleOrderDataForOrdersDisplay(orderId);
+
+  res.render('admin/admin-side-order-cancellation-request', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
+  
+};
+
+const changeOrderReturnStatusPOST = async (req,res)=>{
+
+  let adminData = req.session.adminSession;
+
+  let orderId = req.body.orderId;
+
+  let adminResponse = req.body.status;
+
+  if(adminResponse === "Approve Return"){
+
+    adminResponse = true;
+
+  }else if (adminResponse === "Reject Return"){
+
+    adminResponse = false;
+
+  }
+
+  await adminHelpers.manageOrderReturn(orderId,adminResponse).then((response)=>{
+
+    res.redirect('/admin/order-summary');
+
+  })
+  
+};
+
 
 
 
@@ -283,6 +323,8 @@ module.exports = {
   approveOrderCancellationPOST,
   rejectOrderCancellationPOST,
   changeOrderStatusPOST,
-  adminSideOrderCancellationPOST
+  adminSideOrderCancellationPOST,
+  orderReturnPOST,
+  changeOrderReturnStatusPOST
 
 }

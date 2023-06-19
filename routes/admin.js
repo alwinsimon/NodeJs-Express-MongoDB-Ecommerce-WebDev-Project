@@ -102,11 +102,9 @@ router.post('/admin-side-order-cancellation', verifyAdminLogin, adminController.
 
 // ====================Routes for Managing Order RETURN REQUESTS====================
 
-// router.post('/review-order-return-request', verifyAdminLogin, adminController.orderReturnPOST);
+router.post('/review-order-return-request', verifyAdminLogin, adminController.orderReturnPOST);
 
-// router.post('/approve-order-return-request', verifyAdminLogin, adminController.approveOrderReturnPOST);
-
-// router.post('/reject-order-return-request', verifyAdminLogin, adminController.rejectOrderReturnPOST);
+router.post('/change-order-return-status', verifyAdminLogin, adminController.changeOrderReturnStatusPOST);
 
 
 

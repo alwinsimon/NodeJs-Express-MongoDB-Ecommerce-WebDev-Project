@@ -750,7 +750,7 @@ module.exports = {
     
                 });
 
-                console.log(orderHistory);
+                // console.log(orderHistory);
           
                 resolve(orderHistory);
     
@@ -1075,6 +1075,35 @@ module.exports = {
             } catch (error) {
 
                 console.log("Error from requestOrderCancellation userHelper: " , error);
+
+                reject(error);
+
+            }
+
+        })
+
+    },
+    requestOrderReturn : (orderId)=>{
+        
+        return new Promise( async (resolve,reject)=>{
+
+            try {
+
+                await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+                    
+                    {_id:ObjectId(orderId)},
+                    
+                    { $set: { returnStatus: "Pending Admin Approval" }}
+
+                ).then((response)=>{
+
+                    resolve(response);
+
+                })
+    
+            } catch (error) {
+
+                console.log("Error from requestOrderReturn userHelper: " , error);
 
                 reject(error);
 

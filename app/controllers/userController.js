@@ -589,6 +589,9 @@ const savePaymentDataPOST = async (req,res)=>{
   
 }
 
+
+/* ========================ORDER CANCELLATION Controllers======================== */
+
 const orderCancellationRequestPOST = async (req,res)=>{
 
   let orderId = req.body.orderId;
@@ -608,7 +611,25 @@ const orderCancellationRequestPOST = async (req,res)=>{
 }
 
 
+/* ========================ORDER RETURN Controllers======================== */
 
+const orderReturnRequestPOST = async (req,res)=>{
+
+  let orderId = req.body.orderId;
+
+  await userHelpers.requestOrderReturn(orderId).then((response)=>{
+
+    res.redirect('/orders');
+
+  }).catch((err) => {
+
+    console.log("Error from orderReturnRequestPOST controller: " , err);
+
+    res.redirect('/error-page'); // Redirect to an error page if there was an error
+
+  });
+
+}
 
 
 
@@ -641,6 +662,7 @@ module.exports = {
   orderFailedGET,
   verifyPaymentPOST,
   savePaymentDataPOST,
-  orderCancellationRequestPOST
+  orderCancellationRequestPOST,
+  orderReturnRequestPOST
 
 }

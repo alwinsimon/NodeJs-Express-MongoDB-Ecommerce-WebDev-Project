@@ -526,6 +526,46 @@ module.exports = {
 
     });
 
+  },
+  manageOrderReturn : (orderId, approve)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        if(approve){
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {returnedOrder: true, returnStatus: "Return Request Approved", orderStatus: "Returned"}}
+            
+          );
+          
+        }else{
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {returnedOrder: false, returnStatus: "Return Request Rejected"}}
+            
+          );
+
+        }
+        
+        resolve();
+  
+
+      } catch (error) {
+
+        console.log("Error from manageOrderReturn Admin Helper : " , error);
+
+        reject(error);
+
+      }
+
+    });
+
   }
       
       
