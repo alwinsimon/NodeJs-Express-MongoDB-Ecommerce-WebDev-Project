@@ -304,6 +304,268 @@ module.exports = {
 
     });
 
+  },
+  getAllOrders : ()=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        let platformOrders = await db.get().collection(collections.ORDERS_COLLECTION).find({}).toArray();
+
+        platformOrders = platformOrders.map(order => {
+
+          const { date, ...rest } = order;
+
+          const orderedAtIST = moment(date).tz('Asia/Kolkata').format('DD-MMM-YYYY h:mm A');
+
+          return { ...rest, date: orderedAtIST + ' IST' };
+          
+        });
+
+        // console.log(platformOrders);
+        
+        resolve(platformOrders);
+  
+
+      } catch (error) {
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  getSingleOrderData : (orderId)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        let singleOrderData = await db.get().collection(collections.ORDERS_COLLECTION).findOne({_id:ObjectId(orderId)});
+        
+        resolve(singleOrderData);
+  
+      } catch (error) {
+
+        console.log("Error from getSingleOrderData Admin Helper : " , error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  getSingleOrderDataForOrdersDisplay : (orderId)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        let orderData = await db.get().collection(collections.ORDERS_COLLECTION).aggregate([
+                
+          {
+
+            $match:{_id:ObjectId(orderId)}
+
+          },
+          {
+
+            $unwind:'$products'
+
+          },
+          {
+
+            $project:{
+
+              item:'$products.item',
+
+              quantity:'$products.quantity'
+
+            }
+
+          },
+          {
+
+            $lookup:{
+
+              from:collections.PRODUCT_COLLECTION,
+
+              localField:'item',
+
+              foreignField:'_id',
+
+              as:'product'
+
+            }
+
+          },
+          {
+
+            $project:{
+
+              item:1,
+
+              quantity:1,
+
+              product:{$arrayElemAt:['$product',0]}
+
+            }
+
+          }
+
+        ]).toArray();
+
+        // console.log(orderData);
+        
+        resolve(orderData);
+  
+
+      } catch (error) {
+
+        console.log("Error from getSingleOrderData Admin Helper : " , error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  updateOrderStatus: (orderId,status)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        if(status === "shipped"){
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {orderStatus: "Order Shipped"}}
+            
+          );
+          
+        }else if (status === "delivered"){
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {orderStatus: "Delivered"}}
+            
+          );
+
+        }
+        
+        resolve();
+  
+
+      } catch (error) {
+
+        console.log("Error from updateOrderStatus Admin Helper : " , error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  manageOrderCancellation : (orderId, approve, adminRequest)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        if(approve){
+
+          if(adminRequest){
+
+            await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+              {_id : ObjectId(orderId)},
+              {$set: {cancelledOrder: true, cancellationStatus: "Cancelled by Platform", orderStatus: "Cancelled"}}
+              
+            );
+
+          }else{
+
+            await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+              {_id : ObjectId(orderId)},
+              {$set: {cancelledOrder: true, cancellationStatus: "Cancellation Request Approved", orderStatus: "Cancelled"}}
+              
+            );
+
+          }
+          
+        }else{
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {cancelledOrder: false, cancellationStatus: "Cancellation Request Rejected"}}
+            
+          );
+
+        }
+        
+        resolve();
+  
+
+      } catch (error) {
+
+        console.log("Error from manageOrderCancellation Admin Helper : " , error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  manageOrderReturn : (orderId, approve)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        if(approve){
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {returnedOrder: true, returnStatus: "Return Request Approved", orderStatus: "Returned"}}
+            
+          );
+          
+        }else{
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {returnedOrder: false, returnStatus: "Return Request Rejected"}}
+            
+          );
+
+        }
+        
+        resolve();
+  
+
+      } catch (error) {
+
+        console.log("Error from manageOrderReturn Admin Helper : " , error);
+
+        reject(error);
+
+      }
+
+    });
+
   }
       
       

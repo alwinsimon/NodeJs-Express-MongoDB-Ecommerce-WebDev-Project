@@ -57,7 +57,7 @@ router.post('/change-product-quantity', verifyUserLogin, userController.changeCa
 router.post('/delete-product-from-cart', verifyUserLogin, userController.deleteCartProductPOST);
 
 
-/* ========================ORDERS & PAYMENTS ROUTES======================== */
+/* ========================ORDERS ROUTES======================== */
 
 router.get('/orders',verifyUserLogin, userController.userOrdersGET);
 
@@ -71,9 +71,22 @@ router.get('/order-success',verifyUserLogin, userController.orderSuccessGET);
 
 router.get('/order-failed',verifyUserLogin, userController.orderFailedGET);
 
+
+/* ========================PAYMENTS ROUTES======================== */
+
 router.post('/verify-payment',verifyUserLogin, userController.verifyPaymentPOST);
 
 router.post('/save-payment-data',verifyUserLogin, userController.savePaymentDataPOST);
+
+
+/* ========================ORDERS CANCELLATION ROUTES======================== */
+
+router.post('/order-cancellation-request',verifyUserLogin, userController.orderCancellationRequestPOST);
+
+
+/* ========================ORDERS RETURN ROUTES======================== */
+
+router.post('/order-return-request',verifyUserLogin, userController.orderReturnRequestPOST);
 
 
 

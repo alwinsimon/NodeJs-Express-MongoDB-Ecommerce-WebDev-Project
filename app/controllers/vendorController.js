@@ -1,8 +1,7 @@
 /*======================================= VENDOR CONTROLLERS =======================================*/
 
-const path = require('path');
-const productHelper = require(path.join(__dirname,'..','..','/helpers/product-helpers'));
-const vendorHelper = require(path.join(__dirname,'..','..','/helpers/vendor-helpers'));
+const productHelpers = require('../../helpers/product-helpers');
+const vendorHelper = require('../../helpers/vendor-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -118,7 +117,7 @@ const vendorDashboardGET =  (req, res)=>{
 
   let vendorData = req.session.vendorSession;
 
-  productHelper.getAllProducts().then((products)=>{
+  productHelpers.getAllProducts().then((products)=>{
    
     res.render('vendor/view-products',{title: PLATFORM_NAME + " || Seller Dashboard", vendor:true, vendorData, PLATFORM_NAME, products});
     

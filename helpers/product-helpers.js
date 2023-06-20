@@ -51,18 +51,18 @@ module.exports = {
         
                 const result = products.map((product) => {
 
-                const categoryId = product.category.toString();
+                    const categoryId = product.category.toString();
 
-                const category = categoryMap[categoryId];
+                    const category = categoryMap[categoryId];
 
-                return {
-                    _id: product._id.toString(),
-                    id: product.id,
-                    name: product.name,
-                    description: product.description,
-                    price: product.price,
-                    category: category ? { _id: category._id.toString(), name: category.name } : null,
-                };
+                    return {
+                        _id: product._id.toString(),
+                        id: product.id,
+                        name: product.name,
+                        description: product.description,
+                        price: product.price,
+                        category: category ? { _id: category._id.toString(), name: category.name } : null,
+                    };
 
                 });
         

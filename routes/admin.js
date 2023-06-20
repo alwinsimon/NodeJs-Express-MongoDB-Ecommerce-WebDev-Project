@@ -77,6 +77,37 @@ router.post('/edit-product-category/:categoryId', verifyAdminLogin, productContr
 router.post('/delete-product-category/:categoryId', verifyAdminLogin, productController.deleteProductCategoryPOST);
 
 
+// ====================Routes for Managing Orders====================
+
+router.get('/order-summary', verifyAdminLogin, adminController.manageOrdersGET);
+
+router.post('/single-order-details', verifyAdminLogin, adminController.singleOrderDetailsPOST);
+
+
+// ====================Routes for Managing ORDER STATUS====================
+
+router.post('/change-order-status', verifyAdminLogin, adminController.changeOrderStatusPOST);
+
+
+// ====================Routes for Managing Order CANCELLATION====================
+
+router.post('/review-order-cancellation-request', verifyAdminLogin, adminController.orderCancellationPOST);
+
+router.post('/approve-order-cancellation-request', verifyAdminLogin, adminController.approveOrderCancellationPOST);
+
+router.post('/reject-order-cancellation-request', verifyAdminLogin, adminController.rejectOrderCancellationPOST);
+
+router.post('/admin-side-order-cancellation', verifyAdminLogin, adminController.adminSideOrderCancellationPOST);
+
+
+// ====================Routes for Managing Order RETURN REQUESTS====================
+
+router.post('/review-order-return-request', verifyAdminLogin, adminController.orderReturnPOST);
+
+router.post('/change-order-return-status', verifyAdminLogin, adminController.changeOrderReturnStatusPOST);
+
+
+
 
 
 

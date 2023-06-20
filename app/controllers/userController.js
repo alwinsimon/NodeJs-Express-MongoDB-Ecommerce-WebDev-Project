@@ -1,8 +1,7 @@
 /*======================================= USER CONTROLLERS =======================================*/
 
-const path = require('path');
-const productHelpers = require(path.join(__dirname,'..','..','/helpers/product-helpers'));
-const userHelpers = require(path.join(__dirname,'..','..','/helpers/user-helpers'));
+const productHelpers = require('../../helpers/product-helpers');
+const userHelpers = require('../../helpers/user-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -28,11 +27,11 @@ const homePageGET = async (req, res, next)=>{
 
     if(user){
 
-      res.render('user/view-products', { title: user.name +"'s " + PLATFORM_NAME, products, admin:false, user, cartCount });
+      res.render('user/view-products', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, products, admin:false, user, cartCount });
 
     }else{
 
-      res.render('user/view-products', { title:PLATFORM_NAME, products, admin:false });
+      res.render('user/view-products', { layout: 'user-layout', title:PLATFORM_NAME, products, admin:false });
 
     }
 
@@ -51,7 +50,7 @@ const userLogInGET = (req,res)=>{
 
   }else{
 
-    res.render('user/login',{"loginError":req.session.userLogginErr, title:PLATFORM_NAME + " || Login", admin:false});
+    res.render('user/login',{ layout: 'user-layout', "loginError":req.session.userLogginErr, title:PLATFORM_NAME + " || Login", admin:false});
 
     delete req.session.userLogginErr; 
     /*
@@ -137,7 +136,7 @@ const userLogOutPOST = (req,res)=>{
   
 const userSignUpGET = (req,res)=>{
   
-  res.render('user/signup',{title:PLATFORM_NAME + " || Sign-up", user:true});
+  res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true});
   
 }
   
@@ -155,7 +154,7 @@ const userSignUpPOST = (req,res)=>{
 
       let signUpErrMessage = "Unable to sent OTP to the provided phone number, Please re-check the number!";
 
-      res.render('user/signup',{title:PLATFORM_NAME + " || Sign-up", user:true, signUpErrMessage});
+      res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true, signUpErrMessage});
 
     }
 
@@ -167,7 +166,7 @@ const verifyUserSignUpGET = (req,res)=>{
   
   if(req.session.userSignupData){
 
-    res.render('user/sign-in-otp-validation',{title:PLATFORM_NAME + " || Verify Sign-Up OTP", user:true});
+    res.render('user/sign-in-otp-validation',{ layout: 'user-layout', title:PLATFORM_NAME + " || Verify Sign-Up OTP", user:true});
 
   }else{
 
@@ -208,7 +207,7 @@ const verifyUserSignUpPOST = (req,res)=>{
 
       let otpError = verificationData.otpErrorMessage
 
-      res.render('user/sign-in-otp-validation',{title:PLATFORM_NAME + " || Verify OTP", user:true, otpError});
+      res.render('user/sign-in-otp-validation',{ layout: 'user-layout', title:PLATFORM_NAME + " || Verify OTP", user:true, otpError});
 
     }
 
@@ -230,11 +229,11 @@ const singleProductPageGET =  (req, res) => {
 
       cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
-      res.render('user/single-product-page', { title: user.name + "'s " + PLATFORM_NAME + " || " + productDetails.name, admin: false, user: true, user, cartCount, productDetails });
+      res.render('user/single-product-page', { layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || " + productDetails.name, admin: false, user: true, user, cartCount, productDetails });
 
     } else {
 
-      res.render('user/single-product-page', { title: PLATFORM_NAME + " || " + productDetails.name, admin:false, productDetails });
+      res.render('user/single-product-page', { layout: 'user-layout', title: PLATFORM_NAME + " || " + productDetails.name, admin:false, productDetails });
       
     }
 
@@ -272,7 +271,7 @@ const cartGET = async (req,res)=>{
     // console.log(cartItems);
     // console.log(cartValue);
 
-    res.render('user/cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue });
+    res.render('user/cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue });
 
   }else{ // If there is no items in the cart - then redirect to a different page to avoid the query to database for cartitems and cartvalue
 
@@ -290,11 +289,11 @@ const emptyCartGET = async (req,res)=>{
 
     cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
-    res.render('user/empty-cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, user, cartCount });
+    res.render('user/empty-cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, user, cartCount });
 
   }else{
 
-    res.render('user/empty-cart',{ title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false });
+    res.render('user/empty-cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false });
 
   }
   
@@ -371,7 +370,9 @@ const userOrdersGET = async (req,res)=>{
 
   let orderDetails = await userHelpers.getUserOrderHistory(user._id);
 
-  res.render('user/orders',{ title: user.name +"'s " + PLATFORM_NAME + " || Orders" , admin:false, user, orderDetails});
+  // console.log(orderDetails);
+
+  res.render('user/orders',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Orders" , admin:false, user, orderDetails});
   
 }
   
@@ -389,7 +390,7 @@ const userOrderDetailsPOST = async (req,res)=>{
 
   // console.log(orderDate);
 
-  res.render('user/ordered-product-details',{ title: user.name +"'s " + PLATFORM_NAME + " || Ordered Product Details" , admin:false, user, productDetails, orderDate});
+  res.render('user/ordered-product-details',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Ordered Product Details" , admin:false, user, productDetails, orderDate});
   
 }
 
@@ -411,7 +412,7 @@ const placeOrderGET = async (req,res)=>{
 
     // console.log(cartValue);
 
-    res.render('user/place-order',{ title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue});
+    res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue});
 
   }else{
 
@@ -485,7 +486,7 @@ const orderSuccessGET = (req,res)=>{
   
   let user = req.session.userSession // Used for storing user details for further use in this route
 
-  res.render('user/order-success',{ title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
+  res.render('user/order-success',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
   
 }
   
@@ -493,7 +494,7 @@ const orderFailedGET = (req,res)=>{
   
   let user = req.session.userSession // Used for storing user details for further use in this route
 
-  res.render('user/order-failed',{ title: user.name +"'s " + PLATFORM_NAME + " || Sorry, Order failed" , admin:false, user});
+  res.render('user/order-failed',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Sorry, Order failed" , admin:false, user});
   
 }
   
@@ -589,7 +590,46 @@ const savePaymentDataPOST = async (req,res)=>{
 }
 
 
+/* ========================ORDER CANCELLATION Controllers======================== */
 
+const orderCancellationRequestPOST = async (req,res)=>{
+
+  let orderId = req.body.orderId;
+
+  await userHelpers.requestOrderCancellation(orderId).then((response)=>{
+
+    res.redirect('/orders');
+
+  }).catch((err) => {
+
+    console.log("Error from orderCancellationRequestPOST controller: " , err);
+
+    res.redirect('/error-page'); // Redirect to an error page if there was an error
+
+  });
+
+}
+
+
+/* ========================ORDER RETURN Controllers======================== */
+
+const orderReturnRequestPOST = async (req,res)=>{
+
+  let orderId = req.body.orderId;
+
+  await userHelpers.requestOrderReturn(orderId).then((response)=>{
+
+    res.redirect('/orders');
+
+  }).catch((err) => {
+
+    console.log("Error from orderReturnRequestPOST controller: " , err);
+
+    res.redirect('/error-page'); // Redirect to an error page if there was an error
+
+  });
+
+}
 
 
 
@@ -621,6 +661,8 @@ module.exports = {
   orderSuccessGET,
   orderFailedGET,
   verifyPaymentPOST,
-  savePaymentDataPOST
+  savePaymentDataPOST,
+  orderCancellationRequestPOST,
+  orderReturnRequestPOST
 
 }
