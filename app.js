@@ -35,7 +35,7 @@ const app = express();
 // ====================View Engine Setup====================
 app.set('views', path.join(__dirname, '/app/views'));
 app.set('view engine', 'hbs');
-app.engine('hbs',hbs({extname:'hbs',defaultLayout:'layout',layoutsDir: __dirname+'/app/views/layout/',partialsDir: __dirname+'/app/views/partials/', helpers: handlebarsHelpers()}));
+app.engine('hbs',hbs({extname:'hbs',layoutsDir: __dirname+'/app/views/layout/',partialsDir: __dirname+'/app/views/partials/', helpers: handlebarsHelpers()}));
 
 
 // ====================Application-Level Middlewares====================
