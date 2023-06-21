@@ -28,12 +28,12 @@ function addToCart(productId, productName) {
     success: (response) => {
 
       if(response.status){
-
-        let cartCount = $('#cart-count').html();
+        
+        let cartCount = $('#cart-count').attr('data-notify');
 
         cartCount = parseInt(cartCount) + 1;
 
-        $('#cart-count').html(cartCount);
+        $('#cart-count').attr('data-notify', cartCount);
 
         swal( productName, "Successfully added to your cart!", "success");
 
