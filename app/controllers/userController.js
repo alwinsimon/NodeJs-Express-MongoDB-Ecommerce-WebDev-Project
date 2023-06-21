@@ -2,6 +2,7 @@
 
 const productHelpers = require('../../helpers/product-helpers');
 const userHelpers = require('../../helpers/user-helpers');
+const adminHelpers = require('../../helpers/admin-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -15,6 +16,8 @@ const homePageGET = async (req, res, next)=>{
 
   let user = req.session.userSession //used for authenticating a user visit if user has already logged in earlier
 
+  let productCategories = await adminHelpers.getProductCategories();
+
   let cartCount = null;
 
   if(user){
@@ -27,11 +30,11 @@ const homePageGET = async (req, res, next)=>{
 
     if(user){
 
-      res.render('user/user-home', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, products, admin:false, user, cartCount });
+      res.render('user/user-home', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, admin:false, user, products, productCategories, cartCount });
 
     }else{
 
-      res.render('user/user-home', { layout: 'user-layout', title:PLATFORM_NAME, products, admin:false });
+      res.render('user/user-home', { layout: 'user-layout', title:PLATFORM_NAME, admin:false, products, productCategories });
 
     }
 
