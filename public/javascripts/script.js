@@ -15,7 +15,7 @@ function viewProduct(id) {
 
 // JavaScript to make Ajax call for refreshing cart count - called from cart page
 
-function addToCart(productId) {
+function addToCart(productId, productName) {
 
   // console.log(productId);
 
@@ -34,6 +34,8 @@ function addToCart(productId) {
         cartCount = parseInt(cartCount) + 1;
 
         $('#cart-count').html(cartCount);
+
+        swal( productName, "Successfully added to your cart!", "success");
 
       }
 
