@@ -1,3 +1,18 @@
+/* 
+======================================= COMMON JAVASCRIPT FUNCTIONS =======================================
+*/
+
+
+// JavaScript to make load single product page
+
+function viewProduct(id) {
+
+  window.location.href = '/product-details/' + id;
+
+}
+
+
+
 // JavaScript to make Ajax call for refreshing cart count - called from cart page
 
 function addToCart(productId) {
