@@ -27,11 +27,11 @@ const homePageGET = async (req, res, next)=>{
 
     if(user){
 
-      res.render('user/view-products', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, products, admin:false, user, cartCount });
+      res.render('user/user-home', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, products, admin:false, user, cartCount });
 
     }else{
 
-      res.render('user/view-products', { layout: 'user-layout', title:PLATFORM_NAME, products, admin:false });
+      res.render('user/user-home', { layout: 'user-layout', title:PLATFORM_NAME, products, admin:false });
 
     }
 
