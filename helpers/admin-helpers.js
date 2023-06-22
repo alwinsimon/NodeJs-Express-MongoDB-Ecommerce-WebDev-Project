@@ -501,6 +501,43 @@ module.exports = {
             );
 
           }
+
+          // ======================= Wallet Updation for Order Cancellation =======================
+          const orderData = await db.get().collection(collections.ORDERS_COLLECTION).findOne({_id: ObjectId(orderId)});
+
+          const userId = orderData.userId.toString();
+
+          const userWallet = await db.get().collection(collections.WALLET_COLLCTION).findOne({userId: ObjectId(userId)});
+
+          if(userWallet === null){ // If there is no existing wallet for user, create one
+
+            db.get().collection(collections.WALLET_COLLCTION).insertOne({userId: ObjectId(userId), walletBalance: 0});
+
+          }
+
+          let dataForRefund = {};
+
+          if(orderData.paymentMethod === "ONLINE"){ // If the payment was ONLINE resolve with required data to do wallet refund
+
+            console.log("ONLINE");
+
+            dataForRefund.refundAvailable = true;
+
+            dataForRefund.userId = userId;
+
+            dataForRefund.refundAmount = orderData.orderValue;
+
+            resolve(dataForRefund);
+            
+          }else{ 
+            
+            // If the payment was COD there is no wallet refund required for order cancellation(refund will be done in case of PRODUCT RETURN only)
+
+            dataForRefund.refundAvailable = false;
+
+            resolve(dataForRefund);
+
+          }
           
         }else{
 
@@ -511,10 +548,9 @@ module.exports = {
             
           );
 
+          resolve();
+
         }
-        
-        resolve();
-  
 
       } catch (error) {
 
@@ -565,6 +601,30 @@ module.exports = {
       }
 
     });
+
+  },
+  addRefundToWalletBalance : (userId, refundAmount) => {
+
+    return new Promise( async (resolve, reject) =>{
+
+      try {
+
+        await db.get().collection(collections.WALLET_COLLCTION).updateOne(
+          { userId: ObjectId(userId) },
+          { $inc: { walletBalance: refundAmount } }
+        );
+
+        resolve({success : true});
+  
+      } catch (error) {
+  
+        console.log("Error while adding refund to wallet balance:", error);
+
+        reject(error);
+  
+      }
+
+    })
 
   }
       
