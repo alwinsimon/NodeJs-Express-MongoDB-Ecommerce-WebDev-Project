@@ -290,7 +290,7 @@ const adminSideOrderCancellationPOST = async (req,res)=>{
 
 // ====================Controllers for Managing Order RETURN ====================
 
-const orderReturnPOST = async (req,res)=>{
+const reviewOrderReturnRequestPOST = async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
@@ -356,7 +356,7 @@ module.exports = {
   rejectOrderCancellationPOST,
   changeOrderStatusPOST,
   adminSideOrderCancellationPOST,
-  orderReturnPOST,
+  reviewOrderReturnRequestPOST,
   changeOrderReturnStatusPOST
 
 }
