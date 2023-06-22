@@ -519,8 +519,6 @@ module.exports = {
 
           if(orderData.paymentMethod === "ONLINE"){ // If the payment was ONLINE resolve with required data to do wallet refund
 
-            console.log("ONLINE");
-
             dataForRefund.refundAvailable = true;
 
             dataForRefund.userId = userId;
