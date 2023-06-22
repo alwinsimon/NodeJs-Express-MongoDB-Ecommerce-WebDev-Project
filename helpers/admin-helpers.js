@@ -575,6 +575,31 @@ module.exports = {
             {$set: {returnedOrder: true, returnStatus: "Return Request Approved", orderStatus: "Returned"}}
             
           );
+
+          // ======================= Wallet Updation for Order Cancellation =======================
+          const orderData = await db.get().collection(collections.ORDERS_COLLECTION).findOne({_id: ObjectId(orderId)});
+
+          const userId = orderData.userId.toString();
+
+          const userWallet = await db.get().collection(collections.WALLET_COLLCTION).findOne({userId: ObjectId(userId)});
+
+          if(userWallet === null){ // If there is no existing wallet for user, create one
+
+            db.get().collection(collections.WALLET_COLLCTION).insertOne({userId: ObjectId(userId), walletBalance: 0});
+
+          }
+
+          let dataForRefund = {
+
+            refundAvailable : true,
+
+            userId : userId,
+
+            refundAmount : orderData.orderValue
+
+          };
+
+          resolve(dataForRefund);
           
         }else{
 
@@ -585,10 +610,15 @@ module.exports = {
             
           );
 
+          let dataForRefund = {
+
+            refundAvailable : false
+
+          };
+
+          resolve(dataForRefund);
+
         }
-        
-        resolve();
-  
 
       } catch (error) {
 

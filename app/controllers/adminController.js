@@ -324,7 +324,23 @@ const changeOrderReturnStatusPOST = async (req,res)=>{
 
   await adminHelpers.manageOrderReturn(orderId,adminResponse).then((response)=>{
 
-    res.redirect('/admin/order-summary');
+    if(response.refundAvailable){
+
+      const userId = response.userId;
+
+      const amounttoRefund = response.refundAmount;
+
+      adminHelpers.addRefundToWalletBalance(userId, amounttoRefund).then((response)=>{
+
+        res.redirect('/admin/order-summary');
+
+      })
+
+    }else{
+
+      res.redirect('/admin/order-summary');
+
+    }
 
   })
   
