@@ -223,11 +223,7 @@ const approveOrderCancellationPOST = async (req,res)=>{
 
     if(response.refundAvailable){
 
-      const userId = response.userId;
-
-      const amounttoRefund = response.refundAmount;
-
-      adminHelpers.addRefundToWalletBalance(userId, amounttoRefund).then((response)=>{
+      adminHelpers.addRefundToWalletBalance(orderId, true, false).then((response)=>{
 
         res.redirect('/admin/order-summary');
 
@@ -267,11 +263,7 @@ const adminSideOrderCancellationPOST = async (req,res)=>{
 
     if(response.refundAvailable){
 
-      const userId = response.userId;
-
-      const amounttoRefund = response.refundAmount;
-
-      adminHelpers.addRefundToWalletBalance(userId, amounttoRefund).then((response)=>{
+      adminHelpers.addRefundToWalletBalance(orderId, true, false).then((response)=>{
 
         res.redirect('/admin/order-summary');
 
@@ -326,11 +318,7 @@ const changeOrderReturnStatusPOST = async (req,res)=>{
 
     if(response.refundAvailable){
 
-      const userId = response.userId;
-
-      const amounttoRefund = response.refundAmount;
-
-      adminHelpers.addRefundToWalletBalance(userId, amounttoRefund).then((response)=>{
+      adminHelpers.addRefundToWalletBalance(orderId, false, true).then((response)=>{
 
         res.redirect('/admin/order-summary');
 
