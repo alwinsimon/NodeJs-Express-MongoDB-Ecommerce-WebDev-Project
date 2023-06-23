@@ -1,6 +1,21 @@
+/* 
+======================================= COMMON JAVASCRIPT FUNCTIONS =======================================
+*/
+
+
+// JavaScript to make load single product page
+
+function viewProduct(id) {
+
+  window.location.href = '/product-details/' + id;
+
+}
+
+
+
 // JavaScript to make Ajax call for refreshing cart count - called from cart page
 
-function addToCart(productId) {
+function addToCart(productId, productName) {
 
   // console.log(productId);
 
@@ -13,12 +28,14 @@ function addToCart(productId) {
     success: (response) => {
 
       if(response.status){
-
-        let cartCount = $('#cart-count').html();
+        
+        let cartCount = $('#cart-count').attr('data-notify');
 
         cartCount = parseInt(cartCount) + 1;
 
-        $('#cart-count').html(cartCount);
+        $('#cart-count').attr('data-notify', cartCount);
+
+        swal( productName, "Successfully added to your cart!", "success");
 
       }
 
