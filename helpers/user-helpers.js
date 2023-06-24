@@ -106,11 +106,14 @@ module.exports = {
 
             userData.blocked = false;
 
-            const userCollection = db.get().collection(collections.USER_COLLECTION);
+            const userCollection = await db.get().collection(collections.USER_COLLECTION);
 
             userCollection.insertOne(userData).then((insertResult)=>{
 
                 const insertedId = insertResult.insertedId;
+
+                // ====== Creating a wallet for user while sign-up
+                db.get().collection(collections.WALLET_COLLCTION).insertOne({userId: ObjectId(insertedId), walletBalance: 0});
 
                 userCollection.findOne({_id: insertedId}).then((userData)=>{
 

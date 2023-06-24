@@ -484,37 +484,71 @@ module.exports = {
 
           if(adminRequest){
 
-            await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            try {
+
+              await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
             
-              {_id : ObjectId(orderId)},
-              {$set: {cancelledOrder: true, cancellationStatus: "Cancelled by Platform", orderStatus: "Cancelled"}}
+                {_id : ObjectId(orderId)},
+                {$set: {cancelledOrder: true, cancellationStatus: "Cancelled by Platform", orderStatus: "Cancelled"}}
               
-            );
+              );
+
+              resolve({refundAvailable : true});
+
+            } catch(error) {
+
+              console.log(error);
+
+              reject(error);
+
+            }
 
           }else{
 
-            await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
-            
-              {_id : ObjectId(orderId)},
-              {$set: {cancelledOrder: true, cancellationStatus: "Cancellation Request Approved", orderStatus: "Cancelled"}}
+            try {
               
-            );
+              await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+                {_id : ObjectId(orderId)},
+                {$set: {cancelledOrder: true, cancellationStatus: "Cancellation Request Approved", orderStatus: "Cancelled"}}
+              
+              );
+
+              resolve({refundAvailable : true});
+              
+            } catch(error) {
+
+              console.log(error);
+
+              reject(error);
+
+            }
+            
 
           }
           
         }else{
 
-          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+          try{
+
+            await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
             
-            {_id : ObjectId(orderId)},
-            {$set: {cancelledOrder: false, cancellationStatus: "Cancellation Request Rejected"}}
-            
-          );
+              {_id : ObjectId(orderId)},
+              {$set: {cancelledOrder: false, cancellationStatus: "Cancellation Request Rejected"}}
+              
+            );
+  
+            resolve({refundAvailable : false});
+
+          } catch(error) {
+
+            console.log(error);
+
+            reject(error);
+
+          }
 
         }
-        
-        resolve();
-  
 
       } catch (error) {
 
@@ -541,6 +575,8 @@ module.exports = {
             {$set: {returnedOrder: true, returnStatus: "Return Request Approved", orderStatus: "Returned"}}
             
           );
+
+          resolve( {refundAvailable: true} );
           
         }else{
 
@@ -551,10 +587,9 @@ module.exports = {
             
           );
 
+          resolve( {refundAvailable: false} );
+
         }
-        
-        resolve();
-  
 
       } catch (error) {
 
@@ -565,6 +600,87 @@ module.exports = {
       }
 
     });
+
+  },
+  // ====================== Function to Add balence to user wallet in-case of ORDER CANCELLATION OR RETURN ======================
+  addRefundToWalletBalance : (orderId, orderCancellationRequest, orderReturnRequest) => {
+
+    return new Promise( async (resolve, reject) =>{
+
+      try{
+
+        const orderData = await db.get().collection(collections.ORDERS_COLLECTION).findOne({_id: ObjectId(orderId)});
+
+        const userId = orderData.userId.toString();
+
+        const userWallet = await db.get().collection(collections.WALLET_COLLCTION).findOne({userId: ObjectId(userId)});
+
+        const refundAmount = orderData.orderValue;
+
+        if(userWallet === null){ // If there is no existing wallet for user, create one
+
+          db.get().collection(collections.WALLET_COLLCTION).insertOne({userId: ObjectId(userId), walletBalance: 0});
+
+        }
+
+
+        if(orderCancellationRequest){
+
+          if(orderData.paymentMethod === "ONLINE"){ // If the payment was ONLINE resolve with required data to do wallet refund
+
+            try {
+
+              await db.get().collection(collections.WALLET_COLLCTION).updateOne(
+                { userId: ObjectId(userId) },
+                { $inc: { walletBalance: refundAmount } }
+              );
+    
+              resolve({refundSuccess : true});
+        
+            } catch (error) {
+        
+              console.log("Error while adding order CANCELLATION refund to wallet balance:", error);
+    
+              reject(error);
+        
+            }
+            
+          }else{
+
+            resolve();
+
+          }
+
+        }else if(orderReturnRequest){ 
+
+          try {
+
+            await db.get().collection(collections.WALLET_COLLCTION).updateOne(
+              { userId: ObjectId(userId) },
+              { $inc: { walletBalance: refundAmount } }
+            );
+  
+            resolve({refundSuccess : true});
+      
+          } catch (error) {
+      
+            console.log("Error while adding order RETURN refund to wallet balance:", error);
+  
+            reject(error);
+      
+          }
+
+        }
+
+      } catch (error) {
+
+        console.log("Error in addRefundToWalletBalance function :", error);
+
+        reject(error);
+
+      }
+
+    })
 
   }
       
