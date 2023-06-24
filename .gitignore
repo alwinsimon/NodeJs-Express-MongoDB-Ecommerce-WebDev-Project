@@ -3,7 +3,3 @@ node_modules/
 
 # ignore environment variables
 .env
-
-# ignore images
-public/product-images
-public/product-category-images
