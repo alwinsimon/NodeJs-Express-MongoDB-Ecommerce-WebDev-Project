@@ -210,8 +210,6 @@ module.exports = {
         })
 
     },
-<<<<<<< Updated upstream
-=======
     getUserWalletData : (userId)=>{
         
         return new Promise( async (resolve,reject)=>{
@@ -233,7 +231,6 @@ module.exports = {
         })
 
     },
->>>>>>> Stashed changes
     addToCart:(productId, userId)=>{
 
         // Creating a object to store the product and the product quantity inside the cart
