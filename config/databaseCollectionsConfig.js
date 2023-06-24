@@ -7,6 +7,7 @@ module.exports = {
     PRODUCT_CATEGORY_COLLECTION : 'product categories',
     CART_COLLECTION: 'user cart',
     ORDERS_COLLECTION: 'user orders',
-    PAYMENT_HISTORY_COLLECTION: 'payment history'
+    PAYMENT_HISTORY_COLLECTION: 'payment history',
+    WALLET_COLLCTION : 'user wallet'
 
 }
