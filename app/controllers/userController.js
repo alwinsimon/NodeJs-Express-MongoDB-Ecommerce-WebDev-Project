@@ -219,6 +219,39 @@ const verifyUserSignUpPOST = (req,res)=>{
 }
 
 
+/* ======================== USER PROFILE Page Controller ======================== */
+
+const userProfileGET =  async (req, res) => {
+
+  const user = req.session.userSession;
+
+  const userId = req.params.id;
+
+  const cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+  
+  userHelpers.getUserData(userId).then((userDataFromDb)=>{
+
+    const userCollectionData = userDataFromDb;
+
+    userHelpers.getUserWalletData(userId).then((walletData)=>{
+
+      const userWalletData = walletData;
+
+      res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount });
+
+    })
+
+  }).catch((err)=>{
+
+    console.log("Error from userProfileGET controller : ", err);
+
+    reject(err);
+    
+  });
+
+}
+
+
 /* ========================Single Product Page Controller======================== */
 
 const singleProductPageGET =  (req, res) => {
@@ -651,6 +684,7 @@ module.exports = {
   userSignUpPOST,
   verifyUserSignUpGET,
   verifyUserSignUpPOST,
+  userProfileGET,
   singleProductPageGET,
   cartGET,
   emptyCartGET,
