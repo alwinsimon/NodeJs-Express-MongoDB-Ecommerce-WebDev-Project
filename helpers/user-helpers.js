@@ -113,7 +113,7 @@ module.exports = {
                 const insertedId = insertResult.insertedId;
 
                 // ====== Creating a wallet for user while sign-up
-                db.get().collection(collections.WALLET_COLLCTION).insertOne({userId: ObjectId(insertedId), walletBalance: 0});
+                db.get().collection(collections.collections.WALLET_COLLECTION).insertOne({userId: ObjectId(insertedId), walletBalance: 0});
 
                 userCollection.findOne({_id: insertedId}).then((userData)=>{
 
@@ -206,6 +206,27 @@ module.exports = {
             let currentUserData = await db.get().collection(collections.USER_COLLECTION).findOne({_id : ObjectId(userId)});
 
             resolve(currentUserData);
+
+        })
+
+    },
+    getUserWalletData : (userId)=>{
+        
+        return new Promise( async (resolve,reject)=>{
+
+            try{
+                    
+                let userWalletData = await db.get().collection(collections.WALLET_COLLECTION).findOne({userId : ObjectId(userId)});
+
+                resolve(userWalletData);
+
+            } catch (error){
+
+                console.log("Error from getUserWalletData userHelper : " , error);
+
+                reject(error);
+            
+            }
 
         })
 

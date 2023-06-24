@@ -8,6 +8,6 @@ module.exports = {
     CART_COLLECTION: 'user cart',
     ORDERS_COLLECTION: 'user orders',
     PAYMENT_HISTORY_COLLECTION: 'payment history',
-    WALLET_COLLCTION : 'user wallet'
+    WALLET_COLLECTION : 'user wallet'
 
 }

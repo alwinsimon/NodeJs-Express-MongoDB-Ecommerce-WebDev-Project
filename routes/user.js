@@ -39,6 +39,11 @@ router.get('/verify-user-signup', userController.verifyUserSignUpGET);
 router.post('/verify-user-signup', userController.verifyUserSignUpPOST);
 
 
+/* ========================USER PROFILE ROUTES======================== */
+
+router.get('/profile/:id', verifyUserLogin, userController.userProfileGET);
+
+
 /* ========================Single Product Page Route======================== */
 
 router.get('/product-details/:id', userController.singleProductPageGET);

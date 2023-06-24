@@ -146,21 +146,17 @@
 
 								<ul class="main-menu">
 
-									<li class="active-menu">
+									<li class="active-menu">										
 
-										<a href="/">
+										{{#if user}}
 
-											{{#if user}}
+											<button onclick="window.location.href='/profile/{{user._id}}';"><i><b>Hey, {{user.name}}</b></i></button>
 
-												<i><b>Hey, {{user.name}}</b></i>
+										{{else}}
+											
+											Login/Sign-up
 
-											{{else}}
-												
-												Login/Sign-up
-
-											{{/if}}
-
-										</a>
+										{{/if}}
 
 										<ul class="sub-menu">
 
