@@ -207,6 +207,27 @@ module.exports = {
         })
 
     },
+    getUserWalletData : (userId)=>{
+        
+        return new Promise( async (resolve,reject)=>{
+
+            try{
+                    
+                let userWalletData = await db.get().collection(collections.USER_COLLECTION).findOne({userId : ObjectId(userId)});
+
+                resolve(userWalletData);
+
+            } catch (error){
+
+                console.log("Error from getUserWalletData userHelper : " , error);
+
+                reject(error);
+            
+            }
+
+        })
+
+    },
     addToCart:(productId, userId)=>{
 
         // Creating a object to store the product and the product quantity inside the cart
