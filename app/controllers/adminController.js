@@ -221,7 +221,19 @@ const approveOrderCancellationPOST = async (req,res)=>{
 
   await adminHelpers.manageOrderCancellation(orderId,true, false).then((response)=>{
 
-    res.redirect('/admin/order-summary');
+    if(response.refundAvailable){
+
+      adminHelpers.addRefundToWalletBalance(orderId, true, false).then((response)=>{
+
+        res.redirect('/admin/order-summary');
+
+      })
+
+    }else{
+
+      res.redirect('/admin/order-summary');
+
+    }
 
   })
   
@@ -249,7 +261,19 @@ const adminSideOrderCancellationPOST = async (req,res)=>{
 
   await adminHelpers.manageOrderCancellation(orderId, true, true).then((response)=>{
 
-    res.redirect('/admin/order-summary');
+    if(response.refundAvailable){
+
+      adminHelpers.addRefundToWalletBalance(orderId, true, false).then((response)=>{
+
+        res.redirect('/admin/order-summary');
+
+      })
+
+    }else{
+
+      res.redirect('/admin/order-summary');
+
+    }
 
   })
   
@@ -258,7 +282,7 @@ const adminSideOrderCancellationPOST = async (req,res)=>{
 
 // ====================Controllers for Managing Order RETURN ====================
 
-const orderReturnPOST = async (req,res)=>{
+const reviewOrderReturnRequestPOST = async (req,res)=>{
 
   let adminData = req.session.adminSession;
 
@@ -292,7 +316,19 @@ const changeOrderReturnStatusPOST = async (req,res)=>{
 
   await adminHelpers.manageOrderReturn(orderId,adminResponse).then((response)=>{
 
-    res.redirect('/admin/order-summary');
+    if(response.refundAvailable){
+
+      adminHelpers.addRefundToWalletBalance(orderId, false, true).then((response)=>{
+
+        res.redirect('/admin/order-summary');
+
+      })
+
+    }else{
+
+      res.redirect('/admin/order-summary');
+
+    }
 
   })
   
@@ -324,7 +360,7 @@ module.exports = {
   rejectOrderCancellationPOST,
   changeOrderStatusPOST,
   adminSideOrderCancellationPOST,
-  orderReturnPOST,
+  reviewOrderReturnRequestPOST,
   changeOrderReturnStatusPOST
 
 }
