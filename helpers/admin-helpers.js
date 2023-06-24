@@ -613,13 +613,13 @@ module.exports = {
 
         const userId = orderData.userId.toString();
 
-        const userWallet = await db.get().collection(collections.WALLET_COLLCTION).findOne({userId: ObjectId(userId)});
+        const userWallet = await db.get().collection(collections.WALLET_COLLECTION).findOne({userId: ObjectId(userId)});
 
         const refundAmount = orderData.orderValue;
 
         if(userWallet === null){ // If there is no existing wallet for user, create one
 
-          db.get().collection(collections.WALLET_COLLCTION).insertOne({userId: ObjectId(userId), walletBalance: 0});
+          db.get().collection(collections.WALLET_COLLECTION).insertOne({userId: ObjectId(userId), walletBalance: 0});
 
         }
 
@@ -630,7 +630,7 @@ module.exports = {
 
             try {
 
-              await db.get().collection(collections.WALLET_COLLCTION).updateOne(
+              await db.get().collection(collections.WALLET_COLLECTION).updateOne(
                 { userId: ObjectId(userId) },
                 { $inc: { walletBalance: refundAmount } }
               );
@@ -655,7 +655,7 @@ module.exports = {
 
           try {
 
-            await db.get().collection(collections.WALLET_COLLCTION).updateOne(
+            await db.get().collection(collections.WALLET_COLLECTION).updateOne(
               { userId: ObjectId(userId) },
               { $inc: { walletBalance: refundAmount } }
             );
