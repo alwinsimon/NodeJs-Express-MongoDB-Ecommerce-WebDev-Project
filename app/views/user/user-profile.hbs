@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <style>
     :root {
         --blue: #5e72e4;
@@ -2029,6 +2030,7 @@
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet"> --}}
 
 <body>
+
     <div class="main-content">
         <!-- Top navbar -->
         <!-- Header -->
@@ -2040,13 +2042,15 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-lg-7 col-md-10">
-                        <h1 class="display-2 text-white">Hello {{user.name}}</h1>
+                        <h1 class="display-2 text-white">Hello {{userCollectionData.name}}</h1>
                     </div>
                 </div>
             </div>
         </div>
         <!-- Page content -->
         <div class="container-fluid mt--7">
+            
+            {{!-- ====================== Account Details CARD Left Side ====================== --}}
             <div class="row">
                 <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
                     <div class="card card-profile shadow">
@@ -2071,25 +2075,25 @@
                                 <div class="col">
                                     <div class="card-profile-stats d-flex justify-content-center mt-md-5">
                                         <div>
+                                            <span class="heading">{{cartCount}}</span>
+                                            <span class="description">CartItems</span>
+                                        </div>
+                                        <div>
                                             <span class="heading">20</span>
                                             <span class="description">Wishlist</span>
                                         </div>
                                         <div>
-                                            <span class="heading">10</span>
-                                            <span class="description">CartItems</span>
-                                        </div>
-                                        <div>
-                                            <span class="heading">89</span>
+                                            <span class="heading"> {{ordersCount}} </span>
                                             <span class="description">Purchases</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="text-center">
-                                <h3>{{user.name}}</h3>
+                                <h3>{{userCollectionData.name}}</h3>
 
-                                {{#if user.age}}
-                                <span class="font-weight-light">Age : {{user.age}}</span>
+                                {{#if userCollectionData.age}}
+                                <span class="font-weight-light">Age : {{userCollectionData.age}}</span>
                                 {{/if}}
 
                                 <hr>
@@ -2099,7 +2103,7 @@
                                     <b class="ni education_hat mr-2">Wallet Balence :
 
                                         {{#if userWalletData}}
-                                        ₹ {{userWalletData.balence}}
+                                        ₹ {{userWalletData.walletBalance}}
                                         {{else}}
                                         ₹ 0
                                         {{/if}}
@@ -2110,11 +2114,14 @@
 
                                 <hr class="my-4">
                                 <b class="ni education_hat mr-2">About me:</b>
-                                <p><i>{{user.about}}</i></p>
+                                <p><i>{{userCollectionData.userTagline}}</i></p>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
+                {{!-- ====================== Account Details Display ====================== --}}
                 <div class="col-xl-8 order-xl-1">
                     <div class="card bg-secondary shadow">
                         <div class="card-header bg-white border-0">
@@ -2123,7 +2130,7 @@
                                     <h3 class="mb-0">My account</h3>
                                 </div>
                                 <div class="col-4 text-right">
-                                    <a href="#!" class="btn btn-sm btn-primary">Edit My Profile</a>
+                                    <button class="btn btn-sm btn-primary" data-toggle = "modal" data-target="#edit-profile-modal">Edit My Profile</button>
                                 </div>
                             </div>
                         </div>
@@ -2137,18 +2144,29 @@
 
                                         <div class="col-lg-6">
                                             <div class="form-group focused">
-                                                <label class="form-control-label" for="input-username">Username</label>
-                                                <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{user.name}}</span>
+                                                <label class="form-control-label" for="input-username">Name</label>
+                                                <span id="input-username" class="form-control form-control-alternative" readonly>{{userCollectionData.name}}</span>
                                             </div>
                                         </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="form-group focused">
+                                                <label class="form-control-label" for="input-username">User Name</label>
+                                                <span id="input-username" class="form-control form-control-alternative"
+                                                    readonly>@ {{userCollectionData.userName}}</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    
+                                    <div class="row">
 
                                         <div class="col-lg-6">
                                             <div class="form-group">
                                                 <label class="form-control-label" for="input-email">Email
                                                     address</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{user.email}}</span>
+                                                    readonly>{{userCollectionData.email}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -2158,7 +2176,7 @@
                                                 <label class="form-control-label" for="input-first-name">Phone
                                                     Number</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{user.phone}}</span>
+                                                    readonly>{{userCollectionData.phone}}</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -2166,7 +2184,7 @@
                                                 <label class="form-control-label" for="input-first-name">Alternative
                                                     Phone Number</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{user.phoneNumberAlternative}}</span>
+                                                    readonly>{{userCollectionData.phoneNumberAlternative}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -2259,4 +2277,102 @@
     </div>
 
     <br>
+
+
+    <!-- ========================================= Modal for Edit User ========================================= -->
+
+    <div class="modal fade" id="edit-profile-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Hi {{userCollectionData.name}}, please provide details for updating your profile.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+
+                    <form action="/update-my-profile" method="POST">
+
+                        <div class="form-row">
+
+                            <div class="col-md-4 mb-3">
+                                <label for="validationDefaultUsername">Username</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroupPrepend2">@</span>
+                                    </div>
+                                    <input type="text" class="form-control" id="validationDefaultUsername"
+                                        placeholder="Username" name="userName" value="{{userCollectionData.userName}}" aria-describedby="inputGroupPrepend2" required>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                        <div class="form-row">
+
+                            <div class="col-md-4 mb-3">
+                                <label for="validationDefault01">First name</label>
+                                <input name="name" type="text" class="form-control" id="validationDefault01" placeholder="First name"
+                                    name="name" value="{{userCollectionData.name}}" required>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="validationDefault02">Last name</label>
+                                <input name="lastName" type="{{userCollectionData.lastname}}" class="form-control" id="validationDefault02" placeholder="Last name"
+                                    name="lastName" value="{{userCollectionData.lastName}}" required>
+                            </div>
+
+                            <div class="form-row">
+
+                            <div class="col-md-6 mb-3">
+                                <label for="validationDefault03">Age</label>
+                                <input type="number" name="age" value="{{userCollectionData.age}}"class="form-control" id="validationDefault03" placeholder="Your age in numbers"
+                                    required>
+                            </div>
+
+                        </div>
+
+                        </div>
+
+                        <div class="form-row">
+
+                            <div class="col-md-6 mb-3">
+                                <label for="validationDefault03">Alternative Phone Number</label>
+                                <input type="number" name="phoneNumberAlternative" value="{{userCollectionData.phoneNumberAlternative}}"class="form-control" id="validationDefault03" placeholder="Alternative Phone Number"
+                                    required>
+                            </div>
+
+                        </div>
+
+                        <div class="form-row">
+
+                            <div class="col-md-6 mb-3">
+                                <label for="validationDefault03">About Me</label>
+                                <input type="text" name="userTagline" value="{{userCollectionData.userTagline}}"class="form-control" id="validationDefault03" placeholder="Jot something about you..."
+                                    required>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+
+                        </div>
+
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
 </body>
