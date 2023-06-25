@@ -210,6 +210,50 @@ module.exports = {
         })
 
     },
+    updateUserData : (userId, requestDataForUpdation)=>{
+        
+        return new Promise( async (resolve,reject)=>{
+
+            try {
+                
+                const dataForUpdation = {
+
+                    userName : requestDataForUpdation.userName,
+
+                    name : requestDataForUpdation.name,
+
+                    lastName : requestDataForUpdation.lastName,
+
+                    age : requestDataForUpdation.age,
+
+                    phoneNumberAlternative : requestDataForUpdation.phoneNumberAlternative,
+
+                    userTagline : requestDataForUpdation.userTagline
+
+                }
+
+                const userCollection = await db.get().collection(collections.USER_COLLECTION);
+
+                userCollection.updateOne( 
+                    
+                    {_id: ObjectId(userId)},
+
+                    {$set: dataForUpdation }
+                )
+
+                resolve({success:true});
+
+            } catch (error) {
+
+                console.log(error);
+
+                reject(error);
+
+            }
+
+        })
+
+    },
     getUserWalletData : (userId)=>{
         
         return new Promise( async (resolve,reject)=>{
@@ -435,6 +479,35 @@ module.exports = {
             }
 
             resolve(count);
+
+        })    
+    },
+    getOrdersCount:(userId)=>{
+
+        return new Promise(async(resolve,reject)=>{
+
+            try {
+
+                let count = 0;
+
+                const orders = await db.get().collection(collections.ORDERS_COLLECTION).find({userId:ObjectId(userId)}).toArray();
+
+                if(orders){
+
+                    count = orders.length;
+
+                }
+
+                resolve(count);
+                
+            } catch (error) {
+
+                console.log("Error from getOrdersCount userHelper ======>", error);
+
+                reject(error);
+                
+            }
+            
 
         })    
     },

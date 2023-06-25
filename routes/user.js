@@ -43,6 +43,8 @@ router.post('/verify-user-signup', userController.verifyUserSignUpPOST);
 
 router.get('/profile/:id', verifyUserLogin, userController.userProfileGET);
 
+router.post('/update-my-profile', verifyUserLogin, userController.userProfileUpdateRequestPOST);
+
 
 /* ========================Single Product Page Route======================== */
 
