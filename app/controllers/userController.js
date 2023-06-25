@@ -219,7 +219,7 @@ const verifyUserSignUpPOST = (req,res)=>{
 }
 
 
-/* ======================== USER PROFILE Page Controller ======================== */
+/* ======================== USER PROFILE Controllers ======================== */
 
 const userProfileGET =  async (req, res) => {
 
@@ -228,6 +228,8 @@ const userProfileGET =  async (req, res) => {
   const userId = req.params.id;
 
   const cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+
+  const ordersCount = await userHelpers.getOrdersCount(req.session.userSession._id);
   
   userHelpers.getUserData(userId).then((userDataFromDb)=>{
 
@@ -237,7 +239,7 @@ const userProfileGET =  async (req, res) => {
 
       const userWalletData = walletData;
 
-      res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount });
+      res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount });
 
     })
 
@@ -245,7 +247,51 @@ const userProfileGET =  async (req, res) => {
 
     console.log("Error from userProfileGET controller : ", err);
 
-    reject(err);
+    res.redirect("/error-page");
+    
+  });
+
+}
+
+const userProfileUpdateRequestPOST =  async (req, res) => {
+
+  const user = req.session.userSession;
+
+  const userId = user._id;
+
+  const formData = {
+
+    userName : req.body.userName,
+
+    name : req.body.name,
+
+    lastName : req.body.lastName,
+
+    age : req.body.age,
+
+    phoneNumberAlternative : req.body.phoneNumberAlternative,
+
+    userTagline : req.body.userTagline
+
+  }
+  
+  userHelpers.updateUserData(userId, formData).then((response)=>{
+
+    if(response.success){
+
+      res.redirect("/profile/" + userId);
+
+    }else{
+
+      res.redirect("/error-page");
+
+    }
+
+  }).catch((err)=>{
+
+    console.log("Error from userProfileUpdateRequestPOST controller : ", err);
+
+    res.redirect("/error-page");
     
   });
 
@@ -685,6 +731,7 @@ module.exports = {
   verifyUserSignUpGET,
   verifyUserSignUpPOST,
   userProfileGET,
+  userProfileUpdateRequestPOST,
   singleProductPageGET,
   cartGET,
   emptyCartGET,
