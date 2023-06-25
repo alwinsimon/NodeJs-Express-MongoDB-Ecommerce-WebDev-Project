@@ -2030,6 +2030,7 @@
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet"> --}}
 
 <body>
+
     <div class="main-content">
         <!-- Top navbar -->
         <!-- Header -->
@@ -2048,6 +2049,8 @@
         </div>
         <!-- Page content -->
         <div class="container-fluid mt--7">
+            
+            {{!-- ====================== Account Details CARD Left Side ====================== --}}
             <div class="row">
                 <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
                     <div class="card card-profile shadow">
@@ -2116,6 +2119,9 @@
                         </div>
                     </div>
                 </div>
+
+
+                {{!-- ====================== Account Details Display ====================== --}}
                 <div class="col-xl-8 order-xl-1">
                     <div class="card bg-secondary shadow">
                         <div class="card-header bg-white border-0">
@@ -2139,10 +2145,21 @@
                                         <div class="col-lg-6">
                                             <div class="form-group focused">
                                                 <label class="form-control-label" for="input-username">Name</label>
-                                                <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{user.name}}</span>
+                                                <span id="input-username" class="form-control form-control-alternative" readonly>{{user.name}}</span>
                                             </div>
                                         </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="form-group focused">
+                                                <label class="form-control-label" for="input-username">User Name</label>
+                                                <span id="input-username" class="form-control form-control-alternative"
+                                                    readonly>@ {{user.userName}}</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    
+                                    <div class="row">
 
                                         <div class="col-lg-6">
                                             <div class="form-group">
@@ -2262,14 +2279,14 @@
     <br>
 
 
-    <!-- ========================================= Edit User Modal ========================================= -->
+    <!-- ========================================= Modal for Edit User ========================================= -->
 
     <div class="modal fade" id="edit-profile-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Hi {{user.name}}, please provide details for updating your profile.</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -2278,22 +2295,10 @@
                 <div class="modal-body">
 
 
-                    <form>
+                    <form action="/user/update-my-profile/{{user._id}}" method="POST">
 
                         <div class="form-row">
 
-                            <div class="col-md-4 mb-3">
-                                <label for="validationDefault01">First name</label>
-                                <input type="text" class="form-control" id="validationDefault01" placeholder="First name"
-                                    value="Mark" required>
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <label for="validationDefault02">Last name</label>
-                                <input type="text" class="form-control" id="validationDefault02" placeholder="Last name"
-                                    value="Otto" required>
-                            </div>
-                            
                             <div class="col-md-4 mb-3">
                                 <label for="validationDefaultUsername">Username</label>
                                 <div class="input-group">
@@ -2301,8 +2306,24 @@
                                         <span class="input-group-text" id="inputGroupPrepend2">@</span>
                                     </div>
                                     <input type="text" class="form-control" id="validationDefaultUsername"
-                                        placeholder="Username" aria-describedby="inputGroupPrepend2" required>
+                                        placeholder="Username" value="{{user.userName}}" aria-describedby="inputGroupPrepend2" required>
                                 </div>
+                            </div>
+
+                        </div>
+                        
+                        <div class="form-row">
+
+                            <div class="col-md-4 mb-3">
+                                <label for="validationDefault01">First name</label>
+                                <input name="name" type="text" class="form-control" id="validationDefault01" placeholder="First name"
+                                    value="{{user.name}}" required>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="validationDefault02">Last name</label>
+                                <input name="lastName" type="{{user.lastname}}" class="form-control" id="validationDefault02" placeholder="Last name"
+                                    value="{{user.lastName}}" required>
                             </div>
 
                         </div>
@@ -2310,20 +2331,9 @@
                         <div class="form-row">
 
                             <div class="col-md-6 mb-3">
-                                <label for="validationDefault03">City</label>
-                                <input type="text" class="form-control" id="validationDefault03" placeholder="City"
+                                <label for="validationDefault03">Alternative Phone Number</label>
+                                <input type="text" value="{{user.phoneNumberAlternative}}"class="form-control" id="validationDefault03" placeholder="Alternative Phone Number"
                                     required>
-                            </div>
-
-                            <div class="col-md-3 mb-3">
-                                <label for="validationDefault04">State</label>
-                                <input type="text" class="form-control" id="validationDefault04" placeholder="State"
-                                    required>
-                            </div>
-
-                            <div class="col-md-3 mb-3">
-                                <label for="validationDefault05">Zip</label>
-                                <input type="text" class="form-control" id="validationDefault05" placeholder="Zip" required>
                             </div>
 
                         </div>
@@ -2331,7 +2341,7 @@
                         <div class="modal-footer">
 
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
 
                         </div>
 
