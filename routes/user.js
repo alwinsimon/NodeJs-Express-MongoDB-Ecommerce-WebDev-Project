@@ -54,6 +54,10 @@ router.post('/add-new-address', verifyUserLogin, userController.addNewAddressPOS
 
 router.post('/update-user-primary-address', verifyUserLogin, userController.changePrimaryAddressPOST);
 
+router.post('/edit-user-address', verifyUserLogin, userController.editUserAddressPOST);
+
+router.post('/delete-user-address', verifyUserLogin, userController.deleteUserAddressPOST);
+
 
 /* ========================Single Product Page Route======================== */
 
