@@ -368,6 +368,38 @@ const addNewAddressPOST =  async (req, res) => {
 
 }
 
+const editUserAddressPOST =  async (req, res) => {
+
+  const user = req.session.userSession;
+
+  const userId = user._id;
+
+  const addressId = req.body.addressId;
+
+  await userHelpers.editUserAddress(userId,addressId).then((response)=>{
+
+    res.json({status:true});
+
+  })
+
+}
+
+const deleteUserAddressPOST =  async (req, res) => {
+
+  const user = req.session.userSession;
+
+  const userId = user._id;
+
+  const addressId = req.body.addressId;
+
+  await userHelpers.deleteUserAddress(userId,addressId).then((response)=>{
+
+    res.json({status:true});
+
+  })
+
+}
+
 const changePrimaryAddressPOST =  async (req, res) => {
 
   const user = req.session.userSession;
@@ -821,6 +853,8 @@ module.exports = {
   manageUserAddressGET,
   addNewAddressPOST,
   changePrimaryAddressPOST,
+  editUserAddressPOST,
+  deleteUserAddressPOST,
   singleProductPageGET,
   cartGET,
   emptyCartGET,
