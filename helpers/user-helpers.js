@@ -254,6 +254,130 @@ module.exports = {
         })
 
     },
+    insertUserAddress: (userId, addressData) => {
+
+        return new Promise(async (resolve, reject) => {
+
+          const userAddressCollection = await db.get().collection(collections.USER_ADDRESS_COLLECTION).findOne({ userId: ObjectId(userId) });
+      
+            if (userAddressCollection) { // If there is a existing address collection for the user, add new address to it
+
+                addressData._id = new ObjectId();
+
+                addressData.dateOfCreation = new Date();
+
+                addressData.primaryAddress = false;
+
+                await db.get().collection(collections.USER_ADDRESS_COLLECTION).updateOne(
+
+                    { userId: userId },
+
+                    {$push: {address: addressData}}
+
+                ).then((response) => {
+
+                    resolve(response);
+
+                }).catch((error) => {
+
+                    console.log("Error from insertUserAddress userHelper: ", error);
+
+                    reject(error);
+
+                });
+
+            } else { // If there is NO existing address collection for the user, create a collection with incoming address
+
+                addressData._id = new ObjectId();
+
+                addressData.dateOfCreation = new Date();
+
+                addressData.primaryAddress = true;
+
+                let userAddress = {
+
+                userId: userId,
+
+                address: [addressData]
+
+                };
+        
+                await db.get().collection(collections.USER_ADDRESS_COLLECTION).insertOne(userAddress).then((response) => {
+
+                    resolve(response);
+
+                }).catch((error) => {
+                    
+                    reject(error);
+
+                });
+
+            }
+
+        });
+
+    },
+    getUserAddress: (userId) => {
+
+        return new Promise(async (resolve, reject) => {
+
+          try {
+
+                const userAddressCollection = await db.get().collection(collections.USER_ADDRESS_COLLECTION).find({ userId: ObjectId(userId) });
+        
+                if (userAddressCollection) { // If there is an existing address collection for the user
+
+                    const addresses = await userAddressCollection.toArray();
+
+                    const addressArray = addresses.flatMap((address) => address.address);
+
+                    resolve(addressArray);
+
+                } else { // If there is NO existing address for the user
+
+                    resolve([]);
+
+                }
+
+            } catch (error) {
+
+                reject(error);
+
+            }
+
+        });
+
+    },
+    changePrimaryAddress: (userId, addressId) => {
+
+        return new Promise(async (resolve, reject) => {
+
+          try {
+
+                const query = { userId: userId, "address.primaryAddress": true };
+
+                const update = {$set: { "address.$.primaryAddress": false }};
+        
+                await db.get().collection(collections.USER_ADDRESS_COLLECTION).updateOne(query, update);
+        
+                const newQuery = { userId: ObjectId(userId), "address._id": ObjectId(addressId) };
+
+                const newUpdate = { $set: { "address.$.primaryAddress": true } };
+        
+                await db.get().collection(collections.USER_ADDRESS_COLLECTION).updateOne(newQuery, newUpdate);
+        
+                resolve({status : true});
+
+            } catch (error) {
+
+                console.log("Error from updatePrimaryAddress userHelper: ", error);
+
+                reject(error);
+            }
+
+        });
+
+    },
     getUserWalletData : (userId)=>{
         
         return new Promise( async (resolve,reject)=>{

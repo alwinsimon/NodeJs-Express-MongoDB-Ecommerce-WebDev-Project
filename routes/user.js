@@ -46,6 +46,15 @@ router.get('/profile/:id', verifyUserLogin, userController.userProfileGET);
 router.post('/update-my-profile', verifyUserLogin, userController.userProfileUpdateRequestPOST);
 
 
+/* ========================USER ADDRESS ROUTES======================== */
+
+router.get('/manage-my-address', verifyUserLogin, userController.manageUserAddressGET);
+
+router.post('/add-new-address', verifyUserLogin, userController.addNewAddressPOST);
+
+router.post('/update-user-primary-address', verifyUserLogin, userController.changePrimaryAddressPOST);
+
+
 /* ========================Single Product Page Route======================== */
 
 router.get('/product-details/:id', userController.singleProductPageGET);
