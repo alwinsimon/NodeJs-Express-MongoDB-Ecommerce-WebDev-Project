@@ -260,7 +260,7 @@ module.exports = {
 
           const userAddressCollection = await db.get().collection(collections.USER_ADDRESS_COLLECTION).findOne({ userId: ObjectId(userId) });
       
-            if (userAddressCollection) { // If there is a existing address collection for the user, add new address to it
+            if (userAddressCollection && userAddressCollection.address.length > 0) { // If there is a existing address collection for the user, add new address to it
 
                 addressData._id = new ObjectId();
 
@@ -286,7 +286,7 @@ module.exports = {
 
                 });
 
-            } else { // If there is NO existing address collection for the user, create a collection with incoming address
+            } else if( !userAddressCollection || userAddressCollection.address.length == 0){ // If there is NO existing address collection for the user, create a collection with incoming address
 
                 addressData._id = new ObjectId();
 
@@ -365,6 +365,63 @@ module.exports = {
                 const newUpdate = { $set: { "address.$.primaryAddress": true } };
         
                 await db.get().collection(collections.USER_ADDRESS_COLLECTION).updateOne(newQuery, newUpdate);
+        
+                resolve({status : true});
+
+            } catch (error) {
+
+                console.log("Error from updatePrimaryAddress userHelper: ", error);
+
+                reject(error);
+            }
+
+        });
+
+    },
+    editUserAddress: (userId, dataToUpdate) => {
+
+        return new Promise(async (resolve, reject) => {
+
+          try {
+
+                // Manipulating data before inserting to db to match the data typed in the db
+                dataToUpdate._id = ObjectId(dataToUpdate._id);
+                dataToUpdate.dateOfCreation = new Date();
+                if(dataToUpdate.primaryAddress === "true"){
+                    dataToUpdate.primaryAddress = true;
+                }else{
+                    dataToUpdate.primaryAddress = false;
+                }
+        
+                const query = { userId: ObjectId(userId), "address._id": ObjectId(dataToUpdate._id) };
+
+                const update = { $set: { "address.$": dataToUpdate } };
+        
+                await db.get().collection(collections.USER_ADDRESS_COLLECTION).updateOne(query, update);
+        
+                resolve({status : true});
+
+            } catch (error) {
+
+                console.log("Error from editUserAddress userHelper: ", error);
+
+                reject(error);
+            }
+
+        });
+
+    },
+    deleteUserAddress: (userId, addressId) => {
+
+        return new Promise(async (resolve, reject) => {
+
+          try {
+
+                const query = { userId: ObjectId(userId), "address._id": ObjectId(addressId) };
+
+                const matchAndDelete = { $pull: { address: { _id: ObjectId(addressId) } } };
+        
+                await db.get().collection(collections.USER_ADDRESS_COLLECTION).updateOne(query, matchAndDelete);
         
                 resolve({status : true});
 

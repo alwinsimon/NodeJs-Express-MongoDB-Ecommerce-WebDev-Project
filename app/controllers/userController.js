@@ -374,11 +374,11 @@ const editUserAddressPOST =  async (req, res) => {
 
   const userId = user._id;
 
-  const addressId = req.body.addressId;
+  const dataToUpdate = req.body;
 
-  await userHelpers.editUserAddress(userId,addressId).then((response)=>{
+  await userHelpers.editUserAddress(userId,dataToUpdate).then((response)=>{
 
-    res.json({status:true});
+    res.redirect('/manage-my-address')
 
   })
 

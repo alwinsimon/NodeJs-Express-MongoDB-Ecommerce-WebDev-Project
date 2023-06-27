@@ -253,6 +253,8 @@
 
 </section>
 
+{{!-- ===================================== USER ADDRESS DISPLAY CARDS ===================================== --}}
+
 <section class="p-lr-150 p-t-50">
   <div class="container">
 
@@ -280,21 +282,30 @@
               {{#if (not this.primaryAddress)}}
                 <div class="buttons">
                   <div class="container">
-                    <a onclick="makeThisAddressPrimary('{{this._id}}')" class="btn effect04" data-sm-link-text="Make Primary"target=""><span>Make Primary</span></a>
+                    <a onclick="makeThisAddressPrimary('{{this._id}}')" class="btn effect04" data-sm-link-text="Make Primary" target=""><span>Make Primary</span></a>
                   </div>
                 </div>
               {{/if}}
 
               <div class="buttons">
                 <div class="container">
-                  <a href="" class="btn effect04" data-sm-link-text="Edit Address" target=""><span>Edit
-                      Address</span></a>
+                  <a href="" class="btn effect04 edit-button" data-sm-link-text="Edit Address" data-toggle="modal" data-target="#edit-address-modal" 
+                    
+                    <a  class="btn effect04 edit-button" data-sm-link-text="Edit Address" data-toggle="modal" data-target="#edit-address-modal" 
+                      data-addressType="{{this.addressType}}"
+                      data-addressLine1="{{this.addressLine1}}" data-addressLine2="{{this.addressLine2}}" data-street="{{this.street}}"
+                      data-city="{{this.city}}" data-state="{{this.state}}" data-country="{{this.country}}"
+                      data-postalCode="{{this.postalCode}}" data-phoneNumber="{{this.contactNumber}}"
+                      data-uniqueaddressid="{{this._id}}" data-primaryaddress="{{this.primaryAddress}}" data-dateofcreation="{{this.dateOfCreation}}">
+                      <span>Edit Address</span>
+                    </a>
+              
                 </div>
               </div>
 
               <div class="buttons">
                 <div class="container">
-                  <a href="" class="btn effect04" data-sm-link-text="Delete Address" target=""><span>Delete
+                  <a onclick="deleteThisAddress('{{this._id}}')" class="btn effect04" data-sm-link-text="Delete Address" target=""><span>Delete
                       Address</span></a>
                 </div>
               </div>
@@ -423,25 +434,160 @@
 </section>
 
 
+<!-- ========================================= Modal for Editing Existing Address ========================================= -->
+
+<section>
+
+  <div class="modal fade p-t-60" id="edit-address-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Edit Address</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+      
+      
+        <form action="/edit-user-address" method="POST">
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressType">Address Type</label>
+              <input type="text" class="form-control" id="edit-addressType" name="addressType"
+                placeholder="e.g. Home, Work, Business" value="{{this.addressType}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressLine1">Address Line 1</label>
+              <input type="text" class="form-control" id="edit-addressLine1" name="addressLine1" placeholder="Address Line 1"
+                value="{{this.addressLine1}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressLine2">Address Line 2</label>
+              <input type="text" class="form-control" id="edit-addressLine2" name="addressLine2" placeholder="Address Line 2"
+                value="{{this.addressLine2}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="street">Street</label>
+              <input type="text" class="form-control" id="edit-street" name="street" placeholder="Street" value="{{this.street}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="city">City</label>
+              <input type="text" class="form-control" id="edit-city" name="city" placeholder="City" value="{{this.city}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="state">State</label>
+              <input type="text" class="form-control" id="edit-state" name="state" placeholder="State" value="{{this.state}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="country">Country</label>
+              <input type="text" class="form-control" id="edit-country" name="country" placeholder="Country" value="{{this.country}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="postalCode">Postal Code</label>
+              <input type="number" class="form-control" id="edit-postalCode" name="postalCode" placeholder="Postal Code" value="{{this.postalCode}}" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="postalCode">Contact Number</label>
+              <input type="number" class="form-control" id="edit-phoneNumber" name="contactNumber" placeholder="Contact Number" value="{{this.contactNumber}}" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="_id"></label>
+              <input type="text" class="form-control" id="edit-uniqueAddressId" name="_id" placeholder="addressId" value="{{this.uniqueAddressId}}" hidden required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="primaryaddress"></label>
+              <input type="text" class="form-control" id="edit-primaryAddress" name="primaryAddress" placeholder="primaryAddress" value="{{this.primaryAddress}}" hidden required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressId"></label>
+              <input type="text" class="form-control" id="edit-dateofcreation" name="dateOfCreation" placeholder="dateofcreation" value="{{this.dateofcreation}}" hidden required>
+            </div>
+          </div>
+      
+          <div class="modal-footer">
+      
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+      
+          </div>
+      
+        </form>
+      
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+
+
+
+
+
+
+
+{{!-- =================================== SCRIPTS =================================== --}}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
 
-    function makeThisAddressPrimary(addressId) {
+  function makeThisAddressPrimary(addressId) {
 
-      if (confirm(`Are you sure that you want to make this address as your primary address?`)) {
+    if (confirm(`Are you sure that you want to make this address as your primary address?`)) {
 
-        fetch('/update-user-primary-address', {
+      fetch('/update-user-primary-address', {
 
-          method: 'POST',
+        method: 'POST',
 
-          headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
 
-          body: JSON.stringify({
+        body: JSON.stringify({
 
-            addressId : addressId
-
-          })
+          addressId: addressId
 
         })
+
+      })
         .then(response => {
 
           if (response.status) {
@@ -460,16 +606,105 @@
         })
         .catch(error => {
 
-          console.error('Error updating primary address:', error);
+          console.error('Error IN DELETING address', error);
           /* This will be displayed on browser Console */
 
           location.reload();
 
-        }); 
-
-      }
+        });
 
     }
 
+  }
+
+
+  function deleteThisAddress(addressId) {
+
+    if (confirm(`Are you sure that you want to delete this address?`)) {
+
+      fetch('/delete-user-address', {
+
+        method: 'POST',
+
+        headers: { 'Content-Type': 'application/json' },
+
+        body: JSON.stringify({
+
+          addressId: addressId
+
+        })
+
+      })
+        .then(response => {
+
+          if (response.status) {
+
+            location.reload();
+
+          } else {
+
+            console.error('Error IN DELETING address');
+            /* This will be displayed on browser Console */
+
+            location.reload();
+
+          }
+
+        })
+        .catch(error => {
+
+          console.error('Error IN DELETING address', error);
+          /* This will be displayed on browser Console */
+
+          location.reload();
+
+        });
+
+    }
+
+  }
+
 </script>
 
+
+<script>
+
+  $(document).ready(function () {
+
+    // Getting the data from the address card when the edit button is clicked, this is saved into Data at the edit Address button
+
+    $('.edit-button').click(function () {
+
+      const addressType = $(this).data('addresstype');
+      const addressLine1 = $(this).data('addressline1');
+      const addressLine2 = $(this).data('addressline2');
+      const street = $(this).data('street');
+      const city = $(this).data('city');
+      const state = $(this).data('state');
+      const country = $(this).data('country');
+      const postalCode = $(this).data('postalcode');
+      const phoneNumber = $(this).data("phonenumber");
+      const id = $(this).data('uniqueaddressid');
+      const primaryAddress = $(this).data('primaryaddress');
+      const dateofcreation = $(this).data('dateofcreation');
+
+      // Passing the data to edit address modal when it is opened up
+
+      $('#edit-addressType').val(addressType);
+      $('#edit-addressLine1').val(addressLine1);
+      $('#edit-addressLine2').val(addressLine2);
+      $('#edit-street').val(street);
+      $('#edit-city').val(city);
+      $('#edit-state').val(state);
+      $('#edit-country').val(country);
+      $('#edit-postalCode').val(postalCode);
+      $('#edit-phoneNumber').val(phoneNumber);
+      $('#edit-uniqueAddressId').val(id);
+      $('#edit-primaryAddress').val(primaryAddress);
+      $('#edit-dateofcreation').val(dateofcreation);
+
+    });
+
+  });
+
+</script>
