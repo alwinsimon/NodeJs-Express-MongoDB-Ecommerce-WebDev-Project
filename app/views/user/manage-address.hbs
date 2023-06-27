@@ -1,0 +1,710 @@
+<!-- ====================== MANAGE ADDRESS Page ====================== -->
+
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap");
+
+  *,
+  *:after,
+  *:before {
+    box-sizing: border-box;
+  }
+
+  :root {
+    // Basic
+    --c-white: #fff;
+    --c-black: #000;
+
+    // Greys
+    --c-ash: #eaeef6;
+    --c-charcoal: #a0a0a0;
+    --c-void: #141b22;
+
+    // Beige/Browns
+    --c-fair-pink: #FFEDEC;
+    --c-apricot: #FBC8BE;
+    --c-coffee: #754D42;
+    --c-del-rio: #917072;
+
+    // Greens
+    --c-java: #1FCAC5;
+
+    // Purples
+    --c-titan-white: #f1eeff;
+    --c-cold-purple: #a69fd6;
+    --c-indigo: #6558d3;
+    --c-governor: #4133B7;
+  }
+
+  body {
+    font-family: "Spline Sans", sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+    background-color: var(--c-ash);
+  }
+
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.5rem;
+    width: 90%;
+    max-width: 1000px;
+    margin: 10vh auto;
+  }
+
+  .card {
+    border-radius: 16px;
+    box-shadow: 0 30px 30px -25px rgba(#4133B7, .25);
+    max-width: 300px;
+  }
+
+  .information {
+    background-color: var(--c-white);
+    padding: 1.5rem;
+
+    .tag {
+      display: inline-block;
+      background-color: var(--c-titan-white);
+      color: var(--c-indigo);
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.5em 0.75em;
+      line-height: 1;
+      border-radius: 6px;
+
+      &+* {
+        margin-top: 1rem;
+      }
+    }
+
+    .title {
+      font-size: 1.5rem;
+      color: var(--c-void);
+      line-height: 1.25;
+
+      &+* {
+        margin-top: 1rem;
+      }
+    }
+
+    .info {
+      color: var(--c-charcoal);
+
+      &+* {
+        margin-top: 1.25rem;
+      }
+    }
+
+    .custombutton {
+      font: inherit;
+      line-height: 1;
+      background-color: var(--c-white);
+      border: 2px solid var(--c-indigo);
+      color: var(--c-indigo);
+      padding: 0.5em 1em;
+      border-radius: 6px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+
+      &:hover,
+      &:focus {
+        background-color: var(--c-indigo);
+        color: var(--c-black);
+      }
+    }
+
+
+  }
+
+  .title {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--c-coffee);
+
+    &+* {
+      margin-top: .75rem;
+    }
+  }
+
+  .info {
+    &+* {
+      margin-top: 1rem;
+    }
+  }
+
+  custombutton {
+    font: inherit;
+    background-color: var(--c-indigo);
+    border-radius: 6px;
+    color: var(--c-white);
+    font-weight: 500;
+    font-size: 1.125rem;
+    width: 100%;
+    border: 0;
+    padding: 1em;
+
+    &:hover,
+    &:focus {
+      background-color: var(--c-governor);
+    }
+  }
+</style>
+
+{{!-- Style for Add Address button --}}
+
+<style>
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+  }
+
+  .btn {
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 30px;
+    max-width: 160px;
+    position: relative;
+    text-decoration: none;
+    text-transform: uppercase;
+    width: 100%;
+  }
+
+  .btn:hover {
+    text-decoration: none;
+  }
+
+  /*btn_background*/
+  .effect04 {
+    --uismLinkDisplay: var(--smLinkDisplay, inline-flex);
+    display: var(--uismLinkDisplay);
+    color: #6558d3;
+    outline: solid 2px #6558d3;
+    position: relative;
+    transition-duration: 0.4s;
+    overflow: hidden;
+  }
+
+  .effect04::before,
+  .effect04 span {
+    margin: 0 auto;
+    transition-timing-function: cubic-bezier(0.86, 0, 0.07, 1);
+    transition-duration: 0.4s;
+  }
+
+
+  .effect04:hover {
+
+    background-color: #6558d3;
+  }
+
+  /* HOVER */
+  .effect04:hover span {
+    -webkit-transform: translateY(-400%) scale(-0.1, 20);
+    transform: translateY(-400%) scale(-0.1, 20);
+  }
+
+  .effect04::before {
+    content: attr(data-sm-link-text);
+    color: #FFF;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    -webkit-transform: translateY(500%) scale(-0.1, 20);
+    transform: translateY(500%) scale(-0.1, 20);
+  }
+
+  /* HOVER */
+  .effect04:hover::before {
+    letter-spacing: 0.05em;
+    -webkit-transform: translateY(0) scale(1, 1);
+    transform: translateY(0) scale(1, 1);
+  }
+</style>
+
+<section class="bg-img1 txt-center p-lr-15 p-t-120 p-b-30">
+  <h2 class="ltext-108 cl2 txt-center">
+    Manage Address
+  </h2>
+</section>
+
+{{!-- Add New Address button --}}
+<section>
+
+  <div class="buttons">
+    <div class="container">
+      <a href="" class="btn effect04" data-sm-link-text="ADD NEW ADDRESS" data-toggle="modal"
+        data-target="#add-address-modal"><span>ADD ADDRESS</span></a>
+    </div>
+  </div>
+
+</section>
+
+{{!-- ===================================== USER ADDRESS DISPLAY CARDS ===================================== --}}
+
+<section class="p-lr-150 p-t-50">
+  <div class="container">
+
+    {{#if userAddress}}
+
+      <div class="row">
+
+        {{#each userAddress}}
+
+          <div class="col-md-3 p-b-20">
+            <article class="information card">
+              
+              {{#if this.primaryAddress}}
+                <div class="p-tb-2">
+                  <span class="badge badge-pill badge-success">Primary Address</span>
+                </div>
+              {{/if}}
+
+              <h6 class="title">{{this.addressType}}</h6>
+              <p class="info">{{this.addressLine1}}, {{this.addressLine2}}</p>
+              <p class="info">{{this.street}}, {{this.city}}</p>
+              <p class="info">{{this.state}}, {{this.country}}, PIN: {{this.postalCode}}</p>
+              <p class="info">Phone: {{this.contactNumber}}</p>
+
+              {{#if (not this.primaryAddress)}}
+                <div class="buttons">
+                  <div class="container">
+                    <a onclick="makeThisAddressPrimary('{{this._id}}')" class="btn effect04" data-sm-link-text="Make Primary" target=""><span>Make Primary</span></a>
+                  </div>
+                </div>
+              {{/if}}
+
+              <div class="buttons">
+                <div class="container">
+                  <a href="" class="btn effect04 edit-button" data-sm-link-text="Edit Address" data-toggle="modal" data-target="#edit-address-modal" 
+                    
+                    <a  class="btn effect04 edit-button" data-sm-link-text="Edit Address" data-toggle="modal" data-target="#edit-address-modal" 
+                      data-addressType="{{this.addressType}}"
+                      data-addressLine1="{{this.addressLine1}}" data-addressLine2="{{this.addressLine2}}" data-street="{{this.street}}"
+                      data-city="{{this.city}}" data-state="{{this.state}}" data-country="{{this.country}}"
+                      data-postalCode="{{this.postalCode}}" data-phoneNumber="{{this.contactNumber}}"
+                      data-uniqueaddressid="{{this._id}}" data-primaryaddress="{{this.primaryAddress}}" data-dateofcreation="{{this.dateOfCreation}}">
+                      <span>Edit Address</span>
+                    </a>
+              
+                </div>
+              </div>
+
+              <div class="buttons">
+                <div class="container">
+                  <a onclick="deleteThisAddress('{{this._id}}')" class="btn effect04" data-sm-link-text="Delete Address" target=""><span>Delete
+                      Address</span></a>
+                </div>
+              </div>
+
+            </article>
+          </div>
+
+        {{/each}}
+
+      </div>
+    
+    {{else}}
+
+      <h3 style="text-align: center;">Please add your address details for delivery.</h3>
+
+    {{/if}}
+
+  </div>
+</section>
+
+<section class="bg-img1 txt-center p-lr-15 p-tb-50"></section>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+<!-- ========================================= Modal for Adding New Address ========================================= -->
+
+<section>
+
+  <div class="modal fade p-t-60" id="add-address-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Hi {{userCollectionData.name}}, please add your new address below.</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+      
+      
+        <form action="/add-new-address" method="POST">
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressType">Address Type</label>
+              <input type="text" class="form-control" id="addressType" name="addressType"
+                placeholder="e.g. Home, Work, Business" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressLine1">Address Line 1</label>
+              <input type="text" class="form-control" id="addressLine1" name="addressLine1" placeholder="Address Line 1"
+                required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressLine2">Address Line 2</label>
+              <input type="text" class="form-control" id="addressLine2" name="addressLine2" placeholder="Address Line 2"
+                required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="street">Street</label>
+              <input type="text" class="form-control" id="street" name="street" placeholder="Street" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="city">City</label>
+              <input type="text" class="form-control" id="city" name="city" placeholder="City" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="state">State</label>
+              <input type="text" class="form-control" id="state" name="state" placeholder="State" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="country">Country</label>
+              <input type="text" class="form-control" id="country" name="country" placeholder="Country" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="postalCode">Postal Code</label>
+              <input type="number" class="form-control" id="postalCode" name="postalCode" placeholder="Postal Code" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="postalCode">Contact Number</label>
+              <input type="number" class="form-control" id="contactNumber" name="contactNumber" placeholder="Contact Number" required>
+            </div>
+          </div>
+      
+          <div class="modal-footer">
+      
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+      
+          </div>
+      
+        </form>
+      
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+
+<!-- ========================================= Modal for Editing Existing Address ========================================= -->
+
+<section>
+
+  <div class="modal fade p-t-60" id="edit-address-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Edit Address</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+      
+      
+        <form action="/edit-user-address" method="POST">
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressType">Address Type</label>
+              <input type="text" class="form-control" id="edit-addressType" name="addressType"
+                placeholder="e.g. Home, Work, Business" value="{{this.addressType}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressLine1">Address Line 1</label>
+              <input type="text" class="form-control" id="edit-addressLine1" name="addressLine1" placeholder="Address Line 1"
+                value="{{this.addressLine1}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressLine2">Address Line 2</label>
+              <input type="text" class="form-control" id="edit-addressLine2" name="addressLine2" placeholder="Address Line 2"
+                value="{{this.addressLine2}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="street">Street</label>
+              <input type="text" class="form-control" id="edit-street" name="street" placeholder="Street" value="{{this.street}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="city">City</label>
+              <input type="text" class="form-control" id="edit-city" name="city" placeholder="City" value="{{this.city}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="state">State</label>
+              <input type="text" class="form-control" id="edit-state" name="state" placeholder="State" value="{{this.state}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="country">Country</label>
+              <input type="text" class="form-control" id="edit-country" name="country" placeholder="Country" value="{{this.country}}" required>
+            </div>
+          </div>
+      
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="postalCode">Postal Code</label>
+              <input type="number" class="form-control" id="edit-postalCode" name="postalCode" placeholder="Postal Code" value="{{this.postalCode}}" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="postalCode">Contact Number</label>
+              <input type="number" class="form-control" id="edit-phoneNumber" name="contactNumber" placeholder="Contact Number" value="{{this.contactNumber}}" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="_id"></label>
+              <input type="text" class="form-control" id="edit-uniqueAddressId" name="_id" placeholder="addressId" value="{{this.uniqueAddressId}}" hidden required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="primaryaddress"></label>
+              <input type="text" class="form-control" id="edit-primaryAddress" name="primaryAddress" placeholder="primaryAddress" value="{{this.primaryAddress}}" hidden required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-6 mb-3">
+              <label for="addressId"></label>
+              <input type="text" class="form-control" id="edit-dateofcreation" name="dateOfCreation" placeholder="dateofcreation" value="{{this.dateofcreation}}" hidden required>
+            </div>
+          </div>
+      
+          <div class="modal-footer">
+      
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+      
+          </div>
+      
+        </form>
+      
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+</section>
+
+
+
+
+
+
+
+
+{{!-- =================================== SCRIPTS =================================== --}}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+  function makeThisAddressPrimary(addressId) {
+
+    if (confirm(`Are you sure that you want to make this address as your primary address?`)) {
+
+      fetch('/update-user-primary-address', {
+
+        method: 'POST',
+
+        headers: { 'Content-Type': 'application/json' },
+
+        body: JSON.stringify({
+
+          addressId: addressId
+
+        })
+
+      })
+        .then(response => {
+
+          if (response.status) {
+
+            location.reload();
+
+          } else {
+
+            console.error('Error updating primary address');
+            /* This will be displayed on browser Console */
+
+            location.reload();
+
+          }
+
+        })
+        .catch(error => {
+
+          console.error('Error IN DELETING address', error);
+          /* This will be displayed on browser Console */
+
+          location.reload();
+
+        });
+
+    }
+
+  }
+
+
+  function deleteThisAddress(addressId) {
+
+    if (confirm(`Are you sure that you want to delete this address?`)) {
+
+      fetch('/delete-user-address', {
+
+        method: 'POST',
+
+        headers: { 'Content-Type': 'application/json' },
+
+        body: JSON.stringify({
+
+          addressId: addressId
+
+        })
+
+      })
+        .then(response => {
+
+          if (response.status) {
+
+            location.reload();
+
+          } else {
+
+            console.error('Error IN DELETING address');
+            /* This will be displayed on browser Console */
+
+            location.reload();
+
+          }
+
+        })
+        .catch(error => {
+
+          console.error('Error IN DELETING address', error);
+          /* This will be displayed on browser Console */
+
+          location.reload();
+
+        });
+
+    }
+
+  }
+
+</script>
+
+
+<script>
+
+  $(document).ready(function () {
+
+    // Getting the data from the address card when the edit button is clicked, this is saved into Data at the edit Address button
+
+    $('.edit-button').click(function () {
+
+      const addressType = $(this).data('addresstype');
+      const addressLine1 = $(this).data('addressline1');
+      const addressLine2 = $(this).data('addressline2');
+      const street = $(this).data('street');
+      const city = $(this).data('city');
+      const state = $(this).data('state');
+      const country = $(this).data('country');
+      const postalCode = $(this).data('postalcode');
+      const phoneNumber = $(this).data("phonenumber");
+      const id = $(this).data('uniqueaddressid');
+      const primaryAddress = $(this).data('primaryaddress');
+      const dateofcreation = $(this).data('dateofcreation');
+
+      // Passing the data to edit address modal when it is opened up
+
+      $('#edit-addressType').val(addressType);
+      $('#edit-addressLine1').val(addressLine1);
+      $('#edit-addressLine2').val(addressLine2);
+      $('#edit-street').val(street);
+      $('#edit-city').val(city);
+      $('#edit-state').val(state);
+      $('#edit-country').val(country);
+      $('#edit-postalCode').val(postalCode);
+      $('#edit-phoneNumber').val(phoneNumber);
+      $('#edit-uniqueAddressId').val(id);
+      $('#edit-primaryAddress').val(primaryAddress);
+      $('#edit-dateofcreation').val(dateofcreation);
+
+    });
+
+  });
+
+</script>
