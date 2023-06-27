@@ -230,6 +230,8 @@ const userProfileGET =  async (req, res) => {
   const cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
   const ordersCount = await userHelpers.getOrdersCount(req.session.userSession._id);
+
+  const primaryAddress = await userHelpers.getUserPrimaryAddress(req.session.userSession._id);
   
   userHelpers.getUserData(userId).then((userDataFromDb)=>{
 
@@ -239,7 +241,17 @@ const userProfileGET =  async (req, res) => {
 
       const userWalletData = walletData;
 
-      res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount });
+      if(primaryAddress){
+
+        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount, primaryAddress });
+
+      }else{
+
+        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount });
+
+      }
+
+      
 
     })
 

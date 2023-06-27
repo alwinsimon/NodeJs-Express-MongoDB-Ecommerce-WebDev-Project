@@ -348,6 +348,40 @@ module.exports = {
         });
 
     },
+    getUserPrimaryAddress: (userId) => {
+
+        return new Promise(async (resolve, reject) => {
+
+          try {
+
+            const userAddressCollection = db.get().collection(collections.USER_ADDRESS_COLLECTION);
+
+            const userAddress = await userAddressCollection.findOne({ userId: ObjectId(userId) });
+      
+            if (userAddress) { // If there is an existing address collection for the user
+
+              const addresses = userAddress.address;
+      
+              // Find the address object with primaryAddress set to true
+              const primaryAddress = addresses.find((address) => address.primaryAddress === true);
+      
+              resolve(primaryAddress);
+
+            } else { // If there is NO existing address for the user
+
+              resolve(false);
+
+            }
+
+          } catch (error) {
+
+            reject(error);
+
+          }
+
+        });
+
+    },
     changePrimaryAddress: (userId, addressId) => {
 
         return new Promise(async (resolve, reject) => {
