@@ -412,28 +412,51 @@ module.exports = {
 
     },
     deleteUserAddress: (userId, addressId) => {
-
         return new Promise(async (resolve, reject) => {
-
           try {
-
-                const query = { userId: ObjectId(userId), "address._id": ObjectId(addressId) };
-
-                const matchAndDelete = { $pull: { address: { _id: ObjectId(addressId) } } };
-        
-                await db.get().collection(collections.USER_ADDRESS_COLLECTION).updateOne(query, matchAndDelete);
-        
-                resolve({status : true});
-
-            } catch (error) {
-
-                console.log("Error from updatePrimaryAddress userHelper: ", error);
-
-                reject(error);
+            const addressCollection = db.get().collection(collections.USER_ADDRESS_COLLECTION);
+      
+            const userQuery = { userId: ObjectId(userId) };
+            const userAddress = await addressCollection.findOne(userQuery);
+      
+            const addressIndex = userAddress.address.findIndex(
+              (address) => address._id.toString() === addressId
+            );
+      
+            if (addressIndex !== -1) {
+              const isPrimaryAddress = userAddress.address[addressIndex].primaryAddress;
+      
+              // If the address being deleted is the primary address
+              if (isPrimaryAddress) {
+                // Check if there are other addresses
+                if (userAddress.address.length > 1) {
+                  // Find the first non-deleted address and update it as the new primary address
+                  const newPrimaryAddressIndex = userAddress.address.findIndex(
+                    (address, index) => index !== addressIndex
+                  );
+      
+                  userAddress.address[newPrimaryAddressIndex].primaryAddress = true;
+                }
+              }
+      
+              // Remove the address being deleted from the address array
+              userAddress.address.splice(addressIndex, 1);
+      
+              const updateQuery = {
+                $set: {
+                  address: userAddress.address,
+                },
+              };
+      
+              await addressCollection.updateOne(userQuery, updateQuery);
             }
-
+      
+            resolve({ status: true });
+          } catch (error) {
+            console.log("Error from deleteUserAddress userHelper: ", error);
+            reject(error);
+          }
         });
-
     },
     getUserWalletData : (userId)=>{
         
