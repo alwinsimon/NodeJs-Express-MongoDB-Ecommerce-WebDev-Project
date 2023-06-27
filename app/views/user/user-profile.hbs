@@ -2066,8 +2066,8 @@
                         </div>
                         <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
                             <div class="d-flex justify-content-between">
-                                <a href="#" class="btn btn-sm btn-info mr-4"></a>
-                                <a href="#" class="btn btn-sm btn-default float-right"></a>
+                                <a href="/orders" class="btn btn-sm btn-info mr-4">Orders</a>
+                                <a href="/manage-my-address" class="btn btn-sm btn-default float-right">Address</a>
                             </div>
                         </div>
                         <div class="card-body pt-0 pt-md-4">
@@ -2192,7 +2192,8 @@
                                 </div>
 
                                 <hr class="my-4">
-                                <!-- Address -->
+
+                                <!-- ============================= Address ============================= -->
                                 <h6 class="heading-small text-muted mb-4">Primary Address</h6>
                                 <div class="pl-lg-4">
                                     <div class="row">
@@ -2201,7 +2202,7 @@
                                                 <label class="form-control-label" for="input-address">Address Line
                                                     1</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{userAddress.addressLine1}}</span>
+                                                    readonly>{{primaryAddress.addressLine1}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -2211,7 +2212,7 @@
                                                 <label class="form-control-label" for="input-address">Address Line
                                                     2</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{userAddress.addressLine2}}</span>
+                                                    readonly>{{primaryAddress.addressLine2}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -2220,28 +2221,28 @@
                                             <div class="form-group focused">
                                                 <label class="form-control-label" for="input-city">Street</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{userAddress.street}}</span>
+                                                    readonly>{{primaryAddress.street}}</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="form-group focused">
                                                 <label class="form-control-label" for="input-country">City</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{userAddress.city}}</span>
+                                                    readonly>{{primaryAddress.city}}</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="form-group focused">
                                                 <label class="form-control-label" for="input-country">State</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{userAddress.state}}</span>
+                                                    readonly>{{primaryAddress.state}}</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="form-group focused">
                                                 <label class="form-control-label" for="input-country">Country</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{userAddress.country}}</span>
+                                                    readonly>{{primaryAddress.country}}</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
@@ -2249,7 +2250,7 @@
                                                 <label class="form-control-label" for="input-country">Postal
                                                     code</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{userAddress.postalNumber}}</span>
+                                                    readonly>{{primaryAddress.postalCode}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -2257,7 +2258,7 @@
                                     <br>
 
                                     <div class="col-4 text-left">
-                                        <a href="#!" class="btn btn-sm btn-info">Manage Addresses</a>
+                                        <a href="/manage-my-address" class="btn btn-sm btn-info">Manage Addresses</a>
                                     </div>
 
                                 </div>

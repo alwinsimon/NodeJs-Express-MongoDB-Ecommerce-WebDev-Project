@@ -230,6 +230,8 @@ const userProfileGET =  async (req, res) => {
   const cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
   const ordersCount = await userHelpers.getOrdersCount(req.session.userSession._id);
+
+  const primaryAddress = await userHelpers.getUserPrimaryAddress(req.session.userSession._id);
   
   userHelpers.getUserData(userId).then((userDataFromDb)=>{
 
@@ -239,7 +241,17 @@ const userProfileGET =  async (req, res) => {
 
       const userWalletData = walletData;
 
-      res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount });
+      if(primaryAddress){
+
+        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount, primaryAddress });
+
+      }else{
+
+        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount });
+
+      }
+
+      
 
     })
 
@@ -297,6 +309,124 @@ const userProfileUpdateRequestPOST =  async (req, res) => {
 
 }
 
+
+/* ======================== USER ADDRESS Controllers ======================== */
+
+const manageUserAddressGET =  async (req, res) => {
+
+  try {
+   
+    const user = req.session.userSession;
+
+    const userId = user._id;
+
+    const userCollectionData = await userHelpers.getUserData(userId);
+
+    const cartCount = await userHelpers.getCartCount(userId);
+
+    const userAddress = await userHelpers.getUserAddress(userId);
+
+    if (userAddress && userAddress.length > 0){
+
+      res.render('user/manage-address', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, cartCount, userAddress });
+
+    } else {
+
+      res.render('user/manage-address', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, cartCount });
+
+    }
+
+  } catch (error) {
+    
+    throw new Error(error);
+
+  }  
+
+}
+
+const addNewAddressPOST =  async (req, res) => {
+
+  const user = req.session.userSession;
+
+  const userId = user._id;
+
+  const addressData = {
+
+    addressType : req.body.addressType,
+
+    addressLine1 : req.body.addressLine1,
+
+    addressLine2 : req.body.addressLine2,
+
+    street : req.body.street,
+
+    city : req.body.city,
+
+    state : req.body.state,
+
+    country  : req.body.country,
+
+    postalCode : req.body.postalCode,
+
+    contactNumber : req.body.contactNumber
+
+  }
+
+  userHelpers.insertUserAddress(userId,addressData).then((response)=>{
+
+    res.redirect('/manage-my-address');
+
+  })
+
+}
+
+const editUserAddressPOST =  async (req, res) => {
+
+  const user = req.session.userSession;
+
+  const userId = user._id;
+
+  const dataToUpdate = req.body;
+
+  await userHelpers.editUserAddress(userId,dataToUpdate).then((response)=>{
+
+    res.redirect('/manage-my-address')
+
+  })
+
+}
+
+const deleteUserAddressPOST =  async (req, res) => {
+
+  const user = req.session.userSession;
+
+  const userId = user._id;
+
+  const addressId = req.body.addressId;
+
+  await userHelpers.deleteUserAddress(userId,addressId).then((response)=>{
+
+    res.json({status:true});
+
+  })
+
+}
+
+const changePrimaryAddressPOST =  async (req, res) => {
+
+  const user = req.session.userSession;
+
+  const userId = user._id;
+
+  const addressId = req.body.addressId;
+
+  await userHelpers.changePrimaryAddress(userId,addressId).then((response)=>{
+
+    res.json({status:true});
+
+  })
+
+}
 
 /* ========================Single Product Page Controller======================== */
 
@@ -732,6 +862,11 @@ module.exports = {
   verifyUserSignUpPOST,
   userProfileGET,
   userProfileUpdateRequestPOST,
+  manageUserAddressGET,
+  addNewAddressPOST,
+  changePrimaryAddressPOST,
+  editUserAddressPOST,
+  deleteUserAddressPOST,
   singleProductPageGET,
   cartGET,
   emptyCartGET,
