@@ -1,79 +1,386 @@
-<div
-    style="width: 80%; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
-    <h1 style="font-size: 24px; text-align: center;">Place Order</h1>
-
-    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
-
-        <form id="checkout-form">
-
-            <div style="flex: 1; padding-right: 20px;">
 
 
-                <h4>Delivery Details</h4>
-                <hr>
+<section class="p-t-70 p-b-50">
 
-                <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;">Name:</label>
-                <input type="text" id="name" name="name" required
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+    <style>
+    
+        .shop {
+            font-size: 10px;
+        }
+    
+        .space {
+            letter-spacing: 0.8px !important;
+        }
+    
+        .second a:hover {
+            color: rgb(92, 92, 92);
+        }
+    
+        .active-2 {
+            color: rgb(92, 92, 92)
+        }
+    
+    
+        .breadcrumb>li+li:before {
+            content: "" !important
+        }
+    
+        .breadcrumb {
+            padding: 0px;
+            font-size: 10px;
+            color: #717fe0 !important;
+        }
+    
+        .first {
+            background-color: white;
+        }
+    
+        a {
+            text-decoration: none !important;
+            color: #aaa;
+        }
+    
+        .btn-lg,
+        .form-control-sm:focus,
+        .form-control-sm:active,
+        a:focus,
+        a:active {
+            outline: none !important;
+            box-shadow: none !important
+        }
+    
+        .form-control-sm:focus {
+            border: 1.5px solid #4bb8a9;
+        }
+    
+        .btn-group-lg>.btn,
+        .btn-lg {
+            padding: .5rem 0.1rem;
+            font-size: 1rem;
+            border-radius: 0;
+            color: white !important;
+            background-color: #717fe0;
+            height: 2.8rem !important;
+            border-radius: 0.2rem !important;
+        }
+    
+        .btn-group-lg>.btn:hover,
+        .btn-lg:hover {
+            background-color: #717fe0;
+        }
+    
+        .btn-outline-primary {
+            background-color: #717fe0 !important;
+            color: #ffffff !important;
+            border-radius: 0.2rem !important;
+            border: 1px solid #717fe0;
+        }
+    
+        .btn-outline-primary:hover {
+            background-color: #21b503 !important;
+            color: #fff !important;
+            border: 1px solid #717fe0;
+        }
+    
+        .card-2 {
+            margin-top: 40px !important;
+        }
+    
+        .card-header {
+            background-color: #fff;
+            border-bottom: 0px solid #aaaa !important;
+        }
+    
+        p {
+            font-size: 13px;
+        }
+    
+        .small {
+            font-size: 9px !important;
+        }
+    
+        .form-control-sm {
+            height: calc(2.2em + .5rem + 2px);
+            font-size: .875rem;
+            line-height: 1.5;
+            border-radius: 0;
+        }
+    
+        .cursor-pointer {
+            cursor: pointer;
+        }
+    
+        .boxed {
+            padding: 0px 8px 0 8px;
+            background-color: #717fe0;
+            color: white;
+        }
+    
+        .boxed-1 {
+            padding: 0px 8px 0 8px;
+            color: black !important;
+            border: 1px solid #aaaa;
+        }
+    
+        .bell {
+            opacity: 0.5;
+            cursor: pointer;
+        }
+    
+        @media (max-width: 767px) {
+            .breadcrumb-item+.breadcrumb-item {
+                padding-left: 0
+            }
+        }
 
-                <label for="address" style="font-weight: bold; display: block; margin-bottom: 5px;">Address:</label>
-                <input type="text" id="address" name="address" required
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+    </style>
 
-                <label for="mobile" style="font-weight: bold; display: block; margin-bottom: 5px;">Mobile:</label>
-                <input type="tel" id="mobile" name="mobile" required
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
 
-                <label for="email" style="font-weight: bold; display: block; margin-bottom: 5px;">Email:</label>
-                <input type="email" id="email" name="email" required
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-                <label for="pin" style="font-weight: bold; display: block; margin-bottom: 5px;">Pin:</label>
-                <input type="text" id="pin" name="pin" required
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+    
 
+    <div class=" container-fluid my-5 ">
+
+        <div class="row justify-content-center ">
+
+            <div class="col-xl-10">
+
+                <div class="card shadow-lg ">
+
+
+                    <div class="row p-2 mt-3 justify-content-between mx-sm-2">
+
+                        <div class="col">
+                            <div class="row justify-content-center text-center ">
+                                <div class="col">
+                                    <h3>Order Summary</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-auto">
+                            <img class="irc_mi img-fluid bell" src="https://i.imgur.com/uSHMClk.jpg" width="30" height="30"  >
+                        </div>
+
+                    </div>
+
+                    {{!-- ====================== Breadcrump ====================== --}}
+                    <div class="row  mx-auto justify-content-center text-center">
+
+                        <div class="col-12 mt-3 ">
+
+                            <nav aria-label="breadcrumb" class="second ">
+                                <ol class="breadcrumb indigo lighten-6 first ">
+                                    <li class="breadcrumb-item font-weight-bold "><a class="black-text text-uppercase " href="/"><span class="mr-md-3 mr-1" style="color: #717fe0;" >Products</span></a><i class="fa fa-angle-double-right " aria-hidden="true"></i></li>
+                                    <li class="breadcrumb-item font-weight-bold"><a class="black-text text-uppercase" href="/cart"><span class="mr-md-3 mr-1" style="color: #717fe0;" >My Cart</span></a><i class="fa fa-angle-double-right text-uppercase " aria-hidden="true"></i></li>
+                                    <li class="breadcrumb-item font-weight-bold"><a class="black-text text-uppercase active-2" href="/place-order"><span class="mr-md-3 mr-1" style="color: #717fe0;" >CHECKOUT</span></a></li>
+                                </ol>
+                            </nav>
+
+                        </div>
+
+                    </div>
+                
+                    <div class="row justify-content-around">
+
+                        <div class="col-md-5">
+
+                            <div class="card border-0">
+
+                                <div class="card-header pb-0">
+                                    <h2 class="card-title space ">Checkout</h2>
+                                    <hr class="my-0">
+                                </div>
+
+                                <div class="card-body">
+
+                                    <div class="row mt-4">
+                                        <div class="col">
+                                            <p class="text-muted mb-2">Delivery Details</p>
+                                            <hr class="mt-0">
+                                        </div>
+                                    </div>
+
+                                    {{#if primaryAddress}}
+
+                                        <div class="row justify-content-between">
+                                            <div class="col-auto mt-0"><p>Delivering to your <b>{{primaryAddress.addressType}}</b> Address : </p></div>
+                                        </div>
+
+                                        <div class="row justify-content-between">
+                                            <div class="col-auto mt-0"><p>{{primaryAddress.addressLine1}},</p></div>
+                                        </div>
+
+                                        <div class="row justify-content-between">
+                                            <div class="col-auto mt-0"><p>{{primaryAddress.addressLine2}},</p></div>
+                                        </div>
+
+                                        <div class="row justify-content-between">
+                                            <div class="col-auto mt-0">
+                                                <p>
+                                                    {{primaryAddress.street}},
+                                                    {{primaryAddress.city}},
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row justify-content-between">
+                                            <div class="col-auto mt-0">
+                                                <p>
+                                                    {{primaryAddress.state}},
+                                                    {{primaryAddress.country}},
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row justify-content-between">
+                                            <div class="col-auto mt-0"><p>PIN: {{primaryAddress.postalCode}},</p></div>
+                                        </div>
+
+                                        <div class="row justify-content-between">
+                                            <div class="col-auto mt-0"><p>Contact Number: {{primaryAddress.contactNumber}}</p></div>
+                                        </div>
+
+                                    {{else}}
+
+                                        <p style="color: red;"><i>You have no address saved yet, please add a new address to proceed check-out</i></p>
+
+                                        <div class="row mb-md-5">
+                                            <div class="col">
+                                                <div class="col-md-7 col-lg-6 mx-auto">
+                                                    <a href="/manage-my-address" class="btn btn-block btn-outline-primary btn-lg" >Add Address</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    {{/if}}
+
+                                    
+
+                                    <div class="row mb-md-5">
+                                        <div class="col">
+                                            <div class="col-md-7 col-lg-6 mx-auto"><button type="button" class="btn btn-block btn-outline-primary btn-lg">Change Address</button></div>
+                                        </div>
+                                    </div>  
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-5">
+                            <div class="card border-0 ">
+                                <div class="card-header card-2">
+                                    <p class="card-text text-muted mt-md-4  mb-2 space">YOUR ORDER <a href="/cart"><span class=" small text-muted ml-2 cursor-pointer" style="color: #717fe0;">MODIFY SHOPPING CART</span></a> </p>
+                                    <hr class="my-2">
+                                </div>
+                                <div class="card-body pt-0">
+
+                                    {{#each cartProducts}}
+                                    <div class="row  justify-content-between">
+                                        <div class="col-auto col-md-7">
+                                            <div class="media flex-column flex-sm-row">
+                                                <img class=" img-fluid" src="/product-images/{{this.product._id}}.jpg" width="62" height="62">
+                                                <div class="media-body  my-auto">
+                                                    <div class="row ">
+                                                        <div class="col-auto"><p class="mb-0"><b>{{this.product.name}}</b></p><small class="text-muted">{{this.product.description}}</small></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class=" pl-0 flex-sm-col col-auto  my-auto"> <p class="boxed">{{this.quantity}}</p></div>
+                                        <div class=" pl-0 flex-sm-col col-auto  my-auto "><p><b> x {{this.product.price}} = {{this.productTotal}}</b></p></div>
+                                    </div>
+                                    <hr class="my-2">
+                                    {{/each}}
+
+                                    {{!-- ================================ COUPON ================================ --}}
+
+                                    <div class="row mt-4">
+                                        <div class="col"><p class="text-muted mb-2">Coupons</p><hr class="mt-0"></div>
+                                    </div>
+
+                                    <form action="">
+
+                                        <div class="form-group">
+
+                                            <input type="text" class="form-control form-control-sm" name="couponCodeFromUser" id="couponCodeFromUser" aria-describedby="helpId" placeholder="Enter the coupon code here.">
+
+                                            {{#if couponApplied}}
+
+                                                <p style="color: #21b503;"><b>Coupon Applied Succesfully</b></p>
+
+                                            {{else if couponNotValid}}
+
+                                                <p style="color: red;"><b>Invalid Coupon</b></p>
+
+                                            {{/if}}
+
+                                        </div>
+
+                                        {{#if validCoupon}}
+
+                                            <div class="row mb-1 mt-1">
+
+                                                <div class="col-md-7 col-lg-6 mx-auto justify-content-between text-center">
+
+                                                    <p style="color: #21b503;"><b>Coupon Applied to the order</b></p>
+
+                                                </div>
+
+                                            </div>
+                                        
+                                        {{/if}}
+
+                                        <div class="row mb-1 mt-1">
+                                            <div class="col-md-7 col-lg-6 mx-auto justify-content-between text-center">
+                                                <button type="button" class="btn btn-outline-primary">Add Coupon</button>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                    
+                                    <hr>
+
+                                    <div class="row ">
+                                        <div class="col">
+                                            <div class="row justify-content-between">
+                                                <div class="col-4"><p class="mb-1"><b>Order Value:</b></p></div>
+                                                <div class="flex-sm-col col-auto"><p class="mb-1"><b>₹ 000</b></p></div>
+                                            </div>
+                                            <div class="row justify-content-between">
+                                                <div class="col"><p class="mb-1"><b>Coupon Discounts:</b></p></div>
+                                                <div class="flex-sm-col col-auto"><p class="mb-1"><b>₹ 000</b></p></div>
+                                            </div>
+                                            <div class="row justify-content-between">
+                                                <div class="col"><p class="mb-1"><b>Offer Discounts:</b></p></div>
+                                                <div class="flex-sm-col col-auto"><p class="mb-1"><b>₹ 000</b></p></div>
+                                            </div>
+                                            <div class="row justify-content-between">
+                                                <div class="col-4"><p ><b>Total Amount:</b></p></div>
+                                                <div class="flex-sm-col col-auto"><p  class="mb-1"><b>₹ 000</b></p> </div>
+                                            </div><hr class="my-0">
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div style="flex: 1; padding-left: 20px;">
-                <h2 style="margin-top: 0;">Order Summary</h2>
-
-                <hr>
-
-                {{#each cartProducts}}
-
-                <p>{{this.product.name}} - {{this.quantity}} item</p>
-
-                {{/each}}
-
-                <hr>
-
-                <p>Total Order Amount:</p>
-                <h6>{{cartValue}}</h6>
-
-                <hr>
-
-                <h4>Payment Methods</h4>
-
-                <label>
-                    <input type="radio" name="payment-method" value="COD" required> Cash on Delivery (COD)
-                </label>
-                <label>
-                    <input type="radio" name="payment-method" value="ONLINE" required> Online Payment
-                </label>
-
-                <button type="button" id="checkout-button"
-                    style="background-color: #4CAF50; color: #fff; border: none; padding: 10px 20px; border-radius: 3px; font-size: 16px; cursor: pointer; margin-top: 20px; width: 100%;">Checkout</button>
-
-            </div>
-
-        </form>
+        </div>
 
     </div>
-</div>
 
 
-{{!-- Script for using Razorpay Payment gateway functions --}}
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</section>
 
 
-{{!-- Script for Ajax call for making payments when check-out button is clicked is defined in the common script.js file and hence will be loaded from there --}}
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
