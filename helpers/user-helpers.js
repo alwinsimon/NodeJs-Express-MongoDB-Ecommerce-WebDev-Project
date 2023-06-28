@@ -637,69 +637,46 @@ module.exports = {
 
         })
     },
-    getCartProducts:(userId)=>{
+    getCartProducts: (userId) => {
 
-        return new Promise(async (resolve,reject)=>{
+        return new Promise(async (resolve, reject) => {
 
-            let cartItems = await db.get().collection(collections.CART_COLLECTION).aggregate([
+          let cartItems = await db.get().collection(collections.CART_COLLECTION).aggregate([
+
+                {$match: { user: ObjectId(userId) }},
+
+                {$unwind: '$products'},
+
+                {$project: {item: '$products.item', quantity: '$products.quantity'}},
                 
-                {
-
-                    $match:{user:ObjectId(userId)}
-
-                },
-                {
-
-                    $unwind:'$products'
-
-                },
-                {
-
-                    $project:{
-
-                        item:'$products.item',
-
-                        quantity:'$products.quantity'
-
+                {$lookup: 
+                    {
+                        from: collections.PRODUCT_COLLECTION,
+                        localField: 'item',
+                        foreignField: '_id',
+                        as: 'product'
                     }
-
                 },
-                {
 
-                    $lookup:{
-
-                        from:collections.PRODUCT_COLLECTION,
-
-                        localField:'item',
-
-                        foreignField:'_id',
-
-                        as:'product'
-
+                {$project: 
+                    {
+                        item: 1,
+                        quantity: 1,
+                        product: { $arrayElemAt: ['$product', 0] }
                     }
-
                 },
-                {
 
-                    $project:{
-
-                        item:1,
-
-                        quantity:1,
-
-                        product:{$arrayElemAt:['$product',0]}
-
-                    }
-
+                {$addFields: 
+                    {productTotal: {$multiply: [ { $toInt: '$quantity' }, { $toInt: '$product.price' } ] } } 
                 }
 
-            ]).toArray()
+            ]).toArray();
+      
+          // console.log(cartItems);
 
-            // console.log(cartItems);
+          resolve(cartItems);
 
-            resolve(cartItems);
- 
-        })
+        });
 
     },
     getCartCount:(userId)=>{

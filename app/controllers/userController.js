@@ -328,11 +328,11 @@ const manageUserAddressGET =  async (req, res) => {
 
     if (userAddress && userAddress.length > 0){
 
-      res.render('user/manage-address', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, cartCount, userAddress });
+      res.render('user/manage-address', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Manage Address", PLATFORM_NAME, admin:false, user, userCollectionData, cartCount, userAddress });
 
     } else {
 
-      res.render('user/manage-address', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, cartCount });
+      res.render('user/manage-address', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Manage Address", PLATFORM_NAME, admin:false, user, userCollectionData, cartCount });
 
     }
 
@@ -578,9 +578,9 @@ const deleteCartProductPOST = (req,res,next)=>{
 
 const userOrdersGET = async (req,res)=>{
 
-  let user = req.session.userSession // Used for storing user details for further use in this route
+  const user = req.session.userSession // Used for storing user details for further use in this route
 
-  let orderDetails = await userHelpers.getUserOrderHistory(user._id);
+  const orderDetails = await userHelpers.getUserOrderHistory(user._id);
 
   // console.log(orderDetails);
 
@@ -614,17 +614,25 @@ const placeOrderGET = async (req,res)=>{
 
   cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
+  const primaryAddress = await userHelpers.getUserPrimaryAddress(user._id);
+
   if(cartCount > 0){
 
     let cartProducts = await userHelpers.getCartProducts(user._id);
 
     let cartValue = await userHelpers.getCartValue(user._id);
 
-    // console.log(cartProducts);
+    const primaryAddress = await userHelpers.getUserPrimaryAddress(user._id);
 
-    // console.log(cartValue);
+    if(primaryAddress){
 
-    res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue});
+      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, primaryAddress});
+
+    }else{
+
+      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue});
+
+    }
 
   }else{
 
