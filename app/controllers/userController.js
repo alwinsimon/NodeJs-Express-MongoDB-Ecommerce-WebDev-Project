@@ -622,15 +622,17 @@ const placeOrderGET = async (req,res)=>{
 
     let cartValue = await userHelpers.getCartValue(user._id);
 
+    const userAddress = await userHelpers.getUserAddress(user._id);
+    
     const primaryAddress = await userHelpers.getUserPrimaryAddress(user._id);
 
     if(primaryAddress){
 
-      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, primaryAddress});
+      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, primaryAddress});
 
     }else{
 
-      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue});
+      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue,userAddress});
 
     }
 
