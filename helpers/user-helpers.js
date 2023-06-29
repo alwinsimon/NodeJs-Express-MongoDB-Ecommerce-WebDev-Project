@@ -258,35 +258,65 @@ module.exports = {
 
         return new Promise(async (resolve, reject) => {
 
-          const userAddressCollection = await db.get().collection(collections.USER_ADDRESS_COLLECTION).findOne({ userId: ObjectId(userId) });
+            const userAddressCollection = await db.get().collection(collections.USER_ADDRESS_COLLECTION).findOne({ userId: ObjectId(userId) });
       
-            if (userAddressCollection && userAddressCollection.address.length > 0) { // If there is a existing address collection for the user, add new address to it
+            if (userAddressCollection != null) { // If there is a existing address collection for the user, add new address to it
 
-                addressData._id = new ObjectId();
+                if(userAddressCollection.address.length > 0){
 
-                addressData.dateOfCreation = new Date();
+                    addressData._id = new ObjectId();
 
-                addressData.primaryAddress = false;
+                    addressData.dateOfCreation = new Date();
 
-                await db.get().collection(collections.USER_ADDRESS_COLLECTION).updateOne(
+                    addressData.primaryAddress = false;
 
-                    { userId: userId },
+                    await db.get().collection(collections.USER_ADDRESS_COLLECTION).updateOne(
 
-                    {$push: {address: addressData}}
+                        { userId: userId },
 
-                ).then((response) => {
+                        {$push: {address: addressData}}
 
-                    resolve(response);
+                    ).then((response) => {
 
-                }).catch((error) => {
+                        resolve(response);
 
-                    console.log("Error from insertUserAddress userHelper: ", error);
+                    }).catch((error) => {
 
-                    reject(error);
+                        console.log("Error from insertUserAddress userHelper: ", error);
 
-                });
+                        reject(error);
 
-            } else if( !userAddressCollection || userAddressCollection.address.length == 0){ // If there is NO existing address collection for the user, create a collection with incoming address
+                    });
+
+                }else{
+
+                    addressData._id = new ObjectId();
+
+                    addressData.dateOfCreation = new Date();
+
+                    addressData.primaryAddress = true;
+
+                    await db.get().collection(collections.USER_ADDRESS_COLLECTION).updateOne(
+
+                        { userId: userId },
+
+                        {$push: {address: addressData}}
+
+                    ).then((response) => {
+
+                        resolve(response);
+
+                    }).catch((error) => {
+
+                        console.log("Error from insertUserAddress userHelper: ", error);
+
+                        reject(error);
+
+                    });
+
+                }
+
+            } else if( userAddressCollection == null){ // If there is NO existing address collection for the user, create a collection with incoming address
 
                 addressData._id = new ObjectId();
 
