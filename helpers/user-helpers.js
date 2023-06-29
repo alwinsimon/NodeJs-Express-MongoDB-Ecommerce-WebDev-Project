@@ -979,15 +979,25 @@ module.exports = {
 
             deliveryDetails:{
 
-                name:orderData.name,
+                addressId:ObjectId(orderData.addressId),
 
-                address:orderData.address,
+                addressType:orderData.addressType,
 
-                pincode:orderData.pin,
+                addressLine1:orderData.addressLine1,
 
-                mobile:orderData.mobile,
+                addressLine2:orderData.addressLine2,
 
-                email:orderData.email
+                addressStreet:orderData.addressStreet,
+
+                addressCity:orderData.addressCity,
+
+                addressState:orderData.addressState,
+
+                addressCountry:orderData.addressCountry,
+
+                addressPostalCode:orderData.addressPostalCode,
+
+                addressContactNumber:orderData.addressContactNumber
 
             }            
         
