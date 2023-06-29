@@ -1,0 +1,127 @@
+<!doctype html>
+
+<html lang="en">
+
+    {{!-- ==============================HEAD============================== --}}
+
+    <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Style Sheet for basic animations in few pages -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+
+    <title>{{title}}</title>
+
+
+    </head>
+
+
+    {{!-- ==============================BODY============================== --}}
+
+
+    <body>
+
+
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
+                        aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <a class="navbar-brand" href="/admin" style="font-weight: bold;">{{PLATFORM_NAME}} Admin</a>
+                    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/admin/order-summary">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/manage-products">Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/manage-product-categories">Product Categories</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/manage-vendors">All Vendors</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/manage-users">All Users</a>
+                            </li>
+                        </ul>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" data-bs-target="#navbarTogglerDemo03" aria-haspopup="true"
+                                aria-expanded="false">
+                                {{#if adminData}}
+                                Hey, {{adminData.name}}
+                                {{else}}
+                                {{PLATFORM_NAME}}'s Admin
+                                {{/if}}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {{#if adminData}}
+                                <form action="/admin/logout" method="post">
+                                    <button class="dropdown-item" type="submit">Log out</button>
+                                </form>
+                                {{else}}
+                                <a class="dropdown-item" href="/admin/login">Log In</a>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        
+        <style>
+            .navbar-brand:hover {
+                color: #dc3545;
+            }
+        
+            .navbar-nav .nav-link:hover {
+                color: #dc3545;
+                transform: scale(1.05);
+            }
+        
+            .dropdown:hover .dropdown-menu {
+                display: block;
+                animation: fadeInDown 0.3s ease-in-out;
+            }
+        
+            @keyframes fadeInDown {
+                0% {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+        
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        </style>
+
+
+        {{!-- HBS Code to inject body of the requested page --}}
+        {{{body}}}
+
+        <!-- Bootstrap Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+        <!-- Script File for Ajax -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+        <!-- Script File in Public Folder -->
+        <script src="/javascripts/script.js"></script>
+
+    </body>
+
+
+</html>

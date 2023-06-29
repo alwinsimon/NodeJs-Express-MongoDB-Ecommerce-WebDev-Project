@@ -18,7 +18,7 @@ const addProductGET = async (req,res)=>{
 
   let productCategories = await adminHelpers.getProductCategories();
 
-  res.render('admin/add-product',{title: PLATFORM_NAME + " || Add Product",admin:true, adminData, PLATFORM_NAME, productCategories});
+  res.render('admin/add-product',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Add Product",admin:true, adminData, PLATFORM_NAME, productCategories});
   
 }
   
@@ -40,7 +40,7 @@ const addProductPOST = (req,res)=>{
 
       }else{
 
-        res.render('admin/add-product',{title:"Add product",admin:true, adminData, PLATFORM_NAME});
+        res.render('admin/add-product',{ layout: 'admin-layout', title:"Add product",admin:true, adminData, PLATFORM_NAME});
 
       }
 
@@ -82,7 +82,7 @@ const editProductGET = async (req,res)=>{
 
   let allProductCategories = await adminHelpers.getProductCategories();
 
-  res.render('admin/edit-product',{title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategory, allProductCategories});
+  res.render('admin/edit-product',{ layout: 'admin-layout', title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategory, allProductCategories});
   
 }
   
@@ -130,7 +130,7 @@ const productCategoriesGET = async (req,res)=>{
 
   let productCategories = await adminHelpers.getProductCategories();
 
-  res.render('admin/view-product-categories', {title: PLATFORM_NAME + " || Product Categories", admin:true, adminData, productCategories});
+  res.render('admin/view-product-categories', { layout: 'admin-layout', title: PLATFORM_NAME + " || Product Categories", admin:true, adminData, productCategories});
   
 }
   
@@ -142,13 +142,13 @@ const addProductCategoryGET = (req,res)=>{
 
     let categoryExistsErr = req.session.adminSession.categoryExistsErr;
 
-    res.render('admin/add-product-category', {title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData, categoryExistsErr});
+    res.render('admin/add-product-category', { layout: 'admin-layout', title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData, categoryExistsErr});
 
     delete req.session.adminSession.categoryExistsErr;
 
   }else{
     
-    res.render('admin/add-product-category', {title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData});
+    res.render('admin/add-product-category', { layout: 'admin-layout', title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData});
 
   }
   
@@ -220,7 +220,7 @@ const editProductCategoryGET = async (req,res)=>{
 
   adminHelpers.getProductCategoryDetails(categoryId).then((productCategoryData)=>{
 
-    res.render('admin/edit-product-category', {title: PLATFORM_NAME + " || Edit Product Category", admin:true, adminData, productCategoryData});
+    res.render('admin/edit-product-category', { layout: 'admin-layout', title: PLATFORM_NAME + " || Edit Product Category", admin:true, adminData, productCategoryData});
 
   })
   

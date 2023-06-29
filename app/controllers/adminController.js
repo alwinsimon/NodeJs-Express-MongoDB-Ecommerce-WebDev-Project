@@ -19,7 +19,7 @@ const logInGET = (req,res)=>{
 
   }else{
 
-    res.render('admin/admin-login',{"loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", PLATFORM_NAME, admin:true});
+    res.render('admin/admin-login',{ layout: 'admin-layout', "loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", PLATFORM_NAME, admin:true});
 
     req.session.adminLogginErr = false; 
     /*
@@ -93,7 +93,7 @@ const adminDashboardGET =  (req, res)=>{
 
   productHelpers.getAllProducts().then((products)=>{
     
-    res.render('admin/view-products',{title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, admin:true, adminData, PLATFORM_NAME, products});
+    res.render('admin/view-products',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, admin:true, adminData, PLATFORM_NAME, products});
     
   })
   
@@ -104,7 +104,7 @@ const adminDashboardGET =  (req, res)=>{
 
 const addNewAdminGET = (req, res)=>{
 
-  res.render('admin/add-admin',{title:PLATFORM_NAME + " || Add Admin", PLATFORM_NAME, admin:true});
+  res.render('admin/add-admin',{ layout: 'admin-layout', title:PLATFORM_NAME + " || Add Admin", PLATFORM_NAME, admin:true});
   
 };
   
@@ -127,7 +127,7 @@ const manageUsersGET = async (req,res)=>{
 
   adminHelpers.getAllUsers().then((platformUserData)=>{
 
-    res.render('admin/manage-users', {title: PLATFORM_NAME + " || Manage Users", PLATFORM_NAME, admin:true, adminData, platformUserData});
+    res.render('admin/manage-users', { layout: 'admin-layout', title: PLATFORM_NAME + " || Manage Users", PLATFORM_NAME, admin:true, adminData, platformUserData});
 
   })
   
@@ -156,7 +156,7 @@ const manageOrdersGET = async (req,res)=>{
 
   await adminHelpers.getAllOrders().then((platformOrderData)=>{
 
-    res.render('admin/admin-order-summary', {title: PLATFORM_NAME + " || Manage Orders", PLATFORM_NAME, admin:true, adminData, platformOrderData});
+    res.render('admin/admin-order-summary', { layout: 'admin-layout', title: PLATFORM_NAME + " || Manage Orders", PLATFORM_NAME, admin:true, adminData, platformOrderData});
 
   })
   
@@ -172,7 +172,7 @@ const singleOrderDetailsPOST = async (req,res)=>{
 
   let productDetails = await adminHelpers.getSingleOrderDataForOrdersDisplay(orderId);
 
-  res.render('admin/admin-single-order-summary', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
+  res.render('admin/admin-single-order-summary', { layout: 'admin-layout', title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
   
 };
 
@@ -209,7 +209,7 @@ const orderCancellationPOST = async (req,res)=>{
 
   let productDetails = await adminHelpers.getSingleOrderDataForOrdersDisplay(orderId);
 
-  res.render('admin/admin-side-order-cancellation-request', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
+  res.render('admin/admin-side-order-cancellation-request', { layout: 'admin-layout', title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
   
 };
 
@@ -292,7 +292,7 @@ const reviewOrderReturnRequestPOST = async (req,res)=>{
 
   let productDetails = await adminHelpers.getSingleOrderDataForOrdersDisplay(orderId);
 
-  res.render('admin/admin-side-order-cancellation-request', {title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
+  res.render('admin/admin-side-order-cancellation-request', { layout: 'admin-layout', title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
   
 };
 
