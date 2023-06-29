@@ -158,6 +158,17 @@ $(document).ready(function() {
 
     // console.log("Checkout Button Ajax call");
 
+    // Check if a payment option is selected
+    const paymentOptionSelected = $('input[name="payment-method"]:checked').val();
+
+    if (!paymentOptionSelected) {
+
+      $('#myModal').modal('show'); // Trigger the modal
+      
+      return;
+
+    }
+
     $.ajax({
       
       url:'/place-order',
