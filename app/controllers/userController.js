@@ -243,11 +243,11 @@ const userProfileGET =  async (req, res) => {
 
       if(primaryAddress){
 
-        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount, primaryAddress });
+        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Profile", PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount, primaryAddress });
 
       }else{
 
-        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount });
+        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Profile", PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount });
 
       }
 
@@ -306,6 +306,43 @@ const userProfileUpdateRequestPOST =  async (req, res) => {
     res.redirect("/error-page");
     
   });
+
+}
+
+
+/* ======================== USER WISHLIST Controllers ======================== */
+
+const userWishlistGET =  async (req, res) => {
+
+  const user = req.session.userSession;
+
+  const userId = req.session.userSession._id;
+
+  try {
+
+    const cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+
+    const userWishlistData = 0;
+
+    if(userWishlistData){
+
+      res.render('user/manage-wishlist', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Wishlist", PLATFORM_NAME, user, cartCount, userWishlistData });
+
+    }else{
+
+      res.render('user/manage-wishlist', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Wishlist", PLATFORM_NAME, user, cartCount });
+
+    }
+    
+  } catch (error) {
+
+    console.log("Error from userWishlistGET controller : ", err);
+
+    res.redirect("/error-page");
+    
+  }
+  
+  
 
 }
 
@@ -872,6 +909,7 @@ module.exports = {
   verifyUserSignUpPOST,
   userProfileGET,
   userProfileUpdateRequestPOST,
+  userWishlistGET,
   manageUserAddressGET,
   addNewAddressPOST,
   changePrimaryAddressPOST,
