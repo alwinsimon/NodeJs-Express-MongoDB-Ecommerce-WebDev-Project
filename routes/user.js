@@ -64,6 +64,11 @@ router.post('/delete-user-address', verifyUserLogin, userController.deleteUserAd
 router.get('/product-details/:id', userController.singleProductPageGET);
 
 
+/* ========================Wishlist Route======================== */
+
+router.get('/wishlist', verifyUserLogin, userController.userWishlistGET);
+
+
 /* ========================CART ROUTES======================== */
 
 router.get('/cart', verifyUserLogin, userController.cartGET);
