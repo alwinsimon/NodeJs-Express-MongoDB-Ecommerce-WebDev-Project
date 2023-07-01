@@ -1265,7 +1265,7 @@ module.exports = {
 
             try {
 
-                let orderHistory = await db.get().collection(collections.ORDERS_COLLECTION).find({userId:ObjectId(userId)}).toArray();
+                let orderHistory = await db.get().collection(collections.ORDERS_COLLECTION).find({userId:ObjectId(userId)}).sort({ date: -1 }).toArray();
 
                 orderHistory.forEach((order) => { // Code to check and verify if the order is eligible for Return
 
