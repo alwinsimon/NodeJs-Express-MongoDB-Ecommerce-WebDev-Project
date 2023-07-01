@@ -1,6 +1,6 @@
 {{!-- ==============================Ordered Products Info Page============================== --}}
 
-<section>
+<section style="padding-top: 100px ; padding-bottom: 150px ;">
   <div class="container mt-5">
     <h1 class="text-center">Product Details of Order</h1>
 
@@ -13,19 +13,25 @@
     <br>
 
     <div class="row justify-content-center">
+
       {{#each productDetails}}
-      <div class="col-md-4" style="width: 15rem; height: 23rem;">
-        <div class="card mb-4">
-          <img src="/product-images/{{this.product._id}}.jpg" class="card-img-top" alt="{{this.product.name}}">
-          <div class="card-body">
-            <h5 class="card-title">{{this.product.name}}</h5>
-            <p class="card-text">{{this.product.description}}</p>
-            <p class="card-text">Price: ₹ {{this.product.price}}</p>
-            <p class="card-text">Quantity: {{this.quantity}}</p>
+
+        <div class="col-md-4" style="width: 15rem; height: 23rem;">
+          <div class="card mb-4">
+            <img src="/product-images/{{this.product._id}}.jpg" class="card-img-top" style="height: 180px; width: 180px" alt="{{this.product.name}}">
+            <div class="card-body">
+              <h5 class="card-title">{{this.product.name}}</h5>
+              <p class="card-text">{{this.product.description}}</p>
+              <p class="card-text">Price: ₹ {{this.product.price}}</p>
+              <p class="card-text">Quantity: {{this.quantity}}</p>
+            </div>
           </div>
         </div>
-      </div>
+
       {{/each}}
+
     </div>
+
   </div>
+
 </section>
