@@ -667,6 +667,197 @@ module.exports = {
 
         })
     },
+    getUserWishListData: (userId) => {
+
+        return new Promise(async (resolve, reject) => {
+
+          try {
+            
+                const pipeline = [
+
+                    {$match: { userId: ObjectId(userId) }},
+
+                    {
+                        $lookup: {
+
+                        from: collections.PRODUCT_COLLECTION,
+
+                        localField: "products",
+
+                        foreignField: "_id",
+
+                        as: "products"
+
+                        }
+                    },
+
+                    {
+                        $project: {products: 1}
+                    }
+
+                ];
+        
+                const result = await db.get().collection(collections.WISH_LIST_COLLECTION).aggregate(pipeline).toArray();
+        
+                if (result.length > 0) {
+
+                    resolve(result[0].products);
+
+                } else {
+
+                    resolve([]);
+
+                }
+
+            } catch (error) {
+
+                console.log("Error from getUserWishListData userHelper: ", error);
+
+                reject(error);
+
+            }
+
+        });
+
+    },
+    addOrRemoveFromWishList:(productId, userId)=>{
+
+        return new Promise(async (resolve,reject)=>{
+
+            // Checking if there is a wishlist Existing for this user (using user id) in the wishlist collection
+            const userWishlist = await db.get().collection(collections.WISH_LIST_COLLECTION).findOne({userId:ObjectId(userId)});
+
+            // console.log(userWishlist);
+
+            if(userWishlist){ // If there is a WISH LIST PRESENT for user, update the existing WISH LIST of the user
+
+                /*
+                # Check if the productId provided already exist in products array of the user Wishlist.
+                */
+                const productExist = userWishlist.products.findIndex(products => products == productId);
+
+                // console.log(productExist);
+
+                /*
+                # productExist will have the value of -1 if there is no product existing in the products array of user wishlist
+                # if product exists already, productExist will have the value of the index in which the product exists in the products array of user cart
+                */
+
+                if(productExist !== -1){ // If the value of productExists is NOT EQUAL TO -1, which means there is the same product existing in products array inside user wish list already.
+
+                    // Since the same product exists already, remove it from the products array
+
+                    db.get().collection(collections.WISH_LIST_COLLECTION)
+                    .updateOne(
+
+                        {userId:ObjectId(userId)}, // Matching the same product in the products array of cart collection of the user
+
+                        {$pull:{products:ObjectId(productId)}}
+
+                    ).then(()=>{
+
+                        resolve({removed:true});
+
+                    }).catch((err)=>{
+
+                        if(err){
+
+                            console.log(err);
+    
+                            reject(err);
+                            
+                        }
+                        
+                    });
+
+                    // console.log('WISHLIST EXISTS for user == Given Product exist for user == Product removed from wishlist');
+
+                }else{ // User have a document in wishlist collection, but DON'T have the given product existing in the products array of wishlist document already.
+
+                    // Add the new product object to the products array of the usercart
+                    db.get().collection(collections.WISH_LIST_COLLECTION)
+                    .updateOne(
+
+                        {userId:ObjectId(userId)},
+
+                        {$push:{products:ObjectId(productId)}}
+
+                    ).then(()=>{
+
+                        resolve({status:true});
+
+                    }).catch((err)=>{
+
+                        if(err){
+
+                            console.log(err);
+    
+                            reject(err);
+                            
+                        }
+                        
+                    });
+
+                    // console.log('WISHLIST EXISTS for user == Given Product DOSENT exist in WISHLIST == Product added to products array');
+
+                }
+
+            }else{ // If there is NO EXISTING WISHLIST for the user, create new WISHLIST and insert the product to the WISHLIST
+
+                const newUserWishlist = {
+                    
+                    userId: ObjectId(userId),
+
+                    products: [ObjectId(productId)]
+
+                }  
+
+                db.get().collection(collections.WISH_LIST_COLLECTION)
+                .insertOne(newUserWishlist)
+                .then((data)=>{
+
+                    // console.log(data);
+
+                    resolve({status:true})
+
+                }).catch((err)=>{
+
+                    if(err){
+
+                        console.log(err);
+
+                        reject(err);
+                        
+                    }
+
+                });
+
+                // console.log('New WISHLIST Created for user & product added to WISHLIST with Product ID:', productId );
+
+            }
+
+        })
+
+    },
+    getWishlistCount:(userId)=>{
+
+        return new Promise(async(resolve,reject)=>{
+            
+            let count = 0;
+
+            const wishList = await db.get().collection(collections.WISH_LIST_COLLECTION).findOne({userId:ObjectId(userId)});
+
+            if(wishList != null){
+
+                count = wishList.products.length;
+
+            }
+
+            resolve(count);
+
+        })
+
+    },
     getCartProducts: (userId) => {
 
         return new Promise(async (resolve, reject) => {
