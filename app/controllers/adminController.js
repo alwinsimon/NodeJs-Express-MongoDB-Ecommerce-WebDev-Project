@@ -91,11 +91,7 @@ const adminDashboardGET =  (req, res)=>{
   
   let adminData = req.session.adminSession;
 
-  productHelpers.getAllProducts().then((products)=>{
-    
-    res.render('admin/view-products',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, admin:true, adminData, PLATFORM_NAME, products});
-    
-  })
+  res.render('admin/admin-home',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, admin:true, adminData, PLATFORM_NAME });
   
 };
 
