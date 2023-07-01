@@ -18,11 +18,15 @@ const homePageGET = async (req, res, next)=>{
 
   let productCategories = await adminHelpers.getProductCategories();
 
-  let cartCount = null;
+  let cartCount = 0;
+
+  let wishlistCount = 0;
 
   if(user){
 
     cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+
+    wishlistCount = await userHelpers.getWishlistCount(user._id);
 
   }
 
@@ -30,7 +34,7 @@ const homePageGET = async (req, res, next)=>{
 
     if(user){
 
-      res.render('user/user-home', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, admin:false, user, products, productCategories, cartCount });
+      res.render('user/user-home', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, admin:false, user, products, productCategories, cartCount, wishlistCount });
 
     }else{
 
@@ -232,6 +236,8 @@ const userProfileGET =  async (req, res) => {
   const ordersCount = await userHelpers.getOrdersCount(req.session.userSession._id);
 
   const primaryAddress = await userHelpers.getUserPrimaryAddress(req.session.userSession._id);
+
+  const wishlistCount = await userHelpers.getWishlistCount(userId);
   
   userHelpers.getUserData(userId).then((userDataFromDb)=>{
 
@@ -243,11 +249,11 @@ const userProfileGET =  async (req, res) => {
 
       if(primaryAddress){
 
-        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Profile", PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount, primaryAddress });
+        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Profile", PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount, primaryAddress, wishlistCount });
 
       }else{
 
-        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Profile", PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount });
+        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Profile", PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount, wishlistCount });
 
       }
 
@@ -397,13 +403,15 @@ const manageUserAddressGET =  async (req, res) => {
 
     const userAddress = await userHelpers.getUserAddress(userId);
 
+    const wishlistCount = await userHelpers.getWishlistCount(user._id);
+
     if (userAddress && userAddress.length > 0){
 
-      res.render('user/manage-address', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Manage Address", PLATFORM_NAME, admin:false, user, userCollectionData, cartCount, userAddress });
+      res.render('user/manage-address', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Manage Address", PLATFORM_NAME, admin:false, user, userCollectionData, cartCount, userAddress, wishlistCount });
 
     } else {
 
-      res.render('user/manage-address', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Manage Address", PLATFORM_NAME, admin:false, user, userCollectionData, cartCount });
+      res.render('user/manage-address', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Manage Address", PLATFORM_NAME, admin:false, user, userCollectionData, cartCount, wishlistCount });
 
     }
 
@@ -512,7 +520,9 @@ const singleProductPageGET =  (req, res) => {
 
       cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
-      res.render('user/single-product-page', { layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || " + productDetails.name, admin: false, user: true, user, cartCount, productDetails });
+      const wishlistCount = await userHelpers.getWishlistCount(user._id);
+
+      res.render('user/single-product-page', { layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || " + productDetails.name, admin: false, user: true, user, cartCount, productDetails, wishlistCount });
 
     } else {
 
@@ -549,12 +559,14 @@ const cartGET = async (req,res)=>{
     
     let cartItems = await userHelpers.getCartProducts(req.session.userSession._id);
 
+    const wishlistCount = await userHelpers.getWishlistCount(user._id);
+
     let cartValue = await userHelpers.getCartValue(user._id);
 
     // console.log(cartItems);
     // console.log(cartValue);
 
-    res.render('user/cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue });
+    res.render('user/cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue, wishlistCount });
 
   }else{ // If there is no items in the cart - then redirect to a different page to avoid the query to database for cartitems and cartvalue
 
@@ -572,11 +584,13 @@ const emptyCartGET = async (req,res)=>{
 
     cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
-    res.render('user/empty-cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, user, cartCount });
+    const wishlistCount = await userHelpers.getWishlistCount(user._id);
+
+    res.render('user/empty-cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, user, cartCount, wishlistCount });
 
   }else{
 
-    res.render('user/empty-cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false });
+    res.render('user/empty-cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, wishlistCount });
 
   }
   
@@ -653,9 +667,11 @@ const userOrdersGET = async (req,res)=>{
 
   const orderDetails = await userHelpers.getUserOrderHistory(user._id);
 
+  const wishlistCount = await userHelpers.getWishlistCount(user._id);
+
   // console.log(orderDetails);
 
-  res.render('user/orders',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Orders" , admin:false, user, orderDetails});
+  res.render('user/orders',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Orders" , admin:false, user, orderDetails, wishlistCount});
   
 }
   
@@ -694,16 +710,18 @@ const placeOrderGET = async (req,res)=>{
     let cartValue = await userHelpers.getCartValue(user._id);
 
     const userAddress = await userHelpers.getUserAddress(user._id);
+
+    const wishlistCount = await userHelpers.getWishlistCount(user._id);
     
     const primaryAddress = await userHelpers.getUserPrimaryAddress(user._id);
 
     if(primaryAddress){
 
-      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, primaryAddress});
+      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, primaryAddress, wishlistCount});
 
     }else{
 
-      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue,userAddress});
+      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, wishlistCount});
 
     }
 
