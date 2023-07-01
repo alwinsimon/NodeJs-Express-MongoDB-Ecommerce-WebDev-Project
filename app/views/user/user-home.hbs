@@ -334,6 +334,8 @@
             </div>
 
             <div class="block2-txt flex-w flex-t p-t-14">
+
+              {{!-- ================ Product Details ================ --}}
               <div class="block2-txt-child1 flex-col-l">
                 <a href="#" class="stext-103 cl2 hov-cl1 trans-04 js-name-b2 p-b-6" onclick="viewProduct('{{this._id}}'); return false;">
                   {{this.name}}
@@ -346,12 +348,16 @@
                 </span>
               </div>
 
+              {{!-- ================ Wishlist Icon ================ --}}
               <div class="block2-txt-child2 flex-r p-t-3">
-                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" onclick="viewProduct('{{this._id}}'); return false;">
+
+                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" onclick="modifyWishListStatus('{{this._id}}'); return false;">
                   <img class="icon-heart1 dis-block trans-04" src="/platform-images/icons/icon-heart-01.png" alt="ICON">
                   <img class="icon-heart2 dis-block trans-04 ab-t-l" src="/platform-images/icons/icon-heart-02.png" alt="ICON">
                 </a>
+                
               </div>
+
             </div>
           </div>
         </div>
