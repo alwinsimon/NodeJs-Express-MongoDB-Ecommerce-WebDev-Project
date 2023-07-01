@@ -314,3 +314,130 @@ $(document).ready(function() {
   }
 
 });
+
+function modifyWishListStatus(productId){
+
+  fetch(
+    
+    '/modify-wishlist', 
+    
+    {
+      
+      method : "POST",
+
+      headers : {'Content-Type': 'application/json'},
+
+      body : JSON.stringify({
+
+        productId : productId
+
+      })
+
+    }
+
+  )
+  .then((response)=>{
+
+    if (response.status === 200) {
+
+      response.json().then((data) => {
+
+        if (data.status === "removed") {
+
+          swal("Product removed from your wishlist!", "success");
+
+        } else if (data.status === "added") {
+
+          swal("Product successfully added to your wishlist!", "success");
+
+        } else {
+
+          console.error('Error in modifyWishListStatus Function');
+
+        }
+
+      });
+
+    } else {
+
+      console.error('Error in modifyWishListStatus Function');
+
+    }
+
+  })
+  .catch((error) => {
+
+    console.error('Error in modifyWishListStatus Function:', error);
+    /* This will be displayed on browser Console */
+
+  }); 
+
+}
+
+ 
+function modifyWishListFromWishlistPage(productId){
+  
+  /* Using a seperate function for the same purpose of modifying wishlist exactly same as the modifyWishListStatus because, 
+   in wishlist page the page has to be reloded after making the change 
+  */
+ 
+  fetch(
+    
+    '/modify-wishlist', 
+    
+    {
+      
+      method : "POST",
+
+      headers : {'Content-Type': 'application/json'},
+
+      body : JSON.stringify({
+
+        productId : productId
+
+      })
+
+    }
+
+  )
+  .then((response)=>{
+
+    if (response.status === 200) {
+
+      response.json().then((data) => {
+
+        if (data.status === "removed") {
+
+          swal("Product removed from your wishlist!", "success");
+
+          location.reload();
+
+        } else if (data.status === "added") {
+
+          swal("Product successfully added to your wishlist!", "success");
+
+          location.reload();
+
+        } else {
+
+          console.error('Error in modifyWishListStatus Function');
+
+        }
+
+      });
+
+    } else {
+
+      console.error('Error in modifyWishListStatus Function');
+
+    }
+
+  })
+  .catch((error) => {
+
+    console.error('Error in modifyWishListStatus Function:', error);
+    /* This will be displayed on browser Console */
+
+  }); 
+
+}

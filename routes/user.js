@@ -68,6 +68,8 @@ router.get('/product-details/:id', userController.singleProductPageGET);
 
 router.get('/wishlist', verifyUserLogin, userController.userWishlistGET);
 
+router.post('/modify-wishlist', verifyUserLogin, userController.modifyUserWishlistPOST);
+
 
 /* ========================CART ROUTES======================== */
 

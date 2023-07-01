@@ -320,17 +320,19 @@ const userWishlistGET =  async (req, res) => {
 
   try {
 
-    const cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+    const cartCount = await userHelpers.getCartCount(userId);
 
-    const userWishlistData = 0;
+    const userWishlistData = await userHelpers.getUserWishListData(userId);
 
-    if(userWishlistData){
+    const wishlistCount = await userHelpers.getWishlistCount(userId);
 
-      res.render('user/manage-wishlist', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Wishlist", PLATFORM_NAME, user, cartCount, userWishlistData });
+    if(userWishlistData != null){
+
+      res.render('user/manage-wishlist', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Wishlist", PLATFORM_NAME, user, cartCount, wishlistCount, userWishlistData });
 
     }else{
 
-      res.render('user/manage-wishlist', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Wishlist", PLATFORM_NAME, user, cartCount });
+      res.render('user/manage-wishlist', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Wishlist", PLATFORM_NAME, user, cartCount, wishlistCount });
 
     }
     
@@ -341,8 +343,40 @@ const userWishlistGET =  async (req, res) => {
     res.redirect("/error-page");
     
   }
-  
-  
+
+}
+
+const modifyUserWishlistPOST =  async (req, res) => {
+
+  const user = req.session.userSession;
+
+  const userId = req.session.userSession._id;
+
+  const productId = req.body.productId
+
+  try {
+
+    await userHelpers.addOrRemoveFromWishList(productId, userId).then((response)=>{
+
+      if (response.status) {
+
+        res.status(200).json({ status: "added" });
+
+      } else if (response.removed) {
+
+        res.status(200).json({ status: "removed" });
+
+      }
+
+    })
+    
+  } catch (error) {
+
+    console.log("Error from modifyUserWishlistPOST controller : ", err);
+
+    res.redirect("/error-page");
+    
+  }
 
 }
 
@@ -910,6 +944,7 @@ module.exports = {
   userProfileGET,
   userProfileUpdateRequestPOST,
   userWishlistGET,
+  modifyUserWishlistPOST,
   manageUserAddressGET,
   addNewAddressPOST,
   changePrimaryAddressPOST,
