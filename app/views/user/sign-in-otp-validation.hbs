@@ -23,26 +23,40 @@
     cursor: pointer;
   }
 </style>
-</head>
-<body>
+
+<div style="padding-top: 200px ; padding-bottom: 100px ;">
+
   <div class="form-container">
-    <h2>SMS OTP Validation</h2>
+
+    <h2>OTP Validation</h2>
+    
     <form id="otp-form" action="/verify-user-signup" method="post">
+      
       <label for="otp">Enter OTP:</label>
+      
       <input type="text" id="otp" name="otp" placeholder="Enter the OTP received via SMS">
-    {{#if otpError}}
-    <div>
-        <p style="color: red;">{{otpError}}</p>
-    </div>
-    {{/if}}
+      
+      {{#if otpError}}
+        <div>
+            <p style="color: red;">{{otpError}}</p>
+        </div>
+      {{/if}}
+
       <button type="submit">Verify OTP</button>
+
     </form>
+
   </div>
 
-  <script>
-    function verifyOTP() {
-      // Submit the form programmatically
-      document.getElementById("otp-form").submit();
-    }
-  </script>
-</body>
+</div>
+
+<script>
+
+  function verifyOTP() {
+    
+    // Submit the form programmatically
+    document.getElementById("otp-form").submit();
+
+  }
+
+</script>
