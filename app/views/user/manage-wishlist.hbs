@@ -151,6 +151,12 @@
             }
         </style>
 
+        <div class="bg-img1 txt-center p-t-50">
+            <h2 class="ltext-108 cl2 txt-center">
+                {{user.name}}'s Wishlist
+            </h2>
+        </div>
+
         {{!-- =========================================== Wishlist Items =========================================== --}}
 
         <div>
@@ -169,7 +175,7 @@
                             <!-- ================================= Single Item ================================= -->
                             {{#each userWishlistData}}
 
-                                <div class="row align-items-center">
+                                <div class="row align-items-center p-b-15">
 
 
                                     <div class="col-12 col-md-4">
@@ -202,6 +208,8 @@
 
 
                                 </div>
+
+                                <hr>
 
                             {{/each}}
 
