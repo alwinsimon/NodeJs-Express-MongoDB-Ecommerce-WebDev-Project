@@ -10,6 +10,21 @@ let PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
 
 
+// ====================Controller for Managing Products====================
+
+const manageProductsGET =  (req, res)=>{
+  
+  let adminData = req.session.adminSession;
+
+  productHelpers.getAllProducts().then((products)=>{
+    
+    res.render('admin/view-products',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, admin:true, adminData, PLATFORM_NAME, products});
+    
+  })
+  
+};
+
+
 // ====================Route to Add NEW Product Page====================
 
 const addProductGET = async (req,res)=>{
@@ -272,6 +287,7 @@ const deleteProductCategoryPOST = async (req,res)=>{
 
 module.exports = {
 
+    manageProductsGET,
     addProductGET,
     addProductPOST,
     deleteProductGET,

@@ -43,6 +43,11 @@ router.post('/change-user-status', verifyAdminLogin, adminController.changeUserS
 
 /* ========================================================PRODUCT ROUTES======================================================== */
 
+// ====================Route to Manage Products====================
+
+router.get('/manage-products', verifyAdminLogin, productController.manageProductsGET);
+
+
 // ====================Route to Add NEW Product Page====================
 
 router.get('/add-product', verifyAdminLogin, productController.addProductGET);
