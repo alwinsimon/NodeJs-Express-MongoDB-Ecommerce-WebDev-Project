@@ -116,6 +116,11 @@ router.post('/order-cancellation-request',verifyUserLogin, userController.orderC
 router.post('/order-return-request',verifyUserLogin, userController.orderReturnRequestPOST);
 
 
+/* ======================== Access Forbidden page======================== */
+
+router.get('/access-forbidden', userController.accessForbiddenPageGET);
+
+
 
 
 

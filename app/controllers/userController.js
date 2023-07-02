@@ -964,6 +964,12 @@ const orderReturnRequestPOST = async (req,res)=>{
 }
 
 
+const accessForbiddenPageGET = (req,res)=>{
+  
+  res.render('user/error-access-forbidden',{ layout: 'user-layout', title:PLATFORM_NAME + " || Access Forbidden"});
+  
+}
+
 
 
 
@@ -1004,6 +1010,7 @@ module.exports = {
   verifyPaymentPOST,
   savePaymentDataPOST,
   orderCancellationRequestPOST,
-  orderReturnRequestPOST
+  orderReturnRequestPOST,
+  accessForbiddenPageGET
 
 }
