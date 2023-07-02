@@ -297,8 +297,6 @@ const userProfileUpdateRequestPOST =  async (req, res) => {
 
   const formData = {
 
-    userName : req.body.userName,
-
     name : req.body.name,
 
     lastName : req.body.lastName,
