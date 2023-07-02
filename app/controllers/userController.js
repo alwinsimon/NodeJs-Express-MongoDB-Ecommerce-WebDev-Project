@@ -245,47 +245,52 @@ const verifyUserSignUpPOST = (req,res)=>{
 
 const userProfileGET =  async (req, res) => {
 
-  const user = req.session.userSession;
+  try{
 
-  const userId = req.params.id;
+    const user = req.session.userSession;
 
-  const cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+    const userName = req.params.userName;
 
-  const ordersCount = await userHelpers.getOrdersCount(req.session.userSession._id);
+    if( user.userName === userName ){
 
-  const primaryAddress = await userHelpers.getUserPrimaryAddress(req.session.userSession._id);
+      const userData = await userHelpers.getUserDataWithUserName(userName);
 
-  const wishlistCount = await userHelpers.getWishlistCount(userId);
-  
-  userHelpers.getUserData(userId).then((userDataFromDb)=>{
+      const cartCount = await userHelpers.getCartCount(userData._id);
 
-    const userCollectionData = userDataFromDb;
+      const ordersCount = await userHelpers.getOrdersCount(userData._id);
 
-    userHelpers.getUserWalletData(userId).then((walletData)=>{
+      const primaryAddress = await userHelpers.getUserPrimaryAddress(userData._id);
 
-      const userWalletData = walletData;
+      const wishlistCount = await userHelpers.getWishlistCount(userData._id);
 
+      const userWalletData = await userHelpers.getUserWalletData(userData._id);
+    
       if(primaryAddress){
 
-        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Profile", PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount, primaryAddress, wishlistCount });
+        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Profile", PLATFORM_NAME, admin:false, user, userData, userWalletData, cartCount, ordersCount, primaryAddress, wishlistCount });
 
       }else{
 
-        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Profile", PLATFORM_NAME, admin:false, user, userCollectionData, userWalletData, cartCount, ordersCount, wishlistCount });
+        res.render('user/user-profile', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Profile", PLATFORM_NAME, admin:false, user, userData, userWalletData, cartCount, ordersCount, wishlistCount });
 
       }
 
+    }else{ 
       
+      // If the username in the request url is not same as the username stored in the session, restricting the access as the user will be able to access other users profile page with their user name.
 
-    })
+      res.redirect('/access-forbidden');
 
-  }).catch((err)=>{
+    }
 
-    console.log("Error from userProfileGET controller : ", err);
+  }catch(error){
 
-    res.redirect("/error-page");
-    
-  });
+    console.log("Error from userProfileGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 
 }
 
