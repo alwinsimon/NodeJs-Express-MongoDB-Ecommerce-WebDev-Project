@@ -13,6 +13,9 @@ const verifyAdminLogin = adminMiddlewares.verifyAdminLogin;
 
 /*=================================================ADMIN ROUTES=================================================*/
 
+// ====================Route to Admin Dashboard====================
+router.get('/', verifyAdminLogin, adminController.adminDashboardGET);
+
 
 /* ========================LOGIN & LOGOUT ROUTES======================== */
 
@@ -28,10 +31,6 @@ router.post('/logout', adminController.logOutPOST);
 router.get('/add-admin', verifyAdminLogin, adminController.addNewAdminGET);
 
 router.post('/add-admin', verifyAdminLogin, adminController.addNewAdminPOST);
-
-
-// ====================Route to Admin Dashboard====================
-router.get('/', verifyAdminLogin, adminController.adminDashboardGET);
 
 
 // ====================Routes to Manage Users====================
