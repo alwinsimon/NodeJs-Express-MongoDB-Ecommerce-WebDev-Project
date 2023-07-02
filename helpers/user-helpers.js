@@ -19,6 +19,55 @@ const razorpayInstance = paymentGateway.razorpayInstance;
 
 module.exports = {
 
+    verifyDuplicateUserSignUpData : (requestData)=>{
+
+        return new Promise( async (resolve, reject) => {
+
+            try {
+
+                const registrationEmail = requestData.email;
+
+                const registrationUserName = requestData.userName;
+
+                const emailExists = await db.get().collection(collections.USER_COLLECTION).find( { email : registrationEmail} ).toArray();
+
+                const userNameExists = await db.get().collection(collections.USER_COLLECTION).find( { userName : registrationUserName} ).toArray();
+
+                if( emailExists.length === 0 && userNameExists.length === 0 ){
+
+                    // Email and Username dosen't exist in the database, so new user registration can be done.
+
+                    resolve( {success : true} );
+
+                }else if( emailExists.length && userNameExists.length != 0 ){
+
+                    resolve("Email and User Name already exist");
+
+                }else if (emailExists.length != 0) {
+                    
+                    // Email already exist in the database
+
+                    resolve("Email already exist");
+
+                }else if (userNameExists.length != 0) {
+                    
+                    // Username already exist in the database
+                    
+                    resolve("User Name already exist");
+                
+                }
+      
+            } catch (error) {
+
+              console.log("Error from verifyDuplicateUserSignUpData: ", error);
+      
+              reject(error);
+      
+            }
+      
+        });
+
+    },
     createUserSignUpOtp : (requestData)=>{
 
         return new Promise( async (resolve, reject) => {
@@ -113,7 +162,7 @@ module.exports = {
                 const insertedId = insertResult.insertedId;
 
                 // ====== Creating a wallet for user while sign-up
-                db.get().collection(collections.collections.WALLET_COLLECTION).insertOne({userId: ObjectId(insertedId), walletBalance: 0});
+                db.get().collection(collections.WALLET_COLLECTION).insertOne({userId: ObjectId(insertedId), walletBalance: 0});
 
                 userCollection.findOne({_id: insertedId}).then((userData)=>{
 
