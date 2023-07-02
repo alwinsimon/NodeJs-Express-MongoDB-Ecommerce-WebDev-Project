@@ -267,8 +267,6 @@ module.exports = {
                 
                 const dataForUpdation = {
 
-                    userName : requestDataForUpdation.userName,
-
                     name : requestDataForUpdation.name,
 
                     lastName : requestDataForUpdation.lastName,
