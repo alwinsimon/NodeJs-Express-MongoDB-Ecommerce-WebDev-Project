@@ -100,7 +100,9 @@ const adminDashboardGET =  (req, res)=>{
 
 const addNewAdminGET = (req, res)=>{
 
-  res.render('admin/add-admin',{ layout: 'admin-layout', title:PLATFORM_NAME + " || Add Admin", PLATFORM_NAME, admin:true});
+  const adminData = req.session.adminSession;
+
+  res.render('admin/add-admin',{ layout: 'admin-layout', title:PLATFORM_NAME + " || Add Admin", PLATFORM_NAME, admin:true, adminData});
   
 };
   
