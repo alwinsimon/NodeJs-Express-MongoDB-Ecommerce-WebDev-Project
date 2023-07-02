@@ -142,31 +142,49 @@ const userLogOutPOST = (req,res)=>{
 /* ========================USER SIGN-UP Controllers======================== */
   
 const userSignUpGET = (req,res)=>{
+
+  const existingUserError = req.session.userDataAlreadyExistError;
   
-  res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true});
+  res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true, existingUserError});
+
+  delete req.session.userDataAlreadyExistError;
   
 }
   
-const userSignUpPOST = (req,res)=>{
+const userSignUpPOST = async (req,res)=>{
+
+  const signUpFormData = req.body;
   
-  req.session.userSignupData = req.body;
+  req.session.userSignupData = signUpFormData; // Storing the sign-up data in session for further use in verification routes
 
-  userHelpers.createUserSignUpOtp(req.body).then((response)=>{
+  const emailAndUserNameVerification = await userHelpers.verifyDuplicateUserSignUpData(signUpFormData);
 
-    if(response.statusMessageSent){
+  if(emailAndUserNameVerification.success){
 
-      res.redirect('/verify-user-signup');
+    userHelpers.createUserSignUpOtp(signUpFormData).then((response)=>{
 
-    }else{
-
-      let signUpErrMessage = "Unable to sent OTP to the provided phone number, Please re-check the number!";
-
-      res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true, signUpErrMessage});
-
-    }
-
-  })
+      if(response.statusMessageSent){
   
+        res.redirect('/verify-user-signup');
+  
+      }else{
+  
+        let signUpErrMessage = "Unable to sent OTP to the provided phone number, Please re-check the number!";
+  
+        res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true, signUpErrMessage});
+  
+      }
+  
+    })
+
+  }else{ // If the user Email or Username already exist in the DB, signup page will be rendered with a errror message and instruction.
+
+    req.session.userDataAlreadyExistError = emailAndUserNameVerification;
+
+    res.redirect('/signup');
+
+  }
+
 }
   
 const verifyUserSignUpGET = (req,res)=>{
