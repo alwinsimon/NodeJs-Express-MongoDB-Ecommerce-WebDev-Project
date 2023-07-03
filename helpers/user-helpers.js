@@ -259,6 +259,17 @@ module.exports = {
         })
 
     },
+    getUserDataWithUserName : (userName)=>{
+        
+        return new Promise( async (resolve,reject)=>{
+
+            let currentUserData = await db.get().collection(collections.USER_COLLECTION).findOne({userName : userName});
+
+            resolve(currentUserData);
+
+        })
+
+    },
     updateUserData : (userId, requestDataForUpdation)=>{
         
         return new Promise( async (resolve,reject)=>{
@@ -266,8 +277,6 @@ module.exports = {
             try {
                 
                 const dataForUpdation = {
-
-                    userName : requestDataForUpdation.userName,
 
                     name : requestDataForUpdation.name,
 
