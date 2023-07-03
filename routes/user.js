@@ -41,7 +41,7 @@ router.post('/verify-user-signup', userController.verifyUserSignUpPOST);
 
 /* ========================USER PROFILE ROUTES======================== */
 
-router.get('/profile/:id', verifyUserLogin, userController.userProfileGET);
+router.get('/profile/:userName', verifyUserLogin, userController.userProfileGET);
 
 router.post('/update-my-profile', verifyUserLogin, userController.userProfileUpdateRequestPOST);
 
@@ -114,6 +114,15 @@ router.post('/order-cancellation-request',verifyUserLogin, userController.orderC
 /* ========================ORDERS RETURN ROUTES======================== */
 
 router.post('/order-return-request',verifyUserLogin, userController.orderReturnRequestPOST);
+
+
+/* ======================== Access Forbidden page======================== */
+
+router.get('/access-forbidden', userController.accessForbiddenPageGET);
+
+/* ======================== Error handling page======================== */
+
+router.get('/error-page', userController.errorHandlerPageGET);
 
 
 

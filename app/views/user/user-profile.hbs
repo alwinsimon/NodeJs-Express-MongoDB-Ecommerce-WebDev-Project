@@ -2042,7 +2042,7 @@
             <div class="container-fluid d-flex align-items-center">
                 <div class="row">
                     <div class="col-lg-7 col-md-10">
-                        <h1 class="display-2 text-white">Hello {{userCollectionData.name}}</h1>
+                        <h1 class="display-2 text-white">Hello {{userData.name}}</h1>
                     </div>
                 </div>
             </div>
@@ -2074,26 +2074,30 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="card-profile-stats d-flex justify-content-center mt-md-5">
-                                        <div>
+
+                                        <div onclick="window.location.href = '/cart';" style="cursor: pointer;" >
                                             <span class="heading">{{cartCount}}</span>
                                             <span class="description">CartItems</span>
                                         </div>
-                                        <div>
+
+                                        <div onclick="window.location.href = '/wishlist';" style="cursor: pointer;" >
                                             <span class="heading">{{wishlistCount}}</span>
                                             <span class="description">Wishlist</span>
                                         </div>
-                                        <div>
+
+                                        <div onclick="window.location.href = '/orders';" style="cursor: pointer;" >
                                             <span class="heading"> {{ordersCount}} </span>
                                             <span class="description">Purchases</span>
                                         </div>
+                                        
                                     </div>
                                 </div>
                             </div>
                             <div class="text-center">
-                                <h3>{{userCollectionData.name}}</h3>
+                                <h3>{{userData.name}}</h3>
 
-                                {{#if userCollectionData.age}}
-                                <span class="font-weight-light">Age : {{userCollectionData.age}}</span>
+                                {{#if userData.age}}
+                                <span class="font-weight-light">Age : {{userData.age}}</span>
                                 {{/if}}
 
                                 <hr>
@@ -2114,7 +2118,7 @@
 
                                 <hr class="my-4">
                                 <b class="ni education_hat mr-2">About me:</b>
-                                <p><i>{{userCollectionData.userTagline}}</i></p>
+                                <p><i>{{userData.userTagline}}</i></p>
                             </div>
                         </div>
                     </div>
@@ -2145,7 +2149,7 @@
                                         <div class="col-lg-6">
                                             <div class="form-group focused">
                                                 <label class="form-control-label" for="input-username">Name</label>
-                                                <span id="input-username" class="form-control form-control-alternative" readonly>{{userCollectionData.name}}</span>
+                                                <span id="input-username" class="form-control form-control-alternative" readonly>{{userData.name}}</span>
                                             </div>
                                         </div>
 
@@ -2153,7 +2157,7 @@
                                             <div class="form-group focused">
                                                 <label class="form-control-label" for="input-username">User Name</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>@ {{userCollectionData.userName}}</span>
+                                                    readonly>@ {{userData.userName}}</span>
                                             </div>
                                         </div>
 
@@ -2166,7 +2170,7 @@
                                                 <label class="form-control-label" for="input-email">Email
                                                     address</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{userCollectionData.email}}</span>
+                                                    readonly>{{userData.email}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -2176,7 +2180,7 @@
                                                 <label class="form-control-label" for="input-first-name">Phone
                                                     Number</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{userCollectionData.phone}}</span>
+                                                    readonly>{{userData.phone}}</span>
                                             </div>
                                         </div>
                                         <div class="col-lg-6">
@@ -2184,7 +2188,7 @@
                                                 <label class="form-control-label" for="input-first-name">Alternative
                                                     Phone Number</label>
                                                 <span id="input-username" class="form-control form-control-alternative"
-                                                    readonly>{{userCollectionData.phoneNumberAlternative}}</span>
+                                                    readonly>{{userData.phoneNumberAlternative}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -2287,7 +2291,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalCenterTitle">Hi {{userCollectionData.name}}, please provide details for updating your profile.</h5>
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Hi {{userData.name}}, please provide details for updating your profile.</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -2297,41 +2301,26 @@
 
 
                     <form action="/update-my-profile" method="POST">
-
-                        <div class="form-row">
-
-                            <div class="col-md-4 mb-3">
-                                <label for="validationDefaultUsername">Username</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="inputGroupPrepend2">@</span>
-                                    </div>
-                                    <input type="text" class="form-control" id="validationDefaultUsername"
-                                        placeholder="Username" name="userName" value="{{userCollectionData.userName}}" aria-describedby="inputGroupPrepend2" required>
-                                </div>
-                            </div>
-
-                        </div>
                         
                         <div class="form-row">
 
                             <div class="col-md-4 mb-3">
                                 <label for="validationDefault01">First name</label>
                                 <input name="name" type="text" class="form-control" id="validationDefault01" placeholder="First name"
-                                    name="name" value="{{userCollectionData.name}}" required>
+                                    name="name" value="{{userData.name}}" required>
                             </div>
 
                             <div class="col-md-4 mb-3">
                                 <label for="validationDefault02">Last name</label>
-                                <input name="lastName" type="{{userCollectionData.lastname}}" class="form-control" id="validationDefault02" placeholder="Last name"
-                                    name="lastName" value="{{userCollectionData.lastName}}" required>
+                                <input name="lastName" type="{{userData.lastname}}" class="form-control" id="validationDefault02" placeholder="Last name"
+                                    name="lastName" value="{{userData.lastName}}" required>
                             </div>
 
                             <div class="form-row">
 
                             <div class="col-md-6 mb-3">
                                 <label for="validationDefault03">Age</label>
-                                <input type="number" name="age" value="{{userCollectionData.age}}"class="form-control" id="validationDefault03" placeholder="Your age in numbers"
+                                <input type="number" name="age" value="{{userData.age}}"class="form-control" id="validationDefault03" placeholder="Your age in numbers"
                                     required>
                             </div>
 
@@ -2343,7 +2332,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="validationDefault03">Alternative Phone Number</label>
-                                <input type="number" name="phoneNumberAlternative" value="{{userCollectionData.phoneNumberAlternative}}"class="form-control" id="validationDefault03" placeholder="Alternative Phone Number"
+                                <input type="number" name="phoneNumberAlternative" value="{{userData.phoneNumberAlternative}}"class="form-control" id="validationDefault03" placeholder="Alternative Phone Number"
                                     required>
                             </div>
 
@@ -2353,7 +2342,7 @@
 
                             <div class="col-md-6 mb-3">
                                 <label for="validationDefault03">About Me</label>
-                                <input type="text" name="userTagline" value="{{userCollectionData.userTagline}}"class="form-control" id="validationDefault03" placeholder="Jot something about you..."
+                                <input type="text" name="userTagline" value="{{userData.userTagline}}"class="form-control" id="validationDefault03" placeholder="Jot something about you..."
                                     required>
                             </div>
 
