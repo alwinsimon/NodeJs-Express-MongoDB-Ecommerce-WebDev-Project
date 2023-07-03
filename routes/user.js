@@ -120,6 +120,10 @@ router.post('/order-return-request',verifyUserLogin, userController.orderReturnR
 
 router.get('/access-forbidden', userController.accessForbiddenPageGET);
 
+/* ======================== Error handling page======================== */
+
+router.get('/error-page', userController.errorHandlerPageGET);
+
 
 
 

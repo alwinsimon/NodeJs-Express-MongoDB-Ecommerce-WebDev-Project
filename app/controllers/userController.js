@@ -971,6 +971,22 @@ const accessForbiddenPageGET = (req,res)=>{
 }
 
 
+const errorHandlerPageGET = (req,res)=>{
+
+  const user = req.session.userSession;
+
+  if(user){
+
+    res.render('user/error-page',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Error Page", user});
+
+  }else{
+
+    res.render('user/error-page',{ layout: 'user-layout', title:PLATFORM_NAME + " || Error Page"});
+
+  }
+  
+}
+
 
 
 
@@ -1011,6 +1027,7 @@ module.exports = {
   savePaymentDataPOST,
   orderCancellationRequestPOST,
   orderReturnRequestPOST,
-  accessForbiddenPageGET
+  accessForbiddenPageGET,
+  errorHandlerPageGET
 
 }
