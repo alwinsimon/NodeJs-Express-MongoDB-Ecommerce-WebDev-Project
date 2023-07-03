@@ -965,8 +965,18 @@ const orderReturnRequestPOST = async (req,res)=>{
 
 
 const accessForbiddenPageGET = (req,res)=>{
-  
-  res.render('user/error-access-forbidden',{ layout: 'user-layout', title:PLATFORM_NAME + " || Access Forbidden"});
+
+  const user = req.session.userSession;
+
+  if(user){
+
+    res.render('user/error-access-forbidden',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Access Forbidden", user});
+
+  }else{
+
+    res.render('user/error-access-forbidden',{ layout: 'user-layout', title:PLATFORM_NAME + " || Access Forbidden"});
+
+  }
   
 }
 
