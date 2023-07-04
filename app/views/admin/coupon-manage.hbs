@@ -17,7 +17,7 @@
 
         {{!-- ====================TABLE==================== --}}
 
-        <table id="coupon-table-active" class="table table-striped mt-4">
+        <table id="active-coupons-table" class="table table-striped mt-4">
 
             {{!-- ==========Table Header========== --}}
 
@@ -44,7 +44,7 @@
 
                     <tr>
                         
-                        <th scope="row">{{this.couponCode}}</th>
+                        <td>{{this.couponCode}}</td>
                         <td>
                             {{#if this.activeCoupon}}
                                 <i class="fas fa-check-circle text-success"></i> Active
@@ -105,7 +105,7 @@
 
         {{!-- ====================TABLE==================== --}}
 
-        <table id="coupon-table-inactive" class="table mt-4">
+        <table id="deactivated-coupons-table" class="table mt-4">
 
             {{!-- ==========Table Header========== --}}
 
@@ -180,15 +180,3 @@
     </div>
 
 </section>
-
-{{!-- Script For Enabling Data table in the above table --}}
-<script>
-
-    $.(document).ready(function(){
-
-        $('#coupon-table-active').DataTable();
-        
-    })
-
-
-</script>
