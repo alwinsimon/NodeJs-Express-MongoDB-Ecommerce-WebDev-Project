@@ -50,6 +50,16 @@ const addNewCoupon = (newCouponData, adminData)=>{
 
             newCouponData.usageCount = 0;
 
+            if(newCouponData.activeCoupon === "true"){
+
+                newCouponData.activeCoupon = true;
+
+            }else if(newCouponData.activeCoupon === "false"){
+
+                newCouponData.activeCoupon = false;
+
+            }
+
             newCouponData.createdOn = new Date();
 
             newCouponData.activeCoupon = true;
@@ -63,6 +73,50 @@ const addNewCoupon = (newCouponData, adminData)=>{
         }catch (error){
     
             console.log("Error from addNewCoupon couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
+
+const getActiveCoupons = ()=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+    
+            const activeCoupons = await db.get().collection(dataBasecollections.COUPON_COLLECTION).find( {activeCoupon:true} ).toArray();
+    
+            resolve(activeCoupons);
+    
+        }catch (error){
+    
+            console.log("Error from getActiveCoupons couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
+
+const getInActiveCoupons = ()=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+    
+            const inActiveCoupons = await db.get().collection(dataBasecollections.COUPON_COLLECTION).find( {activeCoupon:false} ).toArray();
+    
+            resolve(inActiveCoupons);
+    
+        }catch (error){
+    
+            console.log("Error from getActiveCoupons couponHelper :", error);
 
             reject(error);
             
@@ -86,6 +140,8 @@ const addNewCoupon = (newCouponData, adminData)=>{
 module.exports = {
 
     addNewCoupon,
-    verifyCouponExist
+    verifyCouponExist,
+    getActiveCoupons,
+    getInActiveCoupons
 
 }
