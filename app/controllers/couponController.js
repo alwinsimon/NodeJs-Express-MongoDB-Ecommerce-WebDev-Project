@@ -23,11 +23,26 @@ const PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
 /* ============================================= MANAGE COUPONS CONTROLLERS ============================================= */
 
-const manageCouponGET =  (req, res)=>{
+const manageCouponGET =  async (req, res)=>{
   
     const adminData = req.session.adminSession;
+
+    const activeCoupons = await couponHelpers.getActiveCoupons();
+
+    const inActiveCoupons = await couponHelpers.getInActiveCoupons();
+
+    const dataToRender = {
+
+        layout: 'admin-layout',
+        title: PLATFORM_NAME + " || Admin Panel",
+        PLATFORM_NAME,
+        adminData,
+        activeCoupons,
+        inActiveCoupons
+
+    }
   
-    res.render('admin/coupon-manage',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, adminData, PLATFORM_NAME });
+    res.render('admin/coupon-manage', dataToRender );
     
 };
 
