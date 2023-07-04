@@ -51,6 +51,8 @@ const addNewCoupon = (newCouponData, adminData)=>{
             newCouponData.usageCount = 0;
 
             newCouponData.createdOn = new Date();
+
+            newCouponData.activeCoupon = true;
     
             newCouponData.createdBy = ObjectId(adminData._id);
     
