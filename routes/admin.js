@@ -3,6 +3,7 @@ const router = express.Router();
 const adminMiddlewares = require('../middlewares/adminMiddlewares');
 const adminController = require('../app/controllers/adminController');
 const productController = require('../app/controllers/productController');
+const couponController = require('../app/controllers/couponController');
 
 
 /*=======================================MIDDLEWARES=======================================*/
@@ -79,6 +80,21 @@ router.get('/edit-product-category/:categoryId', verifyAdminLogin, productContro
 router.post('/edit-product-category/:categoryId', verifyAdminLogin, productController.editProductCategoryPOST);
 
 router.post('/delete-product-category/:categoryId', verifyAdminLogin, productController.deleteProductCategoryPOST);
+
+
+// ====================Routes for Coupon Management ====================
+
+router.get('/manage-coupons', verifyAdminLogin, couponController.manageCouponGET);
+
+router.get('/add-coupon', verifyAdminLogin, couponController.addNewCouponGET);
+
+router.post('/add-coupon', verifyAdminLogin, couponController.addNewCouponPOST);
+
+router.get('/edit-coupon', verifyAdminLogin, );
+
+router.post('/edit-coupon', verifyAdminLogin, );
+
+router.post('/deactivate-coupon', verifyAdminLogin, );
 
 
 // ====================Routes for Managing Orders====================
