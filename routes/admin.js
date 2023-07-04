@@ -86,7 +86,11 @@ router.post('/delete-product-category/:categoryId', verifyAdminLogin, productCon
 
 router.get('/manage-coupons', verifyAdminLogin, couponController.manageCouponGET);
 
-router.post('/add-coupon', verifyAdminLogin, );
+router.get('/add-coupon', verifyAdminLogin, couponController.addNewCouponGET);
+
+router.post('/add-coupon', verifyAdminLogin, couponController.addNewCouponPOST);
+
+router.get('/edit-coupon', verifyAdminLogin, );
 
 router.post('/edit-coupon', verifyAdminLogin, );
 
