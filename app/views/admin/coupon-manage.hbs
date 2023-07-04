@@ -1,30 +1,32 @@
-<section>
+<section style="margin-top: 20px; margin-bottom: 90px; padding-top: 5px; padding-bottom: 90px;">
 
     <div class="container">
 
         <div class="row mt-4 justify-content-end">
 
-            <form action="/admin/add-product" method="GET" class="col-md-2">
-                <button class="btn btn-success" type="submit">Add New Product</button>
+            <form action="/admin/add-coupon" method="GET" class="col-md-2">
+                <button class="btn btn-success" type="submit">Add New Coupon</button>
             </form>
 
         </div>
 
         {{!-- ====================TABLE==================== --}}
 
-        <table class="table mt-4">
+        <table id="coupon-table" class="table mt-4">
 
             {{!-- ==========Table Header========== --}}
 
             <thead>
                 <tr>
-                    <th scope="col">Product Id</th>
-                    <th scope="col">Database Id</th>
-                    <th scope="col">Product</th>
-                    <th scope="col">Category</th>
+                    <th scope="col">Coupon Code</th>
+                    <th scope="col">DB Id</th>
                     <th scope="col">Description</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Image</th>
+                    <th scope="col">Discount %</th>
+                    <th scope="col">Maximum Discount</th>
+                    <th scope="col">Minimum Order Value</th>
+                    <th scope="col">Validity</th>
+                    <th scope="col">Usage Count</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
 
@@ -32,21 +34,43 @@
 
             <tbody>
 
-                {{#each products}}
+                {{#each coupon}}
 
                 <tr>
-                    <th scope="row">{{this.id}}</th>
+                    
+                    <th scope="row">{{this.couponCode}}</th>
                     <td>{{this._id}}</td>
-                    <td>{{this.name}}</td>
-                    <td>{{this.category.name}}</td>
                     <td>{{this.description}}</td>
-                    <td>{{this.price}}</td>
-                    <td><img style="width: 50px; height: 50px" src="/product-images/{{this._id}}.jpg" alt="{{this.name}}"></td>
+                    <td>{{this.discountPercentage}}</td>
+                    <td>{{this.maxDiscountAmount}}</td>
+                    <td>{{this.minOrderValue}}</td>
+                    <td>{{this.validFor}}</td>
+                    <td>{{this.usageCount}}</td>
+
                     <td>
-                        <a href="/admin/edit-product/{{this._id}}" class="btn btn-primary">Edit</a>
-                        <a href="/admin/delete-product/{{this._id}}" class="btn btn-danger" onclick="return confirm('Are you sure that you want to delete {{this.name}} ?')">DELETE</a>
+                        
+                        <form action="/admin/edit-coupon" method="POST" class="col-md-2">
+
+                            <input type="hidden" name="couponId" value="{{this._id}}">
+
+                            <button class="btn btn-success" type="submit">EDIT</button>
+
+                        </form>
+
+                        <form action="/admin/deactivate-coupon" method="POST" class="col-md-2">
+                            
+                            <input type="hidden" name="couponId" value="{{this._id}}">
+                            
+                            <button class="btn btn-danger" onclick="return confirm('Are you sure that you want to deactivate {{this.name}} coupon?')" type="submit">DELETE</button>
+
+                        </form>
+
+
                     </td>
+                    
                 </tr>
+
+                
 
                 {{/each}}
 
@@ -57,3 +81,10 @@
     </div>
 
 </section>
+
+{{!-- Script For Enabling Data table in the above table --}}
+<script>
+
+    $('#coupon-table').DataTable();
+
+</script>
