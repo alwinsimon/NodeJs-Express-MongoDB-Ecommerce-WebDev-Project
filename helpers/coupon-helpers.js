@@ -61,8 +61,6 @@ const addNewCoupon = (newCouponData, adminData)=>{
             }
 
             newCouponData.createdOn = new Date();
-
-            newCouponData.activeCoupon = true;
     
             newCouponData.createdBy = ObjectId(adminData._id);
     
@@ -81,6 +79,8 @@ const addNewCoupon = (newCouponData, adminData)=>{
     })
     
 }
+
+/* ================================================ Retrive Coupon Data ================================================ */
 
 const getActiveCoupons = ()=>{
 
@@ -116,7 +116,75 @@ const getInActiveCoupons = ()=>{
     
         }catch (error){
     
-            console.log("Error from getActiveCoupons couponHelper :", error);
+            console.log("Error from getInActiveCoupons couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
+
+const getSingleCouponData = (couponId)=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+    
+            const couponData = await db.get().collection(dataBasecollections.COUPON_COLLECTION).findOne( {_id : ObjectId(couponId) } );
+    
+            resolve(couponData);
+    
+        }catch (error){
+    
+            console.log("Error from getSingleCouponData couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
+
+
+/* ================================================ Edit Coupon ================================================ */
+
+const updateCouponData = (couponDataForUpdate, adminData)=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+
+            couponDataForUpdate.couponCode = couponDataForUpdate.couponCode.toLowerCase(); 
+            // Converting the coupon code to lowercase to maintain uniform storage of codes and avoid duplicates due to vatiation in uppercase/lowercase
+
+            couponDataForUpdate.updatedOn = new Date();
+
+            if(couponDataForUpdate.activeCoupon === "true"){
+
+                couponDataForUpdate.activeCoupon = true;
+
+            }else if(couponDataForUpdate.activeCoupon === "false"){
+
+                couponDataForUpdate.activeCoupon = false;
+
+            }
+    
+            couponDataForUpdate.updatedBy = ObjectId(adminData._id);
+
+            // Updating in Database
+            const dbQuery = { _id : ObjectId(couponDataForUpdate.couponId)};
+            const dbAction = { $set : couponDataForUpdate};
+    
+            const couponUpdation = await db.get().collection(dataBasecollections.COUPON_COLLECTION).updateOne( dbQuery, dbAction );
+    
+            resolve(couponUpdation);
+    
+        }catch (error){
+    
+            console.log("Error from editCoupon couponHelper :", error);
 
             reject(error);
             
@@ -142,6 +210,8 @@ module.exports = {
     addNewCoupon,
     verifyCouponExist,
     getActiveCoupons,
-    getInActiveCoupons
+    getInActiveCoupons,
+    getSingleCouponData,
+    updateCouponData
 
 }
