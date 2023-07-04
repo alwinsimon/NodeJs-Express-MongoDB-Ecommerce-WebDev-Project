@@ -90,9 +90,9 @@ router.get('/add-coupon', verifyAdminLogin, couponController.addNewCouponGET);
 
 router.post('/add-coupon', verifyAdminLogin, couponController.addNewCouponPOST);
 
-router.get('/edit-coupon', verifyAdminLogin, );
+router.get('/edit-coupon/:couponId', verifyAdminLogin, couponController.editCouponGET);
 
-router.post('/edit-coupon', verifyAdminLogin, );
+router.post('/update-coupon', verifyAdminLogin, couponController.updateCouponPOST);
 
 router.post('/deactivate-coupon', verifyAdminLogin, );
 

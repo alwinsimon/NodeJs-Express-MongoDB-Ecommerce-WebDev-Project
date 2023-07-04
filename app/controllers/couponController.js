@@ -121,6 +121,96 @@ const addNewCouponPOST =  async (req, res)=>{
 };
 
 
+/* ============================================= EDIT COUPON CONTROLLERS ============================================= */
+
+const editCouponGET =  async (req, res)=>{
+
+    try{
+
+        const adminData = req.session.adminSession;
+
+        let couponExistError = false;
+
+        if(req.session.couponExistError){
+
+            couponExistError = req.session.couponExistError;
+            
+        }
+
+        const couponId = req.params.couponId;
+
+        const couponData = await couponHelpers.getSingleCouponData(couponId);
+
+        const dataToRender = {
+            
+            layout: 'admin-layout',
+            title: PLATFORM_NAME + " || Admin Panel",
+            PLATFORM_NAME,
+            adminData,
+            couponExistError,
+            couponData
+
+        }
+  
+        res.render('admin/coupon-edit', dataToRender);
+
+        delete req.session.couponExistError;
+
+    }catch (error){
+
+        console.log("Error from editCouponPOST couponController :", error);
+
+        res.redirect('/admin/error-page');
+
+    }
+    
+};
+
+const updateCouponPOST =  async (req, res)=>{
+
+    try{
+
+        const adminData = req.session.adminSession;
+
+        const couponDataForUpdate = req.body;
+
+        const couponId = couponDataForUpdate.couponId;
+    
+        const couponExist = await couponHelpers.verifyCouponExist(couponDataForUpdate);
+    
+        if(couponExist.status){
+    
+            const couponUpdateStatus = await couponHelpers.updateCouponData(couponDataForUpdate, adminData);
+    
+            if(couponUpdateStatus.modifiedCount === 1){
+    
+                res.redirect('/admin/manage-coupons');
+    
+            }else{
+    
+                console.log("Error from updateCouponPOST Controller: ", couponUpdateStatus);
+    
+                res.redirect('/admin/error-page');
+            }
+    
+        }else if (couponExist.duplicateCoupon){
+    
+            req.session.couponExistError = "Coupon code already exist, try some other code"
+
+            res.redirect('/admin/edit-coupon/' + couponId );
+    
+        }
+
+    }catch (error){
+
+        console.log("Error from editCouponPOST couponController :", error);
+
+        res.redirect('/admin/error-page');
+
+    }
+    
+};
+
 
 
 
@@ -139,6 +229,8 @@ module.exports = {
 
     manageCouponGET,
     addNewCouponGET,
-    addNewCouponPOST
+    addNewCouponPOST,
+    editCouponGET,
+    updateCouponPOST
 
 }
