@@ -10,6 +10,7 @@ module.exports = {
     ORDERS_COLLECTION: 'user orders',
     PAYMENT_HISTORY_COLLECTION: 'payment history',
     WALLET_COLLECTION : 'user wallet',
-    USER_ADDRESS_COLLECTION : 'user address'
+    USER_ADDRESS_COLLECTION : 'user address',
+    COUPON_COLLECTION : 'coupons'
 
 }
