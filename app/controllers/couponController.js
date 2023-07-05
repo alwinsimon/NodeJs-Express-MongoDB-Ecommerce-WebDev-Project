@@ -46,6 +46,26 @@ const manageCouponGET =  async (req, res)=>{
     
 };
 
+const inactiveCouponsGET =  async (req, res)=>{
+  
+    const adminData = req.session.adminSession;
+
+    const inActiveCoupons = await couponHelpers.getInActiveCoupons();
+
+    const dataToRender = {
+
+        layout: 'admin-layout',
+        title: PLATFORM_NAME + " || Admin Panel",
+        PLATFORM_NAME,
+        adminData,
+        inActiveCoupons
+
+    }
+  
+    res.render('admin/coupon-deactivated', dataToRender );
+    
+};
+
 
 /* ============================================= ADD COUPON CONTROLLERS ============================================= */
 
@@ -188,7 +208,7 @@ const updateCouponPOST =  async (req, res)=>{
     
             }else{
     
-                console.log("Error from updateCouponPOST Controller: ", couponUpdateStatus);
+                console.log("Error-1 from updateCouponPOST Controller: ", couponUpdateStatus);
     
                 res.redirect('/admin/error-page');
             }
@@ -203,7 +223,62 @@ const updateCouponPOST =  async (req, res)=>{
 
     }catch (error){
 
-        console.log("Error from editCouponPOST couponController :", error);
+        console.log("Error-2 from updateCouponPOST couponController :", error);
+
+        res.redirect('/admin/error-page');
+
+    }
+    
+};
+
+
+/* ============================================= ACTIVATE/DEACTIVATE COUPON CONTROLLERS ============================================= */
+
+const changeCouponStatusPOST =  async (req, res)=>{
+
+    try{
+
+        const adminData = req.session.adminSession;
+
+        const couponId = req.body.couponId;
+    
+        const couponData = await couponHelpers.getSingleCouponData(couponId);
+    
+        if(couponData.activeCoupon){
+    
+            const couponUpdateStatus = await couponHelpers.changeCouponStatus(couponData, "Deactivate", adminData);
+    
+            if(couponUpdateStatus.modifiedCount === 1){
+    
+                res.redirect('/admin/manage-coupons');
+    
+            }else{
+    
+                console.log("Error-1 from changeCouponStatusPOST Controller: ", couponUpdateStatus);
+    
+                res.redirect('/admin/error-page');
+            }
+    
+        }else if (!couponData.activeCoupon){
+    
+            const couponUpdateStatus = await couponHelpers.changeCouponStatus(couponData, "Activate", adminData);
+    
+            if(couponUpdateStatus.modifiedCount === 1){
+    
+                res.redirect('/admin/inactive-coupons');
+    
+            }else{
+    
+                console.log("Error-2 from changeCouponStatusPOST Controller: ", couponUpdateStatus);
+    
+                res.redirect('/admin/error-page');
+            }
+    
+        }
+
+    }catch (error){
+
+        console.log("Error-3 from changeCouponStatusPOST couponController :", error);
 
         res.redirect('/admin/error-page');
 
@@ -223,14 +298,14 @@ const updateCouponPOST =  async (req, res)=>{
 
 
 
-
-
 module.exports = {
 
     manageCouponGET,
+    inactiveCouponsGET,
     addNewCouponGET,
     addNewCouponPOST,
     editCouponGET,
-    updateCouponPOST
+    updateCouponPOST,
+    changeCouponStatusPOST
 
 }
