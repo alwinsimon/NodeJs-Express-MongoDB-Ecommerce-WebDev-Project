@@ -132,6 +132,18 @@ router.post('/change-order-return-status', verifyAdminLogin, adminController.cha
 
 
 
+/* ======================== Access Forbidden page======================== */
+
+router.get('/access-forbidden', adminController.adminAccessForbiddenPageGET);
+
+/* ======================== Error handling page======================== */
+
+router.get('/error-page', adminController.adminErrorHandlerPageGET);
+
+
+
+
+
 
 
 module.exports = router;

@@ -340,6 +340,49 @@ const changeOrderReturnStatusPOST = async (req,res)=>{
 
 
 
+/* ======================== Error Handling Controllers======================== */
+
+const adminAccessForbiddenPageGET = (req,res)=>{
+
+  const adminData = req.session.adminSession;
+
+  if(adminData){
+
+    res.render('admin/error-access-forbidden',{ layout: 'admin-layout', title: adminData.name +"'s " + PLATFORM_NAME + " || Access Forbidden", PLATFORM_NAME, adminData});
+
+  }else{
+
+    res.render('admin/error-access-forbidden',{ layout: 'admin-layout', title:PLATFORM_NAME + " || Access Forbidden", PLATFORM_NAME});
+
+  }
+  
+}
+
+
+const adminErrorHandlerPageGET = (req,res)=>{
+
+  const adminData = req.session.adminSession;
+
+  if(adminData){
+
+    res.render('admin/error-page',{ layout: 'admin-layout', title: adminData.name +"'s " + PLATFORM_NAME + " || Error Page", PLATFORM_NAME,  adminData});
+
+  }else{
+
+    res.render('admin/error-page',{ layout: 'admin-layout', title:PLATFORM_NAME + " || Error Page", PLATFORM_NAME});
+
+  }
+  
+}
+
+
+
+
+
+
+
+
+
 
 module.exports = {
 
@@ -359,6 +402,8 @@ module.exports = {
   changeOrderStatusPOST,
   adminSideOrderCancellationPOST,
   reviewOrderReturnRequestPOST,
-  changeOrderReturnStatusPOST
+  changeOrderReturnStatusPOST,
+  adminErrorHandlerPageGET,
+  adminAccessForbiddenPageGET
 
 }
