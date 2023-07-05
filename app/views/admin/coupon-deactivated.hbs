@@ -52,13 +52,7 @@
 
                         <td>
                             
-                            <form action="/admin/edit-coupon" method="POST" class="col-md-2">
-
-                                <input type="hidden" name="couponId" value="{{this._id}}">
-
-                                <button class="btn btn-success" type="submit">EDIT</button>
-
-                            </form>
+                            <a href="/admin/edit-coupon/{{this._id}}" class="btn btn-success">EDIT</a>
 
                             <form action="/admin/change-coupon-status" method="POST" class="col-md-2">
                                 
