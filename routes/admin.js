@@ -94,7 +94,9 @@ router.get('/edit-coupon/:couponId', verifyAdminLogin, couponController.editCoup
 
 router.post('/update-coupon', verifyAdminLogin, couponController.updateCouponPOST);
 
-router.post('/deactivate-coupon', verifyAdminLogin, );
+router.post('/change-coupon-status', verifyAdminLogin, couponController.changeCouponStatusPOST);
+
+router.get('/inactive-coupons', verifyAdminLogin, couponController.inactiveCouponsGET );
 
 
 // ====================Routes for Managing Orders====================
