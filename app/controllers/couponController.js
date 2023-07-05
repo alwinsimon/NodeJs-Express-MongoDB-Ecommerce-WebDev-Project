@@ -34,7 +34,7 @@ const manageCouponGET =  async (req, res)=>{
     const dataToRender = {
 
         layout: 'admin-layout',
-        title: PLATFORM_NAME + " || Admin Panel",
+        title: PLATFORM_NAME + " || Manage Coupons",
         PLATFORM_NAME,
         adminData,
         activeCoupons,
@@ -55,7 +55,7 @@ const inactiveCouponsGET =  async (req, res)=>{
     const dataToRender = {
 
         layout: 'admin-layout',
-        title: PLATFORM_NAME + " || Admin Panel",
+        title: PLATFORM_NAME + " || Inactive coupons",
         PLATFORM_NAME,
         adminData,
         inActiveCoupons
@@ -83,7 +83,7 @@ const addNewCouponGET =  (req, res)=>{
             
         }
   
-        res.render('admin/coupon-add',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, adminData, PLATFORM_NAME, couponExistError });
+        res.render('admin/coupon-add',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Add coupon", PLATFORM_NAME, adminData, PLATFORM_NAME, couponExistError });
 
         delete req.session.couponExistError;
 
@@ -164,7 +164,7 @@ const editCouponGET =  async (req, res)=>{
         const dataToRender = {
             
             layout: 'admin-layout',
-            title: PLATFORM_NAME + " || Admin Panel",
+            title: PLATFORM_NAME + " || Edit coupon",
             PLATFORM_NAME,
             adminData,
             couponExistError,
