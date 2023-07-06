@@ -11,6 +11,7 @@ module.exports = {
     PAYMENT_HISTORY_COLLECTION: 'payment history',
     WALLET_COLLECTION : 'user wallet',
     USER_ADDRESS_COLLECTION : 'user address',
-    COUPON_COLLECTION : 'coupons'
+    COUPON_COLLECTION : 'coupons',
+    USED_COUPON_COLLECTION : 'coupons log'
 
 }
