@@ -302,7 +302,7 @@ const applyCouponPOST =  async (req, res)=>{
 
         const couponData = await couponHelpers.getCouponDataByCouponCode(couponCode);
     
-        const couponEligible = await couponHelpers.verifyCouponEligibility(couponCode, userData);
+        const couponEligible = await couponHelpers.verifyCouponEligibility(couponCode);
     
         if(couponEligible.status){
 
@@ -345,8 +345,6 @@ const applyCouponPOST =  async (req, res)=>{
                 res.redirect('/place-order');
 
             }
-    
-            // const cartEligibleForCoupon = await couponHelpers.verifyCouponEligibility(couponCode, userData);
     
         }else if (couponEligible.reasonForRejection){
 

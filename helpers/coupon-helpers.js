@@ -287,7 +287,7 @@ const getCouponDataByCouponCode = (couponCode)=>{
 }
 
 
-const verifyCouponEligibility = (requestedCouponCode, userData)=>{
+const verifyCouponEligibility = (requestedCouponCode)=>{
 
     return new Promise( async (resolve, reject)=>{
 
