@@ -798,7 +798,6 @@ const placeOrderPOST = async (req,res)=>{
   let user = req.session.userSession // Used for storing user details for further use in this route
 
   let orderDetails = req.body;
-  // console.log(req.body);
 
   let orderedProducts = await userHelpers.getProductListForOrders(user._id);
   // This variable will store the product details if cart exist for user, else will store a boolean value false returned by the function
@@ -806,6 +805,20 @@ const placeOrderPOST = async (req,res)=>{
   if(orderedProducts){ // If there are products inside user cart , Proceed executing checkout functions
 
     let totalOrderValue = await userHelpers.getCartValue(user._id);
+
+    const availableCouponData = await couponHelpers.checkCurrentCouponValidityStatus(user._id, totalOrderValue);
+
+    if(availableCouponData.status){
+
+      const couponDiscountAmount = availableCouponData.couponDiscount;
+
+      // Inserting the value of coupon discount into the order details object created above
+      orderDetails.couponDiscount = couponDiscountAmount;
+
+      // Updating the total order value with coupon discount applied
+      totalOrderValue = totalOrderValue - couponDiscountAmount;
+
+    }
 
     userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue).then((orderId)=>{
 
