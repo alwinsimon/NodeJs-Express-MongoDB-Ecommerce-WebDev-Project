@@ -496,7 +496,7 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
 
             if(existingAppledCoupon === null){ // No applied coupons
 
-                resolve( { status : false} );
+                resolve( { status : false, couponDiscount : 0} );
 
             }else{ // Applied Coupon Exist
 
@@ -508,7 +508,7 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
 
                 const minimumOrderValue = parseInt(activeCouponData.minOrderValue);
 
-                if(cartValue >= minimumOrderValue){
+                if(cartValue >= minimumOrderValue){ // Coupon is valid considering the cart amount
 
                     const couponExpiryDate = new Date(activeCouponData.createdOn.getTime());
 
@@ -516,19 +516,40 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
 
                     const currentDate = new Date();
 
-                    if(couponExpiryDate >= currentDate){
+                    if(couponExpiryDate >= currentDate){ // Coupon is valid considering the expiry date
 
-                        resolve({ status: true });
+                        // Calculating eligible Discount Amount considering the cart total
+                        const discountPercentage = parseInt(activeCouponData.discountPercentage);
 
-                    }else{
+                        const discountAmountForCart = cartValue * ( discountPercentage / 100 );
 
-                        resolve({ status: false });
+                        // Fixing maximum eligible discount amount
+                        const maximumCouponDiscountAmount = parseInt(activeCouponData.maxDiscountAmount);
+
+                        let eligibleCouponDiscountAmount = 0;
+
+                        if(discountAmountForCart >= maximumCouponDiscountAmount){
+
+                            eligibleCouponDiscountAmount = maximumCouponDiscountAmount;
+
+                        }else{
+
+                            eligibleCouponDiscountAmount = discountAmountForCart;
+
+                        }
+
+                        // =================== Resolving all the coupon Discount Data of Eligible Coupon ===================
+                        resolve({ status: true, couponId : activeCouponId, couponDiscount : eligibleCouponDiscountAmount });
+
+                    }else{ // Coupon last use date exceeded, so coupon is invalid considering the expiry date
+
+                        resolve({ status: false, couponId : activeCouponId, couponDiscount : 0 });
 
                     }
 
-                }else{
+                }else{ // Coupon is invalid considering the cart amount
 
-                    resolve( { status : false } );
+                    resolve( { status : false, couponId : activeCouponId, couponDiscount : 0 } );
 
                 }
 
@@ -545,9 +566,6 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
     })
     
 }
-
-
-const getCouponDiscountPercentage = 0; // Should return zero if there are no applied coupons or should return the coupon discount pertcentage
 
 
 
