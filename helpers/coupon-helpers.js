@@ -477,6 +477,79 @@ const applyCouponToCart = (userId, couponId)=>{
 }
 
 
+const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+
+            // Check if coupon Exist or not
+            const dbQuery = {
+
+                userId: userId,
+                
+                usedCoupons: { $elemMatch: { appliedCoupon: true }}
+
+            };
+
+            const existingAppledCoupon = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne(dbQuery);
+
+            if(existingAppledCoupon === null){ // No applied coupons
+
+                resolve( { status : false} );
+
+            }else{ // Applied Coupon Exist
+
+                const activeCoupon = existingAppledCoupon.usedCoupons.find(coupon => coupon.appliedCoupon === true);
+
+                const activeCouponId = activeCoupon.couponId.toString();
+
+                const activeCouponData = await db.get().collection(dataBasecollections.COUPON_COLLECTION).findOne( {_id : ObjectId(activeCouponId) } );
+
+                const minimumOrderValue = parseInt(activeCouponData.minOrderValue);
+
+                if(cartValue >= minimumOrderValue){
+
+                    const couponExpiryDate = new Date(activeCouponData.createdOn.getTime());
+
+                    couponExpiryDate.setDate(couponExpiryDate.getDate() + parseInt(activeCouponData.validFor));
+
+                    const currentDate = new Date();
+
+                    if(couponExpiryDate >= currentDate){
+
+                        resolve({ status: true });
+
+                    }else{
+
+                        resolve({ status: false });
+
+                    }
+
+                }else{
+
+                    resolve( { status : false } );
+
+                }
+
+            }
+    
+        }catch (error){
+    
+            console.log("Error from checkCurrentCouponValidityStatus couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
+
+
+const getCouponDiscountPercentage = 0; // Should return zero if there are no applied coupons or should return the coupon discount pertcentage
+
+
 
 
 
@@ -496,10 +569,11 @@ module.exports = {
     updateCouponData,
     changeCouponStatus,
 
-    /*=== Useer Coupon Controllers ===*/
+    /*=== User Coupon Controllers ===*/
     verifyCouponEligibility,
     getCouponDataByCouponCode,
     verifyCouponUsedStatus,
-    applyCouponToCart
+    applyCouponToCart,
+    checkCurrentCouponValidityStatus
 
 }
