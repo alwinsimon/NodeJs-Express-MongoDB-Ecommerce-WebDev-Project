@@ -818,6 +818,8 @@ const placeOrderPOST = async (req,res)=>{
       // Updating the total order value with coupon discount applied
       totalOrderValue = totalOrderValue - couponDiscountAmount;
 
+      const updateCouponUsedStatusResult = await couponHelpers.updateCouponUsedStatus(user._id, availableCouponData.couponId);
+
     }
 
     userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue).then((orderId)=>{
