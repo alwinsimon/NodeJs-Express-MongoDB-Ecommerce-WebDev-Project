@@ -587,7 +587,7 @@ module.exports = {
     updateCouponData,
     changeCouponStatus,
 
-    /*=== Useer Coupon Controllers ===*/
+    /*=== User Coupon Controllers ===*/
     verifyCouponEligibility,
     getCouponDataByCouponCode,
     verifyCouponUsedStatus,
