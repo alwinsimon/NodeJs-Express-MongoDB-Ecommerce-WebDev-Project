@@ -287,7 +287,7 @@ const getCouponDataByCouponCode = (couponCode)=>{
 }
 
 
-const verifyCouponEligibility = (requestedCouponCode, userData)=>{
+const verifyCouponEligibility = (requestedCouponCode)=>{
 
     return new Promise( async (resolve, reject)=>{
 
@@ -508,49 +508,68 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
 
                 const minimumOrderValue = parseInt(activeCouponData.minOrderValue);
 
-                if(cartValue >= minimumOrderValue){ // Coupon is valid considering the cart amount
+                // Check if coupon previously used by the user
+                const dbQuery = {
 
-                    const couponExpiryDate = new Date(activeCouponData.createdOn.getTime());
+                    userId: userId,
+                
+                    usedCoupons: { $elemMatch: { couponId : activeCoupon.couponId, usedCoupon: true }}
 
-                    couponExpiryDate.setDate(couponExpiryDate.getDate() + parseInt(activeCouponData.validFor));
+                };
 
-                    const currentDate = new Date();
+                const previouslyUsedCoupon = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne(dbQuery);
 
-                    if(couponExpiryDate >= currentDate){ // Coupon is valid considering the expiry date
+                if(previouslyUsedCoupon === null){ // Coupon is not used ever
 
-                        // Calculating eligible Discount Amount considering the cart total
-                        const discountPercentage = parseInt(activeCouponData.discountPercentage);
+                    if(cartValue >= minimumOrderValue){ // Coupon is valid considering the cart amount
 
-                        const discountAmountForCart = cartValue * ( discountPercentage / 100 );
-
-                        // Fixing maximum eligible discount amount
-                        const maximumCouponDiscountAmount = parseInt(activeCouponData.maxDiscountAmount);
-
-                        let eligibleCouponDiscountAmount = 0;
-
-                        if(discountAmountForCart >= maximumCouponDiscountAmount){
-
-                            eligibleCouponDiscountAmount = maximumCouponDiscountAmount;
-
-                        }else{
-
-                            eligibleCouponDiscountAmount = discountAmountForCart;
-
+                        const couponExpiryDate = new Date(activeCouponData.createdOn.getTime());
+    
+                        couponExpiryDate.setDate(couponExpiryDate.getDate() + parseInt(activeCouponData.validFor));
+    
+                        const currentDate = new Date();
+    
+                        if(couponExpiryDate >= currentDate){ // Coupon is valid considering the expiry date
+    
+                            // Calculating eligible Discount Amount considering the cart total
+                            const discountPercentage = parseInt(activeCouponData.discountPercentage);
+    
+                            const discountAmountForCart = cartValue * ( discountPercentage / 100 );
+    
+                            // Fixing maximum eligible discount amount
+                            const maximumCouponDiscountAmount = parseInt(activeCouponData.maxDiscountAmount);
+    
+                            let eligibleCouponDiscountAmount = 0;
+    
+                            if(discountAmountForCart >= maximumCouponDiscountAmount){
+    
+                                eligibleCouponDiscountAmount = maximumCouponDiscountAmount;
+    
+                            }else{
+    
+                                eligibleCouponDiscountAmount = discountAmountForCart;
+    
+                            }
+    
+                            // =================== Resolving all the coupon Discount Data of Eligible Coupon ===================
+                            resolve({ status: true, couponId : activeCouponId, couponDiscount : eligibleCouponDiscountAmount });
+    
+                        }else{ // Coupon last use date exceeded, so coupon is invalid considering the expiry date
+    
+                            resolve({ status: false, couponId : activeCouponId, couponDiscount : 0 });
+    
                         }
-
-                        // =================== Resolving all the coupon Discount Data of Eligible Coupon ===================
-                        resolve({ status: true, couponId : activeCouponId, couponDiscount : eligibleCouponDiscountAmount });
-
-                    }else{ // Coupon last use date exceeded, so coupon is invalid considering the expiry date
-
-                        resolve({ status: false, couponId : activeCouponId, couponDiscount : 0 });
-
+    
+                    }else{ // Coupon is invalid considering the cart amount
+    
+                        resolve( { status : false, couponId : activeCouponId, couponDiscount : 0 } );
+    
                     }
-
-                }else{ // Coupon is invalid considering the cart amount
-
-                    resolve( { status : false, couponId : activeCouponId, couponDiscount : 0 } );
-
+    
+                }else{ // Coupon is used already
+    
+                    resolve({ status: false, couponId : activeCouponId, couponDiscount : 0 });
+    
                 }
 
             }
@@ -558,6 +577,53 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
         }catch (error){
     
             console.log("Error from checkCurrentCouponValidityStatus couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
+
+
+const updateCouponUsedStatus = (userId, couponId)=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+
+            const requestedUserId = ObjectId(userId);
+
+            const requestedCouponId = ObjectId(couponId);
+
+            // Check if coupon Exist or not
+            const dbQuery = {
+
+                userId: userId,
+                
+                usedCoupons: { $elemMatch: { couponId : requestedCouponId }}
+
+            };
+
+            const findAppliedCoupon = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne(dbQuery);
+
+            if (findAppliedCoupon) {
+
+                // Coupon exists, update the usedCoupon value to true
+                const couponUpdateStatus = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateOne(dbQuery, { $set: { "usedCoupons.$.usedCoupon": true } });
+        
+                resolve( {status: true} ); // Resolve the promise after updating the status
+
+            } else {
+
+                reject(new Error("Coupon not found")); // Reject the promise if coupon does not exist
+
+            }
+    
+        }catch (error){
+    
+            console.log("Error from updateCouponUsedStatus couponHelper :", error);
 
             reject(error);
             
@@ -592,6 +658,7 @@ module.exports = {
     getCouponDataByCouponCode,
     verifyCouponUsedStatus,
     applyCouponToCart,
-    checkCurrentCouponValidityStatus
+    checkCurrentCouponValidityStatus,
+    updateCouponUsedStatus
 
 }
