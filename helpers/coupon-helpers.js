@@ -389,19 +389,18 @@ const applyCouponToCart = (userId, couponId)=>{
         try{
 
             // Step-1 ==> Disable any other coupons that have been applied earlier
-            const dbQuery = { userId: userId, usedCoupons: { $elemMatch: { couponId : couponId, appliedCoupon: true } } };
+            const dbQuery = { userId: userId, usedCoupons: { $elemMatch: { appliedCoupon: true } } };
 
-            const updateQuery = { $set: { "usedCoupons.$[elem].appliedCoupon" : false } };
+            const updateQuery = { $set: { "usedCoupons.$[elem].appliedCoupon": false } };
 
-            const arrayFilters = [ {"elem.couponId" : couponId, "elem.appliedCoupon" : true } ];
+            const arrayFilters = [ { "elem.appliedCoupon" : true } ];
         
             const updateOptions = { arrayFilters: arrayFilters };
 
             const updateResult = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateMany(dbQuery, updateQuery, updateOptions);
 
-            console.log("============================================================",updateResult);
+            // console.log("============================================================",updateResult);
 
-            
             // Step-2 ==> Add the given coupon to users coupon history
             const userCouponHistory = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne( { userId : userId } );
 
@@ -425,35 +424,49 @@ const applyCouponToCart = (userId, couponId)=>{
 
                 const insertNewCouponHistory = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).insertOne( dataToInsert );
 
-                console.log("#######################################################", insertNewCouponHistory);
+                // console.log("#######################################################", insertNewCouponHistory);
 
-                resolve(insertNewCouponHistory);
+                resolve({status:true});
 
             }else{ // If the user has a document in the coupons history collection, but don't have this coupon or this coupon is not applied yet
 
-                // Find the coupon object in the usedCoupons array of the user document
-                const dbQuery = { userId: userId, usedCoupons: { $elemMatch: { couponId: couponId } } };
 
-                // If there is a object with given coupon ID, update the applied coupon value to true
-                const valueToUpdate = { $set: { "usedCoupons.$[elem].appliedCoupon": true } };
+                const dbQuery = { userId: userId, usedCoupons: { $elemMatch: { couponId : couponId} } };
 
-                // If there is no object with given coupon ID, Insert a new object
-                const objectToInsert = { $setOnInsert: { userId: userId, usedCoupons: [ { couponId: couponId, appliedCoupon: true, usedCoupon: false } ] } };
+                const couponObjectExist = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne( dbQuery );
 
-                const arrayFilters = { arrayFilters: [ { "elem.couponId": couponId } ], upsert: true }
+                if(couponObjectExist === null ){ // Object containing Coupon code dosen't exist in the used coupons array
 
-                const insertNewCouponToHistory = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOneAndUpdate( dbQuery, valueToUpdate, objectToInsert, arrayFilters );
+                    const dbQuery = { userId: userId };
 
-                console.log("***********************************", insertNewCouponToHistory);
+                    const dbInsert = { $push: { usedCoupons: {couponId: couponId, appliedCoupon: true, usedCoupon: false } } };
 
-                resolve(insertNewCouponToHistory);
+                    const couponObjectExist = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateOne( dbQuery, dbInsert );
+
+                    // console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", couponObjectExist);
+
+                    resolve({status:true});
+
+                }else{ // Object containing Coupon code exist in the used coupons array, so update the applied coupon feild in the array object to true
+
+                    const dbQuery = { userId: userId, usedCoupons: { $elemMatch: { couponId : couponId } } };
+
+                    const dbUpdate = { $set: { "usedCoupons.$.appliedCoupon": true } };
+
+                    const couponObjectModified = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateOne( dbQuery, dbUpdate );
+
+                    // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", couponObjectModified);
+
+                    resolve({status:true});
+
+                }
 
             }
 
     
         }catch (error){
     
-            console.log("Error from verifyCouponUsedStatus couponHelper :", error);
+            console.log("Error from applyCouponToCart couponHelper :", error);
 
             reject(error);
             

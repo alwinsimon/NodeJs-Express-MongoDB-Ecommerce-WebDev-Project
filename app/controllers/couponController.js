@@ -314,11 +314,21 @@ const applyCouponPOST =  async (req, res)=>{
 
                 if(userEligible.status){
 
-                    const applyNewCoupon = await couponHelpers.applyCouponToCart(userData._id, couponData._id)
+                    const applyNewCoupon = await couponHelpers.applyCouponToCart(userData._id, couponData._id);
 
-                    req.session.userSession.couponApplied = "Congrats, Coupon applied succesfully";
+                    if(applyNewCoupon.status){
 
-                    res.redirect('/place-order');
+                        req.session.userSession.couponApplied = "Congrats, Coupon applied succesfully";
+
+                        res.redirect('/place-order');
+
+                    }else{
+
+                        req.session.userSession.couponInvalidError = "Sorry, Unexpected Error in applying coupon";
+
+                        res.redirect('/place-order');
+
+                    }
 
                 }else{
 
