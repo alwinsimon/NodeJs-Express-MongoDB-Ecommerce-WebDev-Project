@@ -568,6 +568,53 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
 }
 
 
+const updateCouponUsedStatus = (userId, couponId)=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+
+            const requestedUserId = ObjectId(userId);
+
+            const requestedCouponId = ObjectId(couponId);
+
+            // Check if coupon Exist or not
+            const dbQuery = {
+
+                userId: userId,
+                
+                usedCoupons: { $elemMatch: { couponId : requestedCouponId }}
+
+            };
+
+            const findAppliedCoupon = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne(dbQuery);
+
+            if (findAppliedCoupon) {
+
+                // Coupon exists, update the usedCoupon value to true
+                const couponUpdateStatus = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateOne(dbQuery, { $set: { "usedCoupons.$.usedCoupon": true } });
+        
+                resolve( {status: true} ); // Resolve the promise after updating the status
+
+            } else {
+
+                reject(new Error("Coupon not found")); // Reject the promise if coupon does not exist
+
+            }
+    
+        }catch (error){
+    
+            console.log("Error from updateCouponUsedStatus couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
+
+
 
 
 
@@ -592,6 +639,7 @@ module.exports = {
     getCouponDataByCouponCode,
     verifyCouponUsedStatus,
     applyCouponToCart,
-    checkCurrentCouponValidityStatus
+    checkCurrentCouponValidityStatus,
+    updateCouponUsedStatus
 
 }
