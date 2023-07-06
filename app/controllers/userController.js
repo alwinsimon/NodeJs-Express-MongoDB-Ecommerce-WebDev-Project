@@ -761,7 +761,7 @@ const placeOrderGET = async (req,res)=>{
 
     }else{
 
-      couponDiscount = "Order Not Eligible"
+      couponDiscount = 0;
 
     }
 
