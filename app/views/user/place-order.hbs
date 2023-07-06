@@ -513,29 +513,15 @@
 
                                     {{#if couponApplied}}
 
-                                        <p style="color: #21b503;"><b>Coupon Applied Succesfully</b></p>
+                                        <p style="color: #21b503;"><b>{{couponApplied}}</b></p>
 
-                                    {{else if couponNotValid}}
+                                    {{else if couponError}}
 
-                                        <p style="color: red;"><b>Invalid Coupon</b></p>
+                                        <p style="color: red;"><b>{{couponError}}</b></p>
 
                                     {{/if}}
 
                                 </div>
-
-                                {{#if validCoupon}}
-
-                                    <div class="row mb-1 mt-1">
-
-                                        <div class="col-md-7 col-lg-6 mx-auto justify-content-between text-center">
-
-                                            <p style="color: #21b503;"><b>Coupon Applied to the order</b></p>
-
-                                        </div>
-
-                                    </div>
-
-                                {{/if}}
 
                                 <div class="row mb-1 mt-1">
 

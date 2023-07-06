@@ -318,13 +318,13 @@ const applyCouponPOST =  async (req, res)=>{
 
                     if(applyNewCoupon.status){
 
-                        req.session.userSession.couponApplied = "Congrats, Coupon applied succesfully";
+                        req.session.couponApplied = "Congrats, Coupon applied succesfully";
 
                         res.redirect('/place-order');
 
                     }else{
 
-                        req.session.userSession.couponInvalidError = "Sorry, Unexpected Error in applying coupon";
+                        req.session.couponInvalidError = "Sorry, Unexpected Error in applying coupon";
 
                         res.redirect('/place-order');
 
@@ -332,7 +332,7 @@ const applyCouponPOST =  async (req, res)=>{
 
                 }else{
 
-                    req.session.userSession.couponInvalidError = "Coupon already used earlier";
+                    req.session.couponInvalidError = "Coupon already used earlier";
 
                     res.redirect('/place-order');
 
@@ -340,7 +340,7 @@ const applyCouponPOST =  async (req, res)=>{
 
             }else{
 
-                req.session.userSession.couponInvalidError = "Coupon not applied, purchase minimum for ₹" + couponData.minOrderValue + " to get coupon";
+                req.session.couponInvalidError = "Coupon not applied, purchase minimum for ₹" + couponData.minOrderValue + " to get coupon";
 
                 res.redirect('/place-order');
 
@@ -350,7 +350,7 @@ const applyCouponPOST =  async (req, res)=>{
     
         }else if (couponEligible.reasonForRejection){
 
-            req.session.userSession.couponInvalidError = couponEligible.reasonForRejection;
+            req.session.couponInvalidError = couponEligible.reasonForRejection;
 
             res.redirect('/place-order');
     
