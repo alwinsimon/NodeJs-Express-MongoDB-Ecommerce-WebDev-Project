@@ -724,6 +724,21 @@ const placeOrderGET = async (req,res)=>{
 
   const primaryAddress = await userHelpers.getUserPrimaryAddress(user._id);
 
+  // Coupon Request configuration
+  let couponError = false;
+  let couponApplied = false;
+
+  if(req.session.couponInvalidError){
+
+    couponError = req.session.couponInvalidError;
+
+  }else if(req.session.couponApplied){
+
+    couponApplied = req.session.couponApplied;
+
+  }
+
+
   if(cartCount > 0){
 
     let cartProducts = await userHelpers.getCartProducts(user._id);
@@ -738,11 +753,19 @@ const placeOrderGET = async (req,res)=>{
 
     if(primaryAddress){
 
-      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, primaryAddress, wishlistCount});
+      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, primaryAddress, wishlistCount, couponApplied, couponError});
+
+      delete req.session.couponApplied;
+
+      delete req.session.couponInvalidError;
 
     }else{
 
-      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, wishlistCount});
+      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, wishlistCount, couponApplied, couponError});
+
+      delete req.session.couponApplied;
+
+      delete req.session.couponInvalidError;
 
     }
 

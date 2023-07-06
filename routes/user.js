@@ -1,7 +1,12 @@
 var express = require('express');
 var router = express.Router();
-const userController = require('../app/controllers/userController');
+
+/* ======================== Middlewares ======================== */
 const userMiddlewares = require('../middlewares/userMiddlewares');
+
+/* ======================== Controllers ======================== */
+const userController = require('../app/controllers/userController');
+const couponController = require('../app/controllers/couponController');
 
 
 
@@ -82,6 +87,11 @@ router.get('/add-to-cart/:id', verifyUserLogin, userController.addToCartGET);
 router.post('/change-product-quantity', verifyUserLogin, userController.changeCartProductQuantityPOST);
 
 router.post('/delete-product-from-cart', verifyUserLogin, userController.deleteCartProductPOST);
+
+
+/* ========================COUPON ROUTES======================== */
+
+router.post('/apply-coupon-request', verifyUserLogin, couponController.applyCouponPOST);
 
 
 /* ========================ORDERS ROUTES======================== */

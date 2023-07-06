@@ -2,6 +2,7 @@
 
 const productHelpers = require('../../helpers/product-helpers');
 const adminHelpers = require('../../helpers/admin-helpers');
+const userHelpers = require('../../helpers/user-helpers');
 const couponHelpers = require('../../helpers/coupon-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
@@ -9,19 +10,15 @@ require('dotenv').config(); // Module to Load environment variables from .env fi
 
 const PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
+/*========================================================================================================================
+                       ==================== ADMIN SIDE COUPON CONTROLLERS ====================
+==========================================================================================================================*/
 
 
-/* ============================================= ADD, EDIT & DEACTIVATE COUPONS CONTROLLERS ============================================= */
+/* ======================== ADD, EDIT & DEACTIVATE COUPONS CONTROLLERS ======================== */
 
 
-
-
-
-
-
-
-
-/* ============================================= MANAGE COUPONS CONTROLLERS ============================================= */
+/* ======================== MANAGE COUPONS CONTROLLERS ======================== */
 
 const manageCouponGET =  async (req, res)=>{
   
@@ -67,7 +64,7 @@ const inactiveCouponsGET =  async (req, res)=>{
 };
 
 
-/* ============================================= ADD COUPON CONTROLLERS ============================================= */
+/* ======================== ADD COUPON CONTROLLERS ======================== */
 
 const addNewCouponGET =  (req, res)=>{
 
@@ -141,7 +138,7 @@ const addNewCouponPOST =  async (req, res)=>{
 };
 
 
-/* ============================================= EDIT COUPON CONTROLLERS ============================================= */
+/* ======================== EDIT COUPON CONTROLLERS ======================== */
 
 const editCouponGET =  async (req, res)=>{
 
@@ -232,7 +229,7 @@ const updateCouponPOST =  async (req, res)=>{
 };
 
 
-/* ============================================= ACTIVATE/DEACTIVATE COUPON CONTROLLERS ============================================= */
+/* ======================== ACTIVATE/DEACTIVATE COUPON CONTROLLERS ======================== */
 
 const changeCouponStatusPOST =  async (req, res)=>{
 
@@ -288,6 +285,86 @@ const changeCouponStatusPOST =  async (req, res)=>{
 
 
 
+/*========================================================================================================================
+                        ==================== USER SIDE COUPON CONTROLLERS ====================
+==========================================================================================================================*/
+
+
+/* ======================== APPLY COUPON CONTROLLER ======================== */
+
+const applyCouponPOST =  async (req, res)=>{
+
+    try{
+
+        const userData = req.session.userSession;
+
+        const couponCode = req.body.couponCodeFromUser.toLowerCase();
+
+        const couponData = await couponHelpers.getCouponDataByCouponCode(couponCode);
+    
+        const couponEligible = await couponHelpers.verifyCouponEligibility(couponCode, userData);
+    
+        if(couponEligible.status){
+
+            const cartValue = await userHelpers.getCartValue(userData._id);
+
+            if(cartValue >= couponData.minOrderValue){
+
+                const userEligible = await couponHelpers.verifyCouponUsedStatus(userData._id, couponData._id);
+
+                if(userEligible.status){
+
+                    const applyNewCoupon = await couponHelpers.applyCouponToCart(userData._id, couponData._id);
+
+                    if(applyNewCoupon.status){
+
+                        req.session.couponApplied = "Congrats, Coupon applied succesfully";
+
+                        res.redirect('/place-order');
+
+                    }else{
+
+                        req.session.couponInvalidError = "Sorry, Unexpected Error in applying coupon";
+
+                        res.redirect('/place-order');
+
+                    }
+
+                }else{
+
+                    req.session.couponInvalidError = "Coupon already used earlier";
+
+                    res.redirect('/place-order');
+
+                }
+
+            }else{
+
+                req.session.couponInvalidError = "Coupon not applied, purchase minimum for ₹" + couponData.minOrderValue + " to get coupon";
+
+                res.redirect('/place-order');
+
+            }
+    
+            // const cartEligibleForCoupon = await couponHelpers.verifyCouponEligibility(couponCode, userData);
+    
+        }else if (couponEligible.reasonForRejection){
+
+            req.session.couponInvalidError = couponEligible.reasonForRejection;
+
+            res.redirect('/place-order');
+    
+        }
+
+    }catch (error){
+
+        console.log("Error from applyCouponPOST couponController :", error);
+
+        res.redirect('/error-page');
+
+    }
+    
+};
 
 
 
@@ -298,14 +375,40 @@ const changeCouponStatusPOST =  async (req, res)=>{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================== Exporting Controllers ======================== */
 module.exports = {
 
+    /*=== Admin Coupon Controllers ===*/
     manageCouponGET,
     inactiveCouponsGET,
     addNewCouponGET,
     addNewCouponPOST,
     editCouponGET,
     updateCouponPOST,
-    changeCouponStatusPOST
+    changeCouponStatusPOST,
+
+
+    /*=== User Coupon Controllers ===*/
+    applyCouponPOST
 
 }

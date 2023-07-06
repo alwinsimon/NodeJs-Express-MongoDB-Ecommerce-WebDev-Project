@@ -4,6 +4,10 @@ const ObjectId = require("mongodb").ObjectId;
 
 
 
+/*========================================================================================================================
+                       ==================== ADMIN SIDE COUPON HELPERS ====================
+==========================================================================================================================*/
+
 
 /* ================================================ Add New Coupon ================================================ */
 
@@ -245,19 +249,257 @@ const changeCouponStatus = (couponDataForUpdate, statusToModify, adminData)=>{
 
 
 
+/*========================================================================================================================
+                       ==================== USER SIDE COUPON HELPERS ====================
+==========================================================================================================================*/
+
+
+const getCouponDataByCouponCode = (couponCode)=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+
+            // Check if coupon Exist or not
+            const dbCouponQuery = { couponCode : couponCode};
+            const couponData = await db.get().collection(dataBasecollections.COUPON_COLLECTION).findOne( dbCouponQuery );
+
+            if(couponData === null){
+
+                resolve({ couponNotFound : true});
+
+            }else{
+
+                resolve(couponData);
+
+            }
+    
+        }catch (error){
+    
+            console.log("Error from getCouponDataByCouponCode couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
+
+
+const verifyCouponEligibility = (requestedCouponCode, userData)=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+
+            // Check if coupon Exist or not
+            const dbCouponQuery = { couponCode : requestedCouponCode};
+            const couponData = await db.get().collection(dataBasecollections.COUPON_COLLECTION).findOne( dbCouponQuery );
+
+            if(couponData === null){
+
+                resolve({ status: false, reasonForRejection: "Coupon code dosen't exist"});
+
+            }else{
+
+                if(couponData.activeCoupon){
+
+                    const couponExpiryDate = new Date(couponData.createdOn.getTime());
+
+                    couponExpiryDate.setDate(couponExpiryDate.getDate() + parseInt(couponData.validFor));
+
+                    const currentDate = new Date();
+
+                    if(couponExpiryDate >= currentDate){
+
+                        resolve({ status: true });
+
+                    }else{
+
+                        resolve({ status: false, reasonForRejection: "Coupon code expired"});
+
+                    }
+
+                }else{
+
+                    resolve({ status: false, reasonForRejection: "Coupon currently un-available"});
+
+                }
+
+            }
+    
+        }catch (error){
+    
+            console.log("Error from updateCouponData couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
+
+
+const verifyCouponUsedStatus = (userId, couponId)=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+
+            // Check if coupon Exist or not
+            const dbQuery = {
+
+                userId: userId,
+                
+                usedCoupons: { $elemMatch: { couponId, usedCoupon: true }}
+
+            };
+
+            const previouslyUsedCoupon = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne(dbQuery);
+
+            if(previouslyUsedCoupon === null){ // Coupon is not used ever
+
+                resolve( { status : true} );
+
+            }else{ // Coupon is used already
+
+                resolve({ status : false});
+
+            }
+    
+        }catch (error){
+    
+            console.log("Error from verifyCouponUsedStatus couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
+
+
+const applyCouponToCart = (userId, couponId)=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+
+            // Step-1 ==> Disable any other coupons that have been applied earlier
+            const dbQuery = { userId: userId, usedCoupons: { $elemMatch: { appliedCoupon: true } } };
+
+            const updateQuery = { $set: { "usedCoupons.$[elem].appliedCoupon": false } };
+
+            const arrayFilters = [ { "elem.appliedCoupon" : true } ];
+        
+            const updateOptions = { arrayFilters: arrayFilters };
+
+            const updateResult = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateMany(dbQuery, updateQuery, updateOptions);
+
+            // console.log("============================================================",updateResult);
+
+            // Step-2 ==> Add the given coupon to users coupon history
+            const userCouponHistory = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne( { userId : userId } );
+
+            if(userCouponHistory === null){ // If the user have no document in the coupons history collection
+
+                const dataToInsert = {
+
+                    userId : userId,
+
+                    usedCoupons:[{
+
+                        couponId : couponId,
+                        
+                        appliedCoupon : true,
+
+                        usedCoupon : false
+
+                    }]
+
+                }
+
+                const insertNewCouponHistory = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).insertOne( dataToInsert );
+
+                // console.log("#######################################################", insertNewCouponHistory);
+
+                resolve({status:true});
+
+            }else{ // If the user has a document in the coupons history collection, but don't have this coupon or this coupon is not applied yet
+
+
+                const dbQuery = { userId: userId, usedCoupons: { $elemMatch: { couponId : couponId} } };
+
+                const couponObjectExist = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne( dbQuery );
+
+                if(couponObjectExist === null ){ // Object containing Coupon code dosen't exist in the used coupons array
+
+                    const dbQuery = { userId: userId };
+
+                    const dbInsert = { $push: { usedCoupons: {couponId: couponId, appliedCoupon: true, usedCoupon: false } } };
+
+                    const couponObjectExist = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateOne( dbQuery, dbInsert );
+
+                    // console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", couponObjectExist);
+
+                    resolve({status:true});
+
+                }else{ // Object containing Coupon code exist in the used coupons array, so update the applied coupon feild in the array object to true
+
+                    const dbQuery = { userId: userId, usedCoupons: { $elemMatch: { couponId : couponId } } };
+
+                    const dbUpdate = { $set: { "usedCoupons.$.appliedCoupon": true } };
+
+                    const couponObjectModified = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateOne( dbQuery, dbUpdate );
+
+                    // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", couponObjectModified);
+
+                    resolve({status:true});
+
+                }
+
+            }
+
+    
+        }catch (error){
+    
+            console.log("Error from applyCouponToCart couponHelper :", error);
+
+            reject(error);
+            
+        }
+
+    })
+    
+}
 
 
 
 
 
+
+
+
+
+/* ======================== Exporting Helpers ======================== */
 module.exports = {
 
+    /*=== Admin Coupon Helpers ===*/
     addNewCoupon,
     verifyCouponExist,
     getActiveCoupons,
     getInActiveCoupons,
     getSingleCouponData,
     updateCouponData,
-    changeCouponStatus
+    changeCouponStatus,
+
+    /*=== Useer Coupon Controllers ===*/
+    verifyCouponEligibility,
+    getCouponDataByCouponCode,
+    verifyCouponUsedStatus,
+    applyCouponToCart
 
 }
