@@ -463,13 +463,13 @@ const userWishlistGET =  async (req, res) => {
 
 const modifyUserWishlistPOST =  async (req, res) => {
 
-  const user = req.session.userSession;
-
-  const userId = req.session.userSession._id;
-
-  const productId = req.body.productId
-
   try {
+
+    const user = req.session.userSession;
+
+    const userId = req.session.userSession._id;
+
+    const productId = req.body.productId
 
     await userHelpers.addOrRemoveFromWishList(productId, userId).then((response)=>{
 
@@ -487,7 +487,7 @@ const modifyUserWishlistPOST =  async (req, res) => {
     
   } catch (error) {
 
-    console.log("Error from modifyUserWishlistPOST controller : ", err);
+    console.log("Error from modifyUserWishlistPOST controller : ", error);
 
     res.redirect("/error-page");
     
