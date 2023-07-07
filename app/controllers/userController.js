@@ -743,23 +743,33 @@ const cartGET = async (req,res)=>{
 }
   
 const emptyCartGET = async (req,res)=>{
-  
-  let user = req.session.userSession //To pass user name to the page while rendering - used to display Custom title for page.
 
-  if(user){
+  try{
 
-    cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+    let user = req.session.userSession //To pass user name to the page while rendering - used to display Custom title for page.
 
-    const wishlistCount = await userHelpers.getWishlistCount(user._id);
+    if(user){
 
-    res.render('user/empty-cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, user, cartCount, wishlistCount });
+      cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
-  }else{
+      const wishlistCount = await userHelpers.getWishlistCount(user._id);
 
-    res.render('user/empty-cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, wishlistCount });
+      res.render('user/empty-cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, user, cartCount, wishlistCount });
+
+    }else{
+
+      res.render('user/empty-cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Empty Cart" , admin:false, wishlistCount });
+
+    }
+
+  }catch(error){
+
+    console.log("Error from emptyCartGET userController: ", error);
+
+    res.redirect('/error-page');
 
   }
-  
+
 }
   
 const addToCartGET = (req,res)=>{
