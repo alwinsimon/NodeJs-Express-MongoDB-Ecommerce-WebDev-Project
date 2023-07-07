@@ -857,16 +857,24 @@ const deleteCartProductPOST = (req,res,next)=>{
 
 const userOrdersGET = async (req,res)=>{
 
-  const user = req.session.userSession // Used for storing user details for further use in this route
+  try{
 
-  const orderDetails = await userHelpers.getUserOrderHistory(user._id);
+    const user = req.session.userSession // Used for storing user details for further use in this route
 
-  const wishlistCount = await userHelpers.getWishlistCount(user._id);
+    const orderDetails = await userHelpers.getUserOrderHistory(user._id);
 
-  // console.log(orderDetails);
+    const wishlistCount = await userHelpers.getWishlistCount(user._id);
 
-  res.render('user/orders',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Orders" , admin:false, user, orderDetails, wishlistCount});
-  
+    res.render('user/orders',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Orders" , admin:false, user, orderDetails, wishlistCount});
+
+  }catch(error){
+
+    console.log("Error from userOrdersGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 }
   
 const userOrderDetailsPOST = async (req,res)=>{
