@@ -991,79 +991,87 @@ const placeOrderGET = async (req,res)=>{
 }
   
 const placeOrderPOST = async (req,res)=>{
-  
-  let user = req.session.userSession // Used for storing user details for further use in this route
 
-  let orderDetails = req.body;
+  try{
 
-  let orderedProducts = await userHelpers.getProductListForOrders(user._id);
-  // This variable will store the product details if cart exist for user, else will store a boolean value false returned by the function
+    let user = req.session.userSession // Used for storing user details for further use in this route
 
-  if(orderedProducts){ // If there are products inside user cart , Proceed executing checkout functions
+    let orderDetails = req.body;
 
-    let totalOrderValue = await userHelpers.getCartValue(user._id);
+    let orderedProducts = await userHelpers.getProductListForOrders(user._id);
+    // This variable will store the product details if cart exist for user, else will store a boolean value false returned by the function
 
-    const availableCouponData = await couponHelpers.checkCurrentCouponValidityStatus(user._id, totalOrderValue);
+    if(orderedProducts){ // If there are products inside user cart , Proceed executing checkout functions
 
-    if(availableCouponData.status){
+      let totalOrderValue = await userHelpers.getCartValue(user._id);
 
-      const couponDiscountAmount = availableCouponData.couponDiscount;
+      const availableCouponData = await couponHelpers.checkCurrentCouponValidityStatus(user._id, totalOrderValue);
 
-      // Inserting the value of coupon discount into the order details object created above
-      orderDetails.couponDiscount = couponDiscountAmount;
+      if(availableCouponData.status){
 
-      // Updating the total order value with coupon discount applied
-      totalOrderValue = totalOrderValue - couponDiscountAmount;
+        const couponDiscountAmount = availableCouponData.couponDiscount;
 
-      const updateCouponUsedStatusResult = await couponHelpers.updateCouponUsedStatus(user._id, availableCouponData.couponId);
+        // Inserting the value of coupon discount into the order details object created above
+        orderDetails.couponDiscount = couponDiscountAmount;
 
-    }
+        // Updating the total order value with coupon discount applied
+        totalOrderValue = totalOrderValue - couponDiscountAmount;
 
-    userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue).then((orderId)=>{
-
-      if(req.body['payment-method']==='COD'){
-
-        res.json({COD_CHECKOUT:true});
-  
-      }else if(req.body['payment-method']==='ONLINE'){
-  
-        userHelpers.generateRazorpayOrder(orderId,totalOrderValue).then((razorpayOrderDetails)=>{
-
-          // console.log(razorpayOrderDetails);
-
-          userHelpers.createPaymentHistory(user,orderId,orderDetails,totalOrderValue,razorpayOrderDetails);
-          // Creating a new document in payment history collection in the Database with all the available data of the placed order
-
-          let razorpayKeyId = process.env.RAZORPAY_KEY_ID
-
-          res.json(
-
-            {
-              ONLINE_CHECKOUT:true,
-              userDetails:user,
-              userOrderRequestData:orderDetails,
-              orderDetails:razorpayOrderDetails,
-              razorpayKeyId:razorpayKeyId
-            }
-            
-          );
-
-        });
-  
-      }else{
-  
-        res.json({paymentStatus:false});
+        const updateCouponUsedStatusResult = await couponHelpers.updateCouponUsedStatus(user._id, availableCouponData.couponId);
 
       }
 
-    });
+      userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue).then((orderId)=>{
 
-  }else{ // If there are NO products inside user cart , Send a status back in json
+        if(req.body['payment-method']==='COD'){
 
-    res.json({checkoutStatus:false});
+          res.json({COD_CHECKOUT:true});
+    
+        }else if(req.body['payment-method']==='ONLINE'){
+    
+          userHelpers.generateRazorpayOrder(orderId,totalOrderValue).then((razorpayOrderDetails)=>{
+
+            userHelpers.createPaymentHistory(user,orderId,orderDetails,totalOrderValue,razorpayOrderDetails);
+            // Creating a new document in payment history collection in the Database with all the available data of the placed order
+
+            const razorpayKeyId = process.env.RAZORPAY_KEY_ID
+
+            res.json(
+
+              {
+                ONLINE_CHECKOUT:true,
+                userDetails:user,
+                userOrderRequestData:orderDetails,
+                orderDetails:razorpayOrderDetails,
+                razorpayKeyId:razorpayKeyId
+              }
+              
+            );
+
+          });
+    
+        }else{
+    
+          res.json({paymentStatus:false});
+
+        }
+
+      });
+
+    }else{ // If there are NO products inside user cart , Send a status back in json
+
+      res.json({checkoutStatus:false});
+
+    }
+
+  }catch(error){
+
+    console.log("Error from placeOrderPOST userController: ", error);
+
+    res.redirect('/error-page');
 
   }
-    
+ 
 }
   
 const orderSuccessGET = (req,res)=>{
