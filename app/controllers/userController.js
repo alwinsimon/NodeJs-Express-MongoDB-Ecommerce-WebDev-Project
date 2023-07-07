@@ -1276,15 +1276,25 @@ const orderReturnRequestPOST = async (req,res)=>{
 
 const accessForbiddenPageGET = (req,res)=>{
 
-  const user = req.session.userSession;
+  try{
 
-  if(user){
+    const user = req.session.userSession;
 
-    res.render('user/error-access-forbidden',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Access Forbidden", user});
+    if(user){
+  
+      res.render('user/error-access-forbidden',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Access Forbidden", user});
+  
+    }else{
+  
+      res.render('user/error-access-forbidden',{ layout: 'user-layout', title:PLATFORM_NAME + " || Access Forbidden"});
+  
+    }
 
-  }else{
+  }catch(error){
 
-    res.render('user/error-access-forbidden',{ layout: 'user-layout', title:PLATFORM_NAME + " || Access Forbidden"});
+    console.log("Error from accessForbiddenPageGET userController: ", error);
+
+    res.redirect('/error-page');
 
   }
   
