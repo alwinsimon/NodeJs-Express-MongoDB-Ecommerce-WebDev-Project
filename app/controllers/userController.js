@@ -536,37 +536,47 @@ const manageUserAddressGET =  async (req, res) => {
 
 const addNewAddressPOST =  async (req, res) => {
 
-  const user = req.session.userSession;
+  try{
 
-  const userId = user._id;
+    const user = req.session.userSession;
 
-  const addressData = {
+    const userId = user._id;
 
-    addressType : req.body.addressType,
+    const addressData = {
 
-    addressLine1 : req.body.addressLine1,
+      addressType : req.body.addressType,
 
-    addressLine2 : req.body.addressLine2,
+      addressLine1 : req.body.addressLine1,
 
-    street : req.body.street,
+      addressLine2 : req.body.addressLine2,
 
-    city : req.body.city,
+      street : req.body.street,
 
-    state : req.body.state,
+      city : req.body.city,
 
-    country  : req.body.country,
+      state : req.body.state,
 
-    postalCode : req.body.postalCode,
+      country  : req.body.country,
 
-    contactNumber : req.body.contactNumber
+      postalCode : req.body.postalCode,
+
+      contactNumber : req.body.contactNumber
+
+    }
+
+    userHelpers.insertUserAddress(userId,addressData).then((response)=>{
+
+      res.redirect('/manage-my-address');
+
+    })
+
+  }catch(error){
+
+    console.log("Error from addNewAddressPOST userController: ", error);
+
+    res.redirect('/error-page');
 
   }
-
-  userHelpers.insertUserAddress(userId,addressData).then((response)=>{
-
-    res.redirect('/manage-my-address');
-
-  })
 
 }
 
