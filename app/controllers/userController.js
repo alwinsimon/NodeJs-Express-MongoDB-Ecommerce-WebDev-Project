@@ -634,17 +634,27 @@ const deleteUserAddressPOST =  async (req, res) => {
 
 const changePrimaryAddressPOST =  async (req, res) => {
 
-  const user = req.session.userSession;
+  try{
 
-  const userId = user._id;
+    const user = req.session.userSession;
 
-  const addressId = req.body.addressId;
+    const userId = user._id;
 
-  await userHelpers.changePrimaryAddress(userId,addressId).then((response)=>{
+    const addressId = req.body.addressId;
 
-    res.json({status:true});
+    await userHelpers.changePrimaryAddress(userId,addressId).then((response)=>{
 
-  })
+      res.json({status:true});
+
+    })
+
+  }catch(error){
+
+    console.log("Error from changePrimaryAddressPOST userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
 
 }
 
