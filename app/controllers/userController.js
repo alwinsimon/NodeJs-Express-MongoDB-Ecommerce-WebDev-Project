@@ -1303,18 +1303,32 @@ const accessForbiddenPageGET = (req,res)=>{
 
 const errorHandlerPageGET = (req,res)=>{
 
-  const user = req.session.userSession;
+  try{
 
-  if(user){
+    const user = req.session.userSession;
 
-    res.render('user/error-page',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Error Page", user});
+    if(user){
+  
+      res.render('user/error-page',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Error Page", user});
+  
+    }else{
+  
+      res.render('user/error-page',{ layout: 'user-layout', title:PLATFORM_NAME + " || Error Page"});
+  
+    }
 
-  }else{
+  }catch(error){
 
-    res.render('user/error-page',{ layout: 'user-layout', title:PLATFORM_NAME + " || Error Page"});
+    console.log("Error from errorHandlerPageGET userController: ", error);
+
+    const errorMessage = " Something went wrong!!!, It's a 500 - Server Error "
+    const instructionForUser = " Hi there, just grab a cup of coffee for now & visit the website after sometime, we'll fix it for you by then. "
+
+    // If ERROR HANDLING PAGE REQUEST FAILED, Send a response to client indicating server error
+    res.status(500).json({ Server_Error : errorMessage, Required_Action : instructionForUser});
 
   }
-  
+
 }
 
 
