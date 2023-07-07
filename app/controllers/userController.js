@@ -91,61 +91,73 @@ const userLogInGET = (req,res)=>{
 }
   
 const userLogInPOST = (req,res)=>{
-  
-  if(req.session.userLoggedIn){
 
-    res.redirect('/');
+  try{
 
-  }else{
+    if(req.session.userLoggedIn){
 
-    userHelpers.doUserLogin(req.body).then((doUserLoginResponse)=>{
-
-      if(doUserLoginResponse.status){
+      res.redirect('/');
   
-        req.session.userSession = doUserLoginResponse.userData; // Storing response from doAdminLogin function in session storage
+    }else{
   
-        req.session.userLoggedIn = true;
+      userHelpers.doUserLogin(req.body).then((doUserLoginResponse)=>{
   
-        res.redirect('/');
-  
-      }else if(doUserLoginResponse.emailError){
-  
-        req.session.userLogginErr = "Email Invalid !!!"; 
-        /*Setting a flag for keeping a record of the login error which happened due to admin entering invalid credentials.
-          This flag will be checked in every login request so that we can display an error message in the case of reloading the login page due to invalid credentials entered by admin.
-          This flag variable is stored in the session using req.session so that it will be accesible everywhere.
-          The name of this flag variable can be anything ie, this is NOT an predefined name in the session module.
-        */
-  
-        res.redirect('/login');
-  
-      }else if(doUserLoginResponse.passwordError){
-  
-        req.session.userLogginErr = "Invalid Password Entered!!!";
-  
-        res.redirect('/login');
-  
-      }else if(doUserLoginResponse.blockedUser) {
-
-        // If the user is blocked
-
-        req.session.blockedUser = true;
-
-        req.session.userLogginErr = "We are extremely sorry to inform that your account has been temporarily suspended - Please contact the Site Admin for resolution";
-  
-        res.redirect('/login');
-
-      }else{
-
-        req.session.userLogginErr = "oops! something went wrong and we couldn't process your login request - please contact site admin for resolution";
-  
-        res.redirect('/login');
-
-      }
-  
-    })
+        if(doUserLoginResponse.status){
     
+          req.session.userSession = doUserLoginResponse.userData; // Storing response from doAdminLogin function in session storage
+    
+          req.session.userLoggedIn = true;
+    
+          res.redirect('/');
+    
+        }else if(doUserLoginResponse.emailError){
+    
+          req.session.userLogginErr = "Email Invalid !!!"; 
+          /*Setting a flag for keeping a record of the login error which happened due to admin entering invalid credentials.
+            This flag will be checked in every login request so that we can display an error message in the case of reloading the login page due to invalid credentials entered by admin.
+            This flag variable is stored in the session using req.session so that it will be accesible everywhere.
+            The name of this flag variable can be anything ie, this is NOT an predefined name in the session module.
+          */
+    
+          res.redirect('/login');
+    
+        }else if(doUserLoginResponse.passwordError){
+    
+          req.session.userLogginErr = "Invalid Password Entered!!!";
+    
+          res.redirect('/login');
+    
+        }else if(doUserLoginResponse.blockedUser) {
+  
+          // If the user is blocked
+  
+          req.session.blockedUser = true;
+  
+          req.session.userLogginErr = "We are extremely sorry to inform that your account has been temporarily suspended - Please contact the Site Admin for resolution";
+    
+          res.redirect('/login');
+  
+        }else{
+  
+          req.session.userLogginErr = "oops! something went wrong and we couldn't process your login request - please contact site admin for resolution";
+    
+          res.redirect('/login');
+  
+        }
+    
+      })
+      
+    }
+
+  }catch(error){
+
+    console.log("Error from userLogInPOST userController: ", error);
+
+    res.redirect('/error-page');
+
   }
+  
+  
   
 }
   
