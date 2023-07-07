@@ -429,11 +429,11 @@ const userProfileUpdateRequestPOST =  async (req, res) => {
 
 const userWishlistGET =  async (req, res) => {
 
-  const user = req.session.userSession;
-
-  const userId = req.session.userSession._id;
-
   try {
+
+    const user = req.session.userSession;
+
+    const userId = req.session.userSession._id;
 
     const cartCount = await userHelpers.getCartCount(userId);
 
