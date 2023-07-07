@@ -204,35 +204,45 @@ const userSignUpGET = (req,res)=>{
   
 const userSignUpPOST = async (req,res)=>{
 
-  const signUpFormData = req.body;
-  
-  req.session.userSignupData = signUpFormData; // Storing the sign-up data in session for further use in verification routes
+  try{
 
-  const emailAndUserNameVerification = await userHelpers.verifyDuplicateUserSignUpData(signUpFormData);
-
-  if(emailAndUserNameVerification.success){
-
-    userHelpers.createUserSignUpOtp(signUpFormData).then((response)=>{
-
-      if(response.statusMessageSent){
+    const signUpFormData = req.body;
   
-        res.redirect('/verify-user-signup');
-  
-      }else{
-  
-        let signUpErrMessage = "Unable to sent OTP to the provided phone number, Please re-check the number!";
-  
-        res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true, signUpErrMessage});
-  
-      }
-  
-    })
+    req.session.userSignupData = signUpFormData; // Storing the sign-up data in session for further use in verification routes
 
-  }else{ // If the user Email or Username already exist in the DB, signup page will be rendered with a errror message and instruction.
+    const emailAndUserNameVerification = await userHelpers.verifyDuplicateUserSignUpData(signUpFormData);
 
-    req.session.userDataAlreadyExistError = emailAndUserNameVerification;
+    if(emailAndUserNameVerification.success){
 
-    res.redirect('/signup');
+      userHelpers.createUserSignUpOtp(signUpFormData).then((response)=>{
+
+        if(response.statusMessageSent){
+    
+          res.redirect('/verify-user-signup');
+    
+        }else{
+    
+          let signUpErrMessage = "Unable to sent OTP to the provided phone number, Please re-check the number!";
+    
+          res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true, signUpErrMessage});
+    
+        }
+    
+      })
+
+    }else{ // If the user Email or Username already exist in the DB, signup page will be rendered with a errror message and instruction.
+
+      req.session.userDataAlreadyExistError = emailAndUserNameVerification;
+
+      res.redirect('/signup');
+
+    }
+
+  }catch(error){
+
+    console.log("Error from userSignUpPOST userController: ", error);
+
+    res.redirect('/error-page');
 
   }
 
