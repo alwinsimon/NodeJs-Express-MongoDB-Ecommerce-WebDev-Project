@@ -508,7 +508,7 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
 
                 const minimumOrderValue = parseInt(activeCouponData.minOrderValue);
 
-                // Check if coupon previously used by the user
+                // ============================= Check if coupon previously used by the user =============================
                 const dbQuery = {
 
                     userId: userId,
@@ -519,57 +519,73 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
 
                 const previouslyUsedCoupon = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne(dbQuery);
 
-                if(previouslyUsedCoupon === null){ // Coupon is not used ever
+                // ================= Check if the coupon is a active coupon =================
+                if(activeCouponData.activeCoupon){
 
-                    if(cartValue >= minimumOrderValue){ // Coupon is valid considering the cart amount
+                    // The provided Coupon is a active coupon
 
-                        const couponExpiryDate = new Date(activeCouponData.createdOn.getTime());
+                    if(previouslyUsedCoupon === null){ // Coupon is not used ever
+
+
+                        // ================= Check if cart value is more than the minimum order value of the coupon =================
+                        if(cartValue >= minimumOrderValue){ // Coupon is valid considering the cart amount
     
-                        couponExpiryDate.setDate(couponExpiryDate.getDate() + parseInt(activeCouponData.validFor));
+                            const couponExpiryDate = new Date(activeCouponData.createdOn.getTime());
+        
+                            couponExpiryDate.setDate(couponExpiryDate.getDate() + parseInt(activeCouponData.validFor));
+        
+                            const currentDate = new Date();
     
-                        const currentDate = new Date();
-    
-                        if(couponExpiryDate >= currentDate){ // Coupon is valid considering the expiry date
-    
-                            // Calculating eligible Discount Amount considering the cart total
-                            const discountPercentage = parseInt(activeCouponData.discountPercentage);
-    
-                            const discountAmountForCart = cartValue * ( discountPercentage / 100 );
-    
-                            // Fixing maximum eligible discount amount
-                            const maximumCouponDiscountAmount = parseInt(activeCouponData.maxDiscountAmount);
-    
-                            let eligibleCouponDiscountAmount = 0;
-    
-                            if(discountAmountForCart >= maximumCouponDiscountAmount){
-    
-                                eligibleCouponDiscountAmount = maximumCouponDiscountAmount;
-    
-                            }else{
-    
-                                eligibleCouponDiscountAmount = discountAmountForCart;
-    
+                            // =================== Check if current date is lesser than the coupon expiry date ===================
+                            if(couponExpiryDate >= currentDate){ // Coupon is valid considering the expiry date
+        
+                                // Calculating eligible Discount Amount considering the cart total
+                                const discountPercentage = parseInt(activeCouponData.discountPercentage);
+        
+                                const discountAmountForCart = cartValue * ( discountPercentage / 100 );
+        
+                                // Fixing maximum eligible discount amount
+                                const maximumCouponDiscountAmount = parseInt(activeCouponData.maxDiscountAmount);
+        
+                                let eligibleCouponDiscountAmount = 0;
+        
+                                if(discountAmountForCart >= maximumCouponDiscountAmount){
+        
+                                    eligibleCouponDiscountAmount = maximumCouponDiscountAmount;
+        
+                                }else{
+        
+                                    eligibleCouponDiscountAmount = discountAmountForCart;
+        
+                                }
+        
+                                // =================== Resolving all the coupon Discount Data of Eligible Coupon ===================
+                                resolve({ status: true, couponId : activeCouponId, couponDiscount : eligibleCouponDiscountAmount });
+        
+                            }else{ // Coupon last use date exceeded, so coupon is invalid considering the expiry date
+        
+                                resolve({ status: false, couponId : activeCouponId, couponDiscount : 0 });
+        
                             }
-    
-                            // =================== Resolving all the coupon Discount Data of Eligible Coupon ===================
-                            resolve({ status: true, couponId : activeCouponId, couponDiscount : eligibleCouponDiscountAmount });
-    
-                        }else{ // Coupon last use date exceeded, so coupon is invalid considering the expiry date
-    
-                            resolve({ status: false, couponId : activeCouponId, couponDiscount : 0 });
-    
+        
+                        }else{ // Coupon is invalid considering the cart amount
+        
+                            resolve( { status : false, couponId : activeCouponId, couponDiscount : 0 } );
+        
                         }
-    
-                    }else{ // Coupon is invalid considering the cart amount
-    
-                        resolve( { status : false, couponId : activeCouponId, couponDiscount : 0 } );
-    
-                    }
-    
-                }else{ // Coupon is used already
-    
+        
+                    }else{ // Coupon is used already
+        
+                        resolve({ status: false, couponId : activeCouponId, couponDiscount : 0 });
+        
+                    }//=========================
+
+                }else{
+
+                    // The given coupon is a deactivated coupon
+
                     resolve({ status: false, couponId : activeCouponId, couponDiscount : 0 });
-    
+
                 }
 
             }
