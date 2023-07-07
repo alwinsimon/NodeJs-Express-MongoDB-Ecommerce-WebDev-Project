@@ -249,14 +249,24 @@ const userSignUpPOST = async (req,res)=>{
 }
   
 const verifyUserSignUpGET = (req,res)=>{
+
+  try{
+
+    if(req.session.userSignupData){
+
+      res.render('user/sign-in-otp-validation',{ layout: 'user-layout', title:PLATFORM_NAME + " || Verify Sign-Up OTP", user:true});
   
-  if(req.session.userSignupData){
+    }else{
+  
+      res.redirect('/signup');
+  
+    }
 
-    res.render('user/sign-in-otp-validation',{ layout: 'user-layout', title:PLATFORM_NAME + " || Verify Sign-Up OTP", user:true});
+  }catch(error){
 
-  }else{
+    console.log("Error from verifyUserSignUpGET userController: ", error);
 
-    res.redirect('/signup');
+    res.redirect('/error-page');
 
   }
   
