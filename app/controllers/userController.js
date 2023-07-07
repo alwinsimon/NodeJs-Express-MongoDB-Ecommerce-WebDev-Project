@@ -61,21 +61,31 @@ const homePageGET = async (req, res, next)=>{
 /* ========================USER LOGIN / LOGOUT Controllers======================== */
   
 const userLogInGET = (req,res)=>{
+
+  try{
+
+    if(req.session.userLoggedIn){
+
+      res.redirect('/');
   
-  if(req.session.userLoggedIn){
+    }else{
+  
+      res.render('user/login',{ layout: 'user-layout', "loginError":req.session.userLogginErr, title:PLATFORM_NAME + " || Login", admin:false});
+  
+      delete req.session.userLogginErr; 
+      /*
+      Resetting the flag for checking if the login page post request was due to invalid username or password.
+      This is done so that the login page will show the message only once if there was a redirect to this page due to invalid credentials.
+      */
+      
+    }
 
-    res.redirect('/');
+  }catch(error){
 
-  }else{
+    console.log("Error from userLogInGET userController: ", error);
 
-    res.render('user/login',{ layout: 'user-layout', "loginError":req.session.userLogginErr, title:PLATFORM_NAME + " || Login", admin:false});
+    res.redirect('/error-page');
 
-    delete req.session.userLogginErr; 
-    /*
-    Resetting the flag for checking if the login page post request was due to invalid username or password.
-    This is done so that the login page will show the message only once if there was a redirect to this page due to invalid credentials.
-    */
-    
   }
   
 }
