@@ -903,83 +903,91 @@ const userOrderDetailsPOST = async (req,res)=>{
 }
 
 const placeOrderGET = async (req,res)=>{
-  
-  let user = req.session.userSession // Used for storing user details for further use in this route
 
-  // console.log(user._id);
+  try{
 
-  cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+    let user = req.session.userSession // Used for storing user details for further use in this route
 
-  if(cartCount > 0){
+    cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
-    let cartProducts = await userHelpers.getCartProducts(user._id);
+    if(cartCount > 0){
 
-    let cartValue = await userHelpers.getCartValue(user._id);
+      let cartProducts = await userHelpers.getCartProducts(user._id);
 
-    const userAddress = await userHelpers.getUserAddress(user._id);
+      let cartValue = await userHelpers.getCartValue(user._id);
 
-    const wishlistCount = await userHelpers.getWishlistCount(user._id);
+      const userAddress = await userHelpers.getUserAddress(user._id);
 
-    const primaryAddress = await userHelpers.getUserPrimaryAddress(user._id);
+      const wishlistCount = await userHelpers.getWishlistCount(user._id);
 
-    // Coupon Request configuration
-    let couponError = false;
-    let couponApplied = false;
+      const primaryAddress = await userHelpers.getUserPrimaryAddress(user._id);
 
-    if(req.session.couponInvalidError){
+      // Coupon Request configuration
+      let couponError = false;
+      let couponApplied = false;
 
-      couponError = req.session.couponInvalidError;
+      if(req.session.couponInvalidError){
 
-    }else if(req.session.couponApplied){
+        couponError = req.session.couponInvalidError;
 
-      couponApplied = req.session.couponApplied;
+      }else if(req.session.couponApplied){
 
-    }
+        couponApplied = req.session.couponApplied;
 
-    // Existing Coupon Status Validation & Discount amount calculation using couponHelper
+      }
 
-    let couponDiscount = 0;
+      // Existing Coupon Status Validation & Discount amount calculation using couponHelper
 
-    const eligibleCoupon = await couponHelpers.checkCurrentCouponValidityStatus(user._id, cartValue);
+      let couponDiscount = 0;
 
-    if(eligibleCoupon.status){
+      const eligibleCoupon = await couponHelpers.checkCurrentCouponValidityStatus(user._id, cartValue);
 
-      couponDiscount = eligibleCoupon.couponDiscount;
+      if(eligibleCoupon.status){
+
+        couponDiscount = eligibleCoupon.couponDiscount;
+
+      }else{
+
+        couponDiscount = 0;
+
+      }
+
+
+      // Updating the cart value to display in the front-end after applying coupon discount - note that this will not be modify the cart value in the DB
+      cartValue = cartValue - couponDiscount;
+
+
+      if(primaryAddress){
+
+        res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, primaryAddress, wishlistCount, couponApplied, couponError, couponDiscount });
+
+        delete req.session.couponApplied;
+
+        delete req.session.couponInvalidError;
+
+      }else{
+
+        res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, wishlistCount, couponApplied, couponError, couponDiscount });
+
+        delete req.session.couponApplied;
+
+        delete req.session.couponInvalidError;
+
+      }
 
     }else{
 
-      couponDiscount = 0;
-
+      res.redirect('/empty-cart');
     }
 
+  }catch(error){
 
-    // Updating the cart value to display in the front-end after applying coupon discount - note that this will not be modify the cart value in the DB
-    cartValue = cartValue - couponDiscount;
+    console.log("Error from placeOrderGET userController: ", error);
 
+    res.redirect('/error-page');
 
-    if(primaryAddress){
-
-      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, primaryAddress, wishlistCount, couponApplied, couponError, couponDiscount });
-
-      delete req.session.couponApplied;
-
-      delete req.session.couponInvalidError;
-
-    }else{
-
-      res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, wishlistCount, couponApplied, couponError, couponDiscount });
-
-      delete req.session.couponApplied;
-
-      delete req.session.couponInvalidError;
-
-    }
-
-  }else{
-
-    res.redirect('/empty-cart');
   }
-  
+
 }
   
 const placeOrderPOST = async (req,res)=>{
