@@ -1075,11 +1075,21 @@ const placeOrderPOST = async (req,res)=>{
 }
   
 const orderSuccessGET = (req,res)=>{
-  
-  let user = req.session.userSession // Used for storing user details for further use in this route
 
-  res.render('user/order-success',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
-  
+  try{
+
+    const user = req.session.userSession // Used for storing user details for further use in this route
+
+    res.render('user/order-success',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
+
+  }catch(error){
+
+    console.log("Error from orderSuccessGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 }
   
 const orderFailedGET = (req,res)=>{
