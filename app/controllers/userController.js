@@ -526,7 +526,9 @@ const manageUserAddressGET =  async (req, res) => {
 
   } catch (error) {
     
-    throw new Error(error);
+    console.log("Error from manageUserAddressGET controller : ", error);
+
+    res.redirect("/error-page");
 
   }  
 
