@@ -184,12 +184,22 @@ const userLogOutPOST = (req,res)=>{
   
 const userSignUpGET = (req,res)=>{
 
-  const existingUserError = req.session.userDataAlreadyExistError;
-  
-  res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true, existingUserError});
+  try{
 
-  delete req.session.userDataAlreadyExistError;
+    const existingUserError = req.session.userDataAlreadyExistError;
   
+    res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true, existingUserError});
+
+    delete req.session.userDataAlreadyExistError;
+
+  }catch(error){
+
+    console.log("Error from userSignUpGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 }
   
 const userSignUpPOST = async (req,res)=>{
