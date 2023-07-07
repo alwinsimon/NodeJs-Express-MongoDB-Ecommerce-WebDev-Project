@@ -878,21 +878,28 @@ const userOrdersGET = async (req,res)=>{
 }
   
 const userOrderDetailsPOST = async (req,res)=>{
-  
-  let user = req.session.userSession // Used for storing user details for further use in this route
 
-  // console.log(req.body);
+  try{
 
-  let orderId = req.body.orderId;
+    const user = req.session.userSession // Used for storing user details for further use in this route
 
-  let productDetails = await userHelpers.getProductsInOrder(orderId);
+    const orderId = req.body.orderId;
 
-  let orderDate = await userHelpers.getOrderDate(orderId); // For passing order date to the page
+    const productDetails = await userHelpers.getProductsInOrder(orderId);
 
-  // console.log(orderDate);
+    const orderDate = await userHelpers.getOrderDate(orderId); // For passing order date to the page
 
-  res.render('user/ordered-product-details',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Ordered Product Details" , admin:false, user, productDetails, orderDate});
-  
+    res.render('user/ordered-product-details',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Ordered Product Details" , admin:false, user, productDetails, orderDate});
+
+
+  }catch(error){
+
+    console.log("Error from userOrderDetailsPOST userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 }
 
 const placeOrderGET = async (req,res)=>{
