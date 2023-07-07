@@ -662,32 +662,40 @@ const changePrimaryAddressPOST =  async (req, res) => {
 
 const singleProductPageGET =  (req, res) => {
 
-  let user = req.session.userSession;
-  let productId = req.params.id;
+  try{
 
-  productHelpers.getProductDetails(productId).then(async (productDetails) => {
+    let user = req.session.userSession;
+    let productId = req.params.id;
 
-    if (user) {
+    productHelpers.getProductDetails(productId).then(async (productDetails) => {
 
-      cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+      if (user) {
 
-      const wishlistCount = await userHelpers.getWishlistCount(user._id);
+        cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
-      res.render('user/single-product-page', { layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || " + productDetails.name, admin: false, user: true, user, cartCount, productDetails, wishlistCount });
+        const wishlistCount = await userHelpers.getWishlistCount(user._id);
 
-    } else {
+        res.render('user/single-product-page', { layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || " + productDetails.name, admin: false, user: true, user, cartCount, productDetails, wishlistCount });
 
-      res.render('user/single-product-page', { layout: 'user-layout', title: PLATFORM_NAME + " || " + productDetails.name, admin:false, productDetails });
-      
-    }
+      } else {
 
-  }).catch((err) => {
+        res.render('user/single-product-page', { layout: 'user-layout', title: PLATFORM_NAME + " || " + productDetails.name, admin:false, productDetails });
+        
+      }
 
-    console.log("Error from user/product-details route: " , err);
+    }).catch((error) => {
 
-    res.redirect('/error-page'); // Redirect to an error page if there was an error
+      console.log("Error from getProductDetails userHelper at singleProductPageGET userController : " , error);
 
-  });
+    });
+
+  }catch(error){
+
+    console.log("Error from singleProductPageGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
     
 }
 
