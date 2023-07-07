@@ -1248,19 +1248,29 @@ const orderCancellationRequestPOST = async (req,res)=>{
 
 const orderReturnRequestPOST = async (req,res)=>{
 
-  let orderId = req.body.orderId;
+  try{
 
-  await userHelpers.requestOrderReturn(orderId).then((response)=>{
+    let orderId = req.body.orderId;
 
-    res.redirect('/orders');
+    await userHelpers.requestOrderReturn(orderId).then((response)=>{
+  
+      res.redirect('/orders');
+  
+    }).catch((err) => {
+  
+      console.log("Error from orderReturnRequestPOST controller: " , err);
+  
+      res.redirect('/error-page'); // Redirect to an error page if there was an error
+  
+    });
 
-  }).catch((err) => {
+  }catch(error){
 
-    console.log("Error from orderReturnRequestPOST controller: " , err);
+    console.log("Error from orderReturnRequestPOST userController: ", error);
 
-    res.redirect('/error-page'); // Redirect to an error page if there was an error
+    res.redirect('/error-page');
 
-  });
+  }
 
 }
 
