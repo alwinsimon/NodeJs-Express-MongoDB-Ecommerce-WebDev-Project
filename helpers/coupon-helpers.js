@@ -399,8 +399,6 @@ const applyCouponToCart = (userId, couponId)=>{
 
             const updateResult = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateMany(dbQuery, updateQuery, updateOptions);
 
-            // console.log("============================================================",updateResult);
-
             // Step-2 ==> Add the given coupon to users coupon history
             const userCouponHistory = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).findOne( { userId : userId } );
 
@@ -424,8 +422,6 @@ const applyCouponToCart = (userId, couponId)=>{
 
                 const insertNewCouponHistory = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).insertOne( dataToInsert );
 
-                // console.log("#######################################################", insertNewCouponHistory);
-
                 resolve({status:true});
 
             }else{ // If the user has a document in the coupons history collection, but don't have this coupon or this coupon is not applied yet
@@ -443,8 +439,6 @@ const applyCouponToCart = (userId, couponId)=>{
 
                     const couponObjectExist = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateOne( dbQuery, dbInsert );
 
-                    // console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$", couponObjectExist);
-
                     resolve({status:true});
 
                 }else{ // Object containing Coupon code exist in the used coupons array, so update the applied coupon feild in the array object to true
@@ -454,8 +448,6 @@ const applyCouponToCart = (userId, couponId)=>{
                     const dbUpdate = { $set: { "usedCoupons.$.appliedCoupon": true } };
 
                     const couponObjectModified = await db.get().collection(dataBasecollections.USED_COUPON_COLLECTION).updateOne( dbQuery, dbUpdate );
-
-                    // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", couponObjectModified);
 
                     resolve({status:true});
 
