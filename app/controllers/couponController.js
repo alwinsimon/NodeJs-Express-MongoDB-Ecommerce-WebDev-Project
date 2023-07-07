@@ -21,46 +21,66 @@ const PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 /* ======================== MANAGE COUPONS CONTROLLERS ======================== */
 
 const manageCouponGET =  async (req, res)=>{
-  
-    const adminData = req.session.adminSession;
 
-    const activeCoupons = await couponHelpers.getActiveCoupons();
+    try{
 
-    const inActiveCoupons = await couponHelpers.getInActiveCoupons();
+        const adminData = req.session.adminSession;
 
-    const dataToRender = {
-
-        layout: 'admin-layout',
-        title: PLATFORM_NAME + " || Manage Coupons",
-        PLATFORM_NAME,
-        adminData,
-        activeCoupons,
-        inActiveCoupons
-
-    }
-  
-    res.render('admin/coupon-manage', dataToRender );
+        const activeCoupons = await couponHelpers.getActiveCoupons();
     
+        const inActiveCoupons = await couponHelpers.getInActiveCoupons();
+    
+        const dataToRender = {
+    
+            layout: 'admin-layout',
+            title: PLATFORM_NAME + " || Manage Coupons",
+            PLATFORM_NAME,
+            adminData,
+            activeCoupons,
+            inActiveCoupons
+    
+        }
+      
+        res.render('admin/coupon-manage', dataToRender );
+    
+    }catch(error){
+    
+        console.log("Error from manageCouponGET couponController: ", error);
+    
+        res.redirect('/admin/error-page');
+    
+    }
+
 };
 
 const inactiveCouponsGET =  async (req, res)=>{
-  
-    const adminData = req.session.adminSession;
 
-    const inActiveCoupons = await couponHelpers.getInActiveCoupons();
+    try{
 
-    const dataToRender = {
+        const adminData = req.session.adminSession;
 
-        layout: 'admin-layout',
-        title: PLATFORM_NAME + " || Inactive coupons",
-        PLATFORM_NAME,
-        adminData,
-        inActiveCoupons
-
-    }
-  
-    res.render('admin/coupon-deactivated', dataToRender );
+        const inActiveCoupons = await couponHelpers.getInActiveCoupons();
     
+        const dataToRender = {
+    
+            layout: 'admin-layout',
+            title: PLATFORM_NAME + " || Inactive coupons",
+            PLATFORM_NAME,
+            adminData,
+            inActiveCoupons
+    
+        }
+      
+        res.render('admin/coupon-deactivated', dataToRender );
+    
+    }catch(error){
+    
+        console.log("Error from inactiveCouponsGET couponController: ", error);
+    
+        res.redirect('/admin/error-page');
+    
+    }
+
 };
 
 
@@ -175,7 +195,7 @@ const editCouponGET =  async (req, res)=>{
 
     }catch (error){
 
-        console.log("Error from editCouponPOST couponController :", error);
+        console.log("Error from editCouponGET couponController :", error);
 
         res.redirect('/admin/error-page');
 
