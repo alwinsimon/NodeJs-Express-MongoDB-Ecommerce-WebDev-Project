@@ -824,26 +824,32 @@ const changeCartProductQuantityPOST = (req,res,next)=>{
 }
   
 const deleteCartProductPOST = (req,res,next)=>{
-  
-  // console.log(req.body);
 
-  userHelpers.deleteProductFromCart(req.body).then((response)=>{
+  try{
 
-    res.json(response); 
-    /* 
-    # Used JSON to send data back here as RESPONSE to AJAX Call from cart page
-    # As we are using AJAX there is no need of sending back a complete web page or redirecting to a webpage (which will load the page completely)
-    # We can configure the AJAX to use the data in JSON format for updating the specific element of webpage
-    */
-  
-  }).catch((err)=>{
+    userHelpers.deleteProductFromCart(req.body).then((response)=>{
 
-    console.log(err);
-
-    reject(err);
+      res.json(response); 
+      /* 
+      # Used JSON to send data back here as RESPONSE to AJAX Call from cart page
+      # As we are using AJAX there is no need of sending back a complete web page or redirecting to a webpage (which will load the page completely)
+      # We can configure the AJAX to use the data in JSON format for updating the specific element of webpage
+      */
     
-  });
-  
+    }).catch((error)=>{
+    
+      console.log("Error from deleteProductFromCart userHelper at deleteCartProductPOST userController: ", error);
+      
+    });
+
+  }catch(error){
+
+    console.log("Error from deleteCartProductPOST userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 }
 
 
