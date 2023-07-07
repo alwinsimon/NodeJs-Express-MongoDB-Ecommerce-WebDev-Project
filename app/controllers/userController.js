@@ -793,30 +793,34 @@ const addToCartGET = (req,res)=>{
 }
   
 const changeCartProductQuantityPOST = (req,res,next)=>{
+
+  try{
+
+    userHelpers.changeCartProductQuantity(req.body).then( async (response)=>{
+
+      response.cartValue =  await userHelpers.getCartValue(req.body.userId); // Adding a cartValue feild to response object 
   
-  // console.log(req.body);
-
-  userHelpers.changeCartProductQuantity(req.body).then( async (response)=>{
-
-    response.cartValue =  await userHelpers.getCartValue(req.body.userId); // Adding a cartValue feild to response object 
-
-    // console.log(response.cartValue);
-
-    res.json(response); 
-    /* 
-    # Used JSON to send data back here as RESPONSE to AJAX Call from cart page
-    # As we are using AJAX there is no need of sending back a complete web page or redirecting to a webpage (which will load the page completely)
-    # We can configure the AJAX to use the data in JSON format for updating the specific element of webpage
-    */
-  
-  }).catch((err)=>{
-
-    console.log(err);
-
-    reject(err);
+      res.json(response); 
+      /* 
+      # Used JSON to send data back here as RESPONSE to AJAX Call from cart page
+      # As we are using AJAX there is no need of sending back a complete web page or redirecting to a webpage (which will load the page completely)
+      # We can configure the AJAX to use the data in JSON format for updating the specific element of webpage
+      */
     
-  });
+    }).catch((error)=>{
   
+      console.log("Error from changeCartProductQuantity userHelper at changeCartProductQuantityPOST userController: ", error);
+      
+    });
+
+  }catch(error){
+
+    console.log("Error from changeCartProductQuantityPOST userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 }
   
 const deleteCartProductPOST = (req,res,next)=>{
