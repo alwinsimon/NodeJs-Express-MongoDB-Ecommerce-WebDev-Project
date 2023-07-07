@@ -773,14 +773,22 @@ const emptyCartGET = async (req,res)=>{
 }
   
 const addToCartGET = (req,res)=>{
+
+  try{
+
+    userHelpers.addToCart(req.params.id,req.session.userSession._id).then(()=>{
+
+      res.json({status:true});
   
-  // console.log("api call");
+    })
 
-  userHelpers.addToCart(req.params.id,req.session.userSession._id).then(()=>{
+  }catch(error){
 
-    res.json({status:true});
+    console.log("Error from addToCartGET userController: ", error);
 
-  })
+    res.redirect('/error-page');
+
+  }
   
 }
   
