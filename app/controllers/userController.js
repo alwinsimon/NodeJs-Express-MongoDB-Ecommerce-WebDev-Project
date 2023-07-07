@@ -15,35 +15,45 @@ let PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
 const homePageGET = async (req, res, next)=>{
 
-  let user = req.session.userSession //used for authenticating a user visit if user has already logged in earlier
+  try{
 
-  let productCategories = await adminHelpers.getProductCategories();
+    let user = req.session.userSession //used for authenticating a user visit if user has already logged in earlier
 
-  let cartCount = 0;
+    let productCategories = await adminHelpers.getProductCategories();
 
-  let wishlistCount = 0;
+    let cartCount = 0;
 
-  if(user){
-
-    cartCount = await userHelpers.getCartCount(req.session.userSession._id);
-
-    wishlistCount = await userHelpers.getWishlistCount(user._id);
-
-  }
-
-  productHelpers.getAllProducts().then((products)=>{
+    let wishlistCount = 0;
 
     if(user){
 
-      res.render('user/user-home', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, admin:false, user, products, productCategories, cartCount, wishlistCount });
+      cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
-    }else{
-
-      res.render('user/user-home', { layout: 'user-layout', title:PLATFORM_NAME, admin:false, products, productCategories });
+      wishlistCount = await userHelpers.getWishlistCount(user._id);
 
     }
 
-  })
+    productHelpers.getAllProducts().then((products)=>{
+
+      if(user){
+
+        res.render('user/user-home', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, admin:false, user, products, productCategories, cartCount, wishlistCount });
+
+      }else{
+
+        res.render('user/user-home', { layout: 'user-layout', title:PLATFORM_NAME, admin:false, products, productCategories });
+
+      }
+
+    });
+
+  }catch(error){
+
+    console.log("Error from homePageGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
   
 }
   
@@ -291,7 +301,6 @@ const userProfileGET =  async (req, res) => {
     res.redirect('/error-page');
 
   }
-
 
 }
 
