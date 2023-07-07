@@ -582,17 +582,27 @@ const addNewAddressPOST =  async (req, res) => {
 
 const editUserAddressPOST =  async (req, res) => {
 
-  const user = req.session.userSession;
+  try{
 
-  const userId = user._id;
+    const user = req.session.userSession;
 
-  const dataToUpdate = req.body;
+    const userId = user._id;
 
-  await userHelpers.editUserAddress(userId,dataToUpdate).then((response)=>{
+    const dataToUpdate = req.body;
 
-    res.redirect('/manage-my-address')
+    await userHelpers.editUserAddress(userId,dataToUpdate).then((response)=>{
 
-  })
+      res.redirect('/manage-my-address')
+
+    })
+
+  }catch(error){
+
+    console.log("Error from editUserAddressPOST userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
 
 }
 
