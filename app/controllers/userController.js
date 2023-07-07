@@ -273,41 +273,51 @@ const verifyUserSignUpGET = (req,res)=>{
 }
   
 const verifyUserSignUpPOST = (req,res)=>{
-  
-  let otpFromUser = req.body.otp;
 
-  let userSignUpRequestData = req.session.userSignupData;
+  try{
 
-  let userPhoneNumber = userSignUpRequestData.phone;
+    let otpFromUser = req.body.otp;
 
-  userHelpers.verifyUserSignUpOtp(otpFromUser, userPhoneNumber).then((verificationData)=>{
+    let userSignUpRequestData = req.session.userSignupData;
 
-    if(verificationData.verified){
+    let userPhoneNumber = userSignUpRequestData.phone;
 
-      userHelpers.doUserSignup(userSignUpRequestData).then((userData)=>{
-    
-        // console.log(user);
-    
-        req.session.userSession = userData;
-    
-        req.session.userLoggedIn = true;
+    userHelpers.verifyUserSignUpOtp(otpFromUser, userPhoneNumber).then((verificationData)=>{
 
-        delete req.session.userSignupData;
-        // Deleting the userData that was stored in session after the user succesfully sign-In (To prevent session storage being unnecassarily used)
-    
-        res.redirect('/');
-    
-      })
+      if(verificationData.verified){
 
-    }else{
+        userHelpers.doUserSignup(userSignUpRequestData).then((userData)=>{
+      
+          // console.log(user);
+      
+          req.session.userSession = userData;
+      
+          req.session.userLoggedIn = true;
 
-      let otpError = verificationData.otpErrorMessage
+          delete req.session.userSignupData;
+          // Deleting the userData that was stored in session after the user succesfully sign-In (To prevent session storage being unnecassarily used)
+      
+          res.redirect('/');
+      
+        })
 
-      res.render('user/sign-in-otp-validation',{ layout: 'user-layout', title:PLATFORM_NAME + " || Verify OTP", user:true, otpError});
+      }else{
 
-    }
+        let otpError = verificationData.otpErrorMessage
 
-  })
+        res.render('user/sign-in-otp-validation',{ layout: 'user-layout', title:PLATFORM_NAME + " || Verify OTP", user:true, otpError});
+
+      }
+
+    })
+
+  }catch(error){
+
+    console.log("Error from verifyUserSignUpPOST userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
   
 }
 
