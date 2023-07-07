@@ -658,7 +658,7 @@ const changePrimaryAddressPOST =  async (req, res) => {
 
 }
 
-/* ========================Single Product Page Controller======================== */
+/* ======================== Single Product Page Controller ======================== */
 
 const singleProductPageGET =  (req, res) => {
 
@@ -700,36 +700,46 @@ const singleProductPageGET =  (req, res) => {
 }
 
 
-/* ========================CART Controllers======================== */
+/* ======================== CART Controllers ======================== */
 
 const cartGET = async (req,res)=>{
 
-  let user = req.session.userSession //To pass user name to cart-page while rendering - used to display Custom title for page.
+  try{
 
-  let cartCount = null;
+    let user = req.session.userSession //To pass user name to cart-page while rendering - used to display Custom title for page.
 
-  if(user){
+    let cartCount = null;
 
-    cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+    if(user){
 
-  }
+      cartCount = await userHelpers.getCartCount(req.session.userSession._id);
 
-  if(cartCount > 0){  // If there is atleast 1 item in the database, then calculate fetch items and value from db
-    
-    let cartItems = await userHelpers.getCartProducts(req.session.userSession._id);
+    }
 
-    const wishlistCount = await userHelpers.getWishlistCount(user._id);
+    if(cartCount > 0){  // If there is atleast 1 item in the database, then calculate fetch items and value from db
+      
+      let cartItems = await userHelpers.getCartProducts(req.session.userSession._id);
 
-    let cartValue = await userHelpers.getCartValue(user._id);
+      const wishlistCount = await userHelpers.getWishlistCount(user._id);
 
-    // console.log(cartItems);
-    // console.log(cartValue);
+      let cartValue = await userHelpers.getCartValue(user._id);
 
-    res.render('user/cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue, wishlistCount });
+      // console.log(cartItems);
+      // console.log(cartValue);
 
-  }else{ // If there is no items in the cart - then redirect to a different page to avoid the query to database for cartitems and cartvalue
+      res.render('user/cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue, wishlistCount });
 
-    res.redirect('/empty-cart');
+    }else{ // If there is no items in the cart - then redirect to a different page to avoid the query to database for cartitems and cartvalue
+
+      res.redirect('/empty-cart');
+
+    }
+
+  }catch(error){
+
+    console.log("Error from cartGET userController: ", error);
+
+    res.redirect('/error-page');
 
   }
   
