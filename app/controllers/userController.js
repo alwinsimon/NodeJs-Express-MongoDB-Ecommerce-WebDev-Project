@@ -724,9 +724,6 @@ const cartGET = async (req,res)=>{
 
       let cartValue = await userHelpers.getCartValue(user._id);
 
-      // console.log(cartItems);
-      // console.log(cartValue);
-
       res.render('user/cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue, wishlistCount });
 
     }else{ // If there is no items in the cart - then redirect to a different page to avoid the query to database for cartitems and cartvalue
