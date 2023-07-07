@@ -1093,11 +1093,21 @@ const orderSuccessGET = (req,res)=>{
 }
   
 const orderFailedGET = (req,res)=>{
-  
-  let user = req.session.userSession // Used for storing user details for further use in this route
 
-  res.render('user/order-failed',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Sorry, Order failed" , admin:false, user});
-  
+  try{
+
+    const user = req.session.userSession // Used for storing user details for further use in this route
+
+    res.render('user/order-failed',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Sorry, Order failed" , admin:false, user});
+
+  }catch(error){
+
+    console.log("Error from orderFailedGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 }
   
 const verifyPaymentPOST = (req,res)=>{
