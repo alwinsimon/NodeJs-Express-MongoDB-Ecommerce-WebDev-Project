@@ -570,7 +570,7 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
         
                         resolve({ status: false, couponId : activeCouponId, couponDiscount : 0 });
         
-                    }//=========================
+                    }
 
                 }else{
 
