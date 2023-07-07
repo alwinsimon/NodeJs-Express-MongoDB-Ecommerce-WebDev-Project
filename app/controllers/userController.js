@@ -1111,54 +1111,63 @@ const orderFailedGET = (req,res)=>{
 }
   
 const verifyPaymentPOST = (req,res)=>{
-  
-  // console.log(req.body);
 
-  // The below verifyOnlinePayment function will match the signature returned by Razorpay with our server generated signature
-  userHelpers.verifyOnlinePayment(req.body).then(()=>{
+  try{
 
-    // The below function updateOnlineOrderPaymentStatus will be called upon succesful verification of payment by verifyOnlinePayment above
-    // updateOnlineOrderPaymentStatus function will update the payment status in DB
+    // The below verifyOnlinePayment function will match the signature returned by Razorpay with our server generated signature
+    userHelpers.verifyOnlinePayment(req.body).then(()=>{
 
-    let receiptId = req.body['serverOrderDetails[receipt]'];
+      // The below function updateOnlineOrderPaymentStatus will be called upon succesful verification of payment by verifyOnlinePayment above
+      // updateOnlineOrderPaymentStatus function will update the payment status in DB
 
-    let paymentSuccess = true;
+      let receiptId = req.body['serverOrderDetails[receipt]'];
 
-    userHelpers.updateOnlineOrderPaymentStatus(receiptId, paymentSuccess).then(()=>{
-
-      // Sending the receiptId to the above userHelper to modify the order status in the DB
-      // We have set the Receipt Id is same as the orders cart collection ID
-
-      res.json({status:true});
-
-      // console.log('Payment Succesful from Update online Orders');
-
-    })
-    
-
-  }).catch((err)=>{
-
-    if(err){
-      
-      console.log(err);
-
-      let paymentSuccess = false;
+      let paymentSuccess = true;
 
       userHelpers.updateOnlineOrderPaymentStatus(receiptId, paymentSuccess).then(()=>{
 
         // Sending the receiptId to the above userHelper to modify the order status in the DB
         // We have set the Receipt Id is same as the orders cart collection ID
 
-        res.json({status:false});
+        res.json({status:true});
 
-        // console.log('Payment Failed from Update online Orders');
+        // console.log('Payment Succesful from Update online Orders');
 
       })
-    
-    }
+      
 
-  });
-  
+    }).catch((error)=>{
+
+      if(error){
+        
+        console.log("Error from verifyOnlinePayment userHelper at verifyPaymentPOST userController: ", error);
+
+        let paymentSuccess = false;
+
+        userHelpers.updateOnlineOrderPaymentStatus(receiptId, paymentSuccess).then(()=>{
+
+          // Sending the receiptId to the above userHelper to modify the order status in the DB
+          // We have set the Receipt Id is same as the orders cart collection ID
+
+          res.json({status:false});
+
+          // console.log('Payment Failed from Update online Orders');
+
+        })
+      
+      }
+
+    });
+
+
+  }catch(error){
+
+    console.log("Error from verifyPaymentPOST userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 }
 
 const savePaymentDataPOST = async (req,res)=>{
