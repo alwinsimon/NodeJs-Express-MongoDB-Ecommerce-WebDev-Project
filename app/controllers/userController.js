@@ -1219,19 +1219,27 @@ const savePaymentDataPOST = async (req,res)=>{
 
 const orderCancellationRequestPOST = async (req,res)=>{
 
-  let orderId = req.body.orderId;
+  try{
 
-  await userHelpers.requestOrderCancellation(orderId).then((response)=>{
+    let orderId = req.body.orderId;
 
-    res.redirect('/orders');
+    await userHelpers.requestOrderCancellation(orderId).then((response)=>{
+  
+      res.redirect('/orders');
+  
+    }).catch((error) => {
+  
+      console.log("Error from requestOrderCancellation userHelper at orderCancellationRequestPOST userController: " , error);
+  
+    });
 
-  }).catch((err) => {
+  }catch(error){
 
-    console.log("Error from orderCancellationRequestPOST controller: " , err);
+    console.log("Error from orderCancellationRequestPOST userController: ", error);
 
-    res.redirect('/error-page'); // Redirect to an error page if there was an error
+    res.redirect('/error-page');
 
-  });
+  }
 
 }
 
