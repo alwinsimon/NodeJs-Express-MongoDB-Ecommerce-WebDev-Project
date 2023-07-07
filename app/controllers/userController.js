@@ -1171,43 +1171,47 @@ const verifyPaymentPOST = (req,res)=>{
 }
 
 const savePaymentDataPOST = async (req,res)=>{
+
+  try{
+
+    let paymentGatewayResponse = req.body;
   
-  let paymentGatewayResponse = req.body;
+    if(req.body.razorpay_signature){
+  
+      let orderId = req.body.razorpay_order_id;
+  
+      let dbPaymentHistoryCollectionId = await userHelpers.getPaymentHistoryId(orderId);
+  
+      userHelpers.updatePaymentHistory(dbPaymentHistoryCollectionId, paymentGatewayResponse).then(()=>{
+  
+        res.json({status:true});
+  
+      });
+  
+    }else{
+  
+      let failedPaymentData = req.body;
+  
+      let orderId = failedPaymentData['error[metadata][order_id]'];
+  
+      let dbPaymentHistoryCollectionId = await userHelpers.getPaymentHistoryId(orderId);
+  
+      userHelpers.updatePaymentHistory(dbPaymentHistoryCollectionId, paymentGatewayResponse).then(()=>{
+  
+        res.json({status:true});
+  
+      })
+  
+    }
 
-  // console.log(paymentGatewayResponse);
+  }catch(error){
 
-  if(req.body.razorpay_signature){
+    console.log("Error from savePaymentDataPOST userController: ", error);
 
-    let orderId = req.body.razorpay_order_id;
-
-    let dbPaymentHistoryCollectionId = await userHelpers.getPaymentHistoryId(orderId);
-
-    // console.log(dbPaymentHistoryCollectionId);
-
-    userHelpers.updatePaymentHistory(dbPaymentHistoryCollectionId, paymentGatewayResponse).then(()=>{
-
-      res.json({status:true});
-
-    });
-
-  }else{
-
-    let failedPaymentData = req.body;
-
-    let orderId = failedPaymentData['error[metadata][order_id]'];
-
-    let dbPaymentHistoryCollectionId = await userHelpers.getPaymentHistoryId(orderId);
-
-    // console.log(dbPaymentHistoryCollectionId);
-
-    userHelpers.updatePaymentHistory(dbPaymentHistoryCollectionId, paymentGatewayResponse).then(()=>{
-
-      res.json({status:true});
-
-    })
+    res.redirect('/error-page');
 
   }
-  
+
 }
 
 
