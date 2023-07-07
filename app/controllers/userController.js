@@ -766,6 +766,8 @@ const placeOrderGET = async (req,res)=>{
     }
 
 
+    // Updating the cart value to display in the front-end after applying coupon discount - note that this will not be modify the cart value in the DB
+    cartValue = cartValue - couponDiscount;
 
 
     if(primaryAddress){
