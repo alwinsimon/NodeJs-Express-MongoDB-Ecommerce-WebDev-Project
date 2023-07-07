@@ -156,19 +156,27 @@ const userLogInPOST = (req,res)=>{
     res.redirect('/error-page');
 
   }
-  
-  
-  
+
 }
   
 const userLogOutPOST = (req,res)=>{
-  
-  delete req.session.userSession;
 
-  delete req.session.userLoggedIn;
+  try{
 
-  res.redirect('/');
-  
+    delete req.session.userSession;
+
+    delete req.session.userLoggedIn;
+
+    res.redirect('/');
+
+  }catch(error){
+
+    console.log("Error from userLogOutPOST userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 }
   
   
