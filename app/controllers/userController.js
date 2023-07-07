@@ -376,43 +376,51 @@ const userProfileGET =  async (req, res) => {
 
 const userProfileUpdateRequestPOST =  async (req, res) => {
 
-  const user = req.session.userSession;
+  try{
 
-  const userId = user._id;
+    const user = req.session.userSession;
 
-  const formData = {
+    const userId = user._id;
 
-    name : req.body.name,
+    const formData = {
 
-    lastName : req.body.lastName,
+      name : req.body.name,
 
-    age : req.body.age,
+      lastName : req.body.lastName,
 
-    phoneNumberAlternative : req.body.phoneNumberAlternative,
+      age : req.body.age,
 
-    userTagline : req.body.userTagline
+      phoneNumberAlternative : req.body.phoneNumberAlternative,
 
-  }
-  
-  userHelpers.updateUserData(userId, formData).then((response)=>{
-
-    if(response.success){
-
-      res.redirect("/profile/" + userId);
-
-    }else{
-
-      res.redirect("/error-page");
+      userTagline : req.body.userTagline
 
     }
-
-  }).catch((err)=>{
-
-    console.log("Error from userProfileUpdateRequestPOST controller : ", err);
-
-    res.redirect("/error-page");
     
-  });
+    userHelpers.updateUserData(userId, formData).then((response)=>{
+
+      if(response.success){
+
+        res.redirect("/profile/" + userId);
+
+      }else{
+
+        res.redirect("/error-page");
+
+      }
+
+    }).catch((err)=>{
+
+      console.log("Error from updateUserData userHelper at userProfileUpdateRequestPOST controller : ", err);
+      
+    });
+
+  }catch(error){
+
+    console.log("Error from userProfileUpdateRequestPOST userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
 
 }
 
@@ -445,7 +453,7 @@ const userWishlistGET =  async (req, res) => {
     
   } catch (error) {
 
-    console.log("Error from userWishlistGET controller : ", err);
+    console.log("Error from userWishlistGET controller : ", error);
 
     res.redirect("/error-page");
     
