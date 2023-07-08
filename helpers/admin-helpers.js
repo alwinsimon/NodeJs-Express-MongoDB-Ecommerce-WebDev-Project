@@ -17,44 +17,54 @@ module.exports = {
 
   doAdminLogin:(loginFormData)=>{
 
-    let adminAuthenticationResponse = {};
-
     return new Promise( async (resolve,reject)=>{
 
-      let admin = await db.get().collection(collections.ADMIN_COLLECTION).findOne({email:loginFormData.email});
+      try{
 
-      if(admin){
+        let adminAuthenticationResponse = {};
 
-        bcrypt.compare(loginFormData.password, admin.password).then((verificationData)=>{
+        const admin = await db.get().collection(collections.ADMIN_COLLECTION).findOne({email:loginFormData.email});
+  
+        if(admin){
+  
+          bcrypt.compare(loginFormData.password, admin.password).then((verificationData)=>{
+  
+            if(verificationData){
+  
+              adminAuthenticationResponse.status = true;
+  
+              adminAuthenticationResponse.adminData = admin;
+  
+              resolve(adminAuthenticationResponse);
+  
+            }else{
+  
+              adminAuthenticationResponse.status = false;
+  
+              adminAuthenticationResponse.passwordError = true;
+  
+              resolve(adminAuthenticationResponse);
+  
+            }
+  
+          })
+  
+        }else{
+  
+          adminAuthenticationResponse.status = false;
+  
+          adminAuthenticationResponse.emailError = true;
+  
+          resolve(adminAuthenticationResponse);
+  
+        }
 
-          if(verificationData){
-
-            adminAuthenticationResponse.status = true;
-
-            adminAuthenticationResponse.adminData = admin;
-
-            resolve(adminAuthenticationResponse);
-
-          }else{
-
-            adminAuthenticationResponse.status = false;
-
-            adminAuthenticationResponse.passwordError = true;
-
-            resolve(adminAuthenticationResponse);
-
-          }
-
-        })
-
-      }else{
-
-        adminAuthenticationResponse.status = false;
-
-        adminAuthenticationResponse.emailError = true;
-
-        resolve(adminAuthenticationResponse);
-
+      }catch(error){
+    
+        console.error("Error from doAdminLogin admin-helper: ", error);
+    
+        reject(error);
+    
       }
 
     })
@@ -64,13 +74,23 @@ module.exports = {
 
     return new Promise( async (resolve,reject)=>{
 
-      newAdminDetails.password = await bcrypt.hash(newAdminDetails.password, 10);
+      try{
 
-      db.get().collection(collections.ADMIN_COLLECTION).insertOne(newAdminDetails).then((result)=>{
+        newAdminDetails.password = await bcrypt.hash(newAdminDetails.password, 10);
 
-        resolve(result._insertedId);
+        db.get().collection(collections.ADMIN_COLLECTION).insertOne(newAdminDetails).then((result)=>{
+  
+          resolve(result._insertedId);
+  
+        })
 
-      })
+      }catch(error){
+    
+        console.error("Error from addNewAdmin admin-helper: ", error);
+    
+        reject(error);
+    
+      }
 
     });
 
@@ -79,23 +99,27 @@ module.exports = {
 
     return new Promise((resolve,reject)=>{
 
-      db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION)
-      .insertOne(categoryDetails).then((response)=>{
+      try{
 
-        resolve(response.insertedId);
+        db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).insertOne(categoryDetails).then((response)=>{
+  
+          resolve(response.insertedId);
+  
+        }).catch((error)=>{
+    
+          console.log("Error from db operation in addProductCategory admin helper:", error);
 
-      })
-      .catch((err)=>{
+          reject(error);
+                
+        });
 
-        if(err){
-
-          console.log(err);
-
-          reject(err);
-            
-        }
-              
-      });
+      }catch(error){
+    
+        console.error("Error from addProductCategory admin-helper: ", error);
+    
+        reject(error);
+    
+      }
 
     })
 
@@ -104,26 +128,36 @@ module.exports = {
 
     return new Promise( async (resolve,reject)=>{
 
-      let productCategory = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).find({name:categoryName}).toArray();
+      try{
 
-      if(productCategory[0]){  // Product category already exist in DB
+        const productCategory = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).find({name:categoryName}).toArray();
 
-        let response = {
-          status:true,
-          message: "Product Category Already Exists - New category Addition FAILED"
+        if(productCategory[0]){  // Product category already exist in DB
+  
+          let response = {
+            status:true,
+            message: "Product Category Already Exists - New category Addition FAILED"
+          }
+  
+          resolve(response);
+  
+        }else{ // Product category DOSEN'T exist in DB
+  
+          let response = {
+            status:false,
+            message: "Product Category Dosen't Exist"
+          }
+  
+          resolve(response);
+  
         }
 
-        resolve(response);
-
-      }else{ // Product category DOSEN'T exist in DB
-
-        let response = {
-          status:false,
-          message: "Product Category Dosen't Exist"
-        }
-
-        resolve(response);
-
+      }catch(error){
+    
+        console.error("Error from checkProductCategoryExists admin-helper: ", error);
+    
+        reject(error);
+    
       }
 
     })
@@ -192,6 +226,8 @@ module.exports = {
 
       } catch (error) {
 
+        console.error("Error from updateProductCategory admin-helper: ", error);
+
         reject(error);
 
       }
@@ -235,6 +271,8 @@ module.exports = {
 
       } catch (error) {
 
+        console.error("Error from deleteProductCategory admin-helper: ", error);
+
         reject(error);
 
       }
@@ -262,6 +300,8 @@ module.exports = {
   
 
       } catch (error) {
+
+        console.error("Error from getAllUsers admin-helper: ", error);
 
         reject(error);
 
@@ -298,6 +338,8 @@ module.exports = {
 
       } catch (error) {
 
+        console.error("Error from changeUserBlockStatus admin-helper: ", error);
+
         reject(error);
 
       }
@@ -322,13 +364,12 @@ module.exports = {
           return { ...rest, date: orderedAtIST + ' IST' };
           
         });
-
-        // console.log(platformOrders);
         
         resolve(platformOrders);
-  
 
       } catch (error) {
+
+        console.error("Error from getAllOrders admin-helper: ", error);
 
         reject(error);
 
@@ -343,13 +384,13 @@ module.exports = {
 
       try {
 
-        let singleOrderData = await db.get().collection(collections.ORDERS_COLLECTION).findOne({_id:ObjectId(orderId)});
+        const singleOrderData = await db.get().collection(collections.ORDERS_COLLECTION).findOne({_id:ObjectId(orderId)});
         
         resolve(singleOrderData);
   
       } catch (error) {
 
-        console.log("Error from getSingleOrderData Admin Helper : " , error);
+        console.error("Error from getSingleOrderData admin-helper: ", error);
 
         reject(error);
 
@@ -364,7 +405,7 @@ module.exports = {
 
       try {
 
-        let orderData = await db.get().collection(collections.ORDERS_COLLECTION).aggregate([
+        const orderData = await db.get().collection(collections.ORDERS_COLLECTION).aggregate([
                 
           {
 
@@ -417,15 +458,12 @@ module.exports = {
           }
 
         ]).toArray();
-
-        // console.log(orderData);
         
         resolve(orderData);
-  
 
       } catch (error) {
 
-        console.log("Error from getSingleOrderData Admin Helper : " , error);
+        console.error("Error from getSingleOrderDataForOrdersDisplay admin-helper: ", error);
 
         reject(error);
 
@@ -461,11 +499,10 @@ module.exports = {
         }
         
         resolve();
-  
 
       } catch (error) {
 
-        console.log("Error from updateOrderStatus Admin Helper : " , error);
+        console.error("Error from updateOrderStatus admin-helper: ", error);
 
         reject(error);
 
@@ -497,7 +534,7 @@ module.exports = {
 
             } catch(error) {
 
-              console.log(error);
+              console.error("Error-4 from manageOrderCancellation admin-helper:", error);
 
               reject(error);
 
@@ -518,7 +555,7 @@ module.exports = {
               
             } catch(error) {
 
-              console.log(error);
+              console.error("Error-3 from manageOrderCancellation admin-helper:", error);
 
               reject(error);
 
@@ -542,7 +579,7 @@ module.exports = {
 
           } catch(error) {
 
-            console.log(error);
+            console.error("Error-2 from manageOrderCancellation admin-helper:", error);
 
             reject(error);
 
@@ -552,7 +589,7 @@ module.exports = {
 
       } catch (error) {
 
-        console.log("Error from manageOrderCancellation Admin Helper : " , error);
+        console.error("Error from manageOrderCancellation admin-helper: ", error);
 
         reject(error);
 
@@ -593,7 +630,7 @@ module.exports = {
 
       } catch (error) {
 
-        console.log("Error from manageOrderReturn Admin Helper : " , error);
+        console.error("Error from manageOrderReturn admin-helper: ", error);
 
         reject(error);
 
@@ -623,7 +660,6 @@ module.exports = {
 
         }
 
-
         if(orderCancellationRequest){
 
           if(orderData.paymentMethod === "ONLINE"){ // If the payment was ONLINE resolve with required data to do wallet refund
@@ -639,7 +675,7 @@ module.exports = {
         
             } catch (error) {
         
-              console.log("Error while adding order CANCELLATION refund to wallet balance:", error);
+              console.error("Error in addRefundToWalletBalance admin-helpers while adding order CANCELLATION refund to wallet balance:", error);
     
               reject(error);
         
@@ -664,7 +700,7 @@ module.exports = {
       
           } catch (error) {
       
-            console.log("Error while adding order RETURN refund to wallet balance:", error);
+            console.error("Error in addRefundToWalletBalance admin-helpers while adding order RETURN refund to wallet balance:", error);
   
             reject(error);
       
@@ -674,7 +710,7 @@ module.exports = {
 
       } catch (error) {
 
-        console.log("Error in addRefundToWalletBalance function :", error);
+        console.error("Error from addRefundToWalletBalance admin-helper: ", error);
 
         reject(error);
 
