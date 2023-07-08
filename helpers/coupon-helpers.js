@@ -15,9 +15,9 @@ const verifyCouponExist = (newCouponData)=>{
 
     return new Promise( async (resolve, reject)=>{
 
-        const couponCodeForVerification = newCouponData.couponCode.toLowerCase();
-
         try{
+
+            const couponCodeForVerification = newCouponData.couponCode.toLowerCase();
     
             const couponExist = await db.get().collection(dataBasecollections.COUPON_COLLECTION).find( { couponCode: couponCodeForVerification } ).toArray();
     
@@ -32,7 +32,7 @@ const verifyCouponExist = (newCouponData)=>{
     
         }catch (error){
     
-            console.log("Error from verifyCouponExist couponHelper :", error);
+            console.error("Error from verifyCouponExist coupon-helpers: ", error);
 
             reject(error);
     
@@ -74,7 +74,7 @@ const addNewCoupon = (newCouponData, adminData)=>{
     
         }catch (error){
     
-            console.log("Error from addNewCoupon couponHelper :", error);
+            console.error("Error from addNewCoupon coupon-helpers: ", error);
 
             reject(error);
             
@@ -98,7 +98,7 @@ const getActiveCoupons = ()=>{
     
         }catch (error){
     
-            console.log("Error from getActiveCoupons couponHelper :", error);
+            console.error("Error from getActiveCoupons coupon-helpers: ", error);
 
             reject(error);
             
@@ -120,7 +120,7 @@ const getInActiveCoupons = ()=>{
     
         }catch (error){
     
-            console.log("Error from getInActiveCoupons couponHelper :", error);
+            console.error("Error from getInActiveCoupons coupon-helpers: ", error);
 
             reject(error);
             
@@ -142,7 +142,7 @@ const getSingleCouponData = (couponId)=>{
     
         }catch (error){
     
-            console.log("Error from getSingleCouponData couponHelper :", error);
+            console.error("Error from getSingleCouponData coupon-helpers: ", error);
 
             reject(error);
             
@@ -193,7 +193,7 @@ const updateCouponData = (couponDataForUpdate, adminData)=>{
     
         }catch (error){
     
-            console.log("Error from updateCouponData couponHelper :", error);
+            console.error("Error from updateCouponData coupon-helpers: ", error);
 
             reject(error);
             
@@ -233,7 +233,7 @@ const changeCouponStatus = (couponDataForUpdate, statusToModify, adminData)=>{
     
         }catch (error){
     
-            console.log("Error from updateCouponData couponHelper :", error);
+            console.error("Error from changeCouponStatus coupon-helpers: ", error);
 
             reject(error);
             
@@ -276,7 +276,7 @@ const getCouponDataByCouponCode = (couponCode)=>{
     
         }catch (error){
     
-            console.log("Error from getCouponDataByCouponCode couponHelper :", error);
+            console.error("Error from getCouponDataByCouponCode coupon-helpers: ", error);
 
             reject(error);
             
@@ -331,7 +331,7 @@ const verifyCouponEligibility = (requestedCouponCode)=>{
     
         }catch (error){
     
-            console.log("Error from updateCouponData couponHelper :", error);
+            console.error("Error from verifyCouponEligibility coupon-helpers: ", error);
 
             reject(error);
             
@@ -371,7 +371,7 @@ const verifyCouponUsedStatus = (userId, couponId)=>{
     
         }catch (error){
     
-            console.log("Error from verifyCouponUsedStatus couponHelper :", error);
+            console.error("Error from verifyCouponUsedStatus coupon-helpers: ", error);
 
             reject(error);
             
@@ -458,7 +458,7 @@ const applyCouponToCart = (userId, couponId)=>{
     
         }catch (error){
     
-            console.log("Error from applyCouponToCart couponHelper :", error);
+            console.error("Error from applyCouponToCart coupon-helpers: ", error);
 
             reject(error);
             
@@ -584,7 +584,7 @@ const checkCurrentCouponValidityStatus = (userId, cartValue)=>{
     
         }catch (error){
     
-            console.log("Error from checkCurrentCouponValidityStatus couponHelper :", error);
+            console.error("Error from checkCurrentCouponValidityStatus coupon-helpers: ", error);
 
             reject(error);
             
@@ -631,7 +631,7 @@ const updateCouponUsedStatus = (userId, couponId)=>{
     
         }catch (error){
     
-            console.log("Error from updateCouponUsedStatus couponHelper :", error);
+            console.error("Error from updateCouponUsedStatus coupon-helpers: ", error);
 
             reject(error);
             
