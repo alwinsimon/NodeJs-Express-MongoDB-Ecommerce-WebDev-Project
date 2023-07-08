@@ -185,6 +185,8 @@ module.exports = {
 
       } catch (error) {
 
+        console.error("Error from getProductCategories admin-helper: ", error);
+
         reject(error);
 
       }
@@ -198,11 +200,13 @@ module.exports = {
 
       try {
 
-        let categoryDetails = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).findOne({_id:ObjectId(categoryId)});
+        const categoryDetails = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).findOne({_id:ObjectId(categoryId)});
 
         resolve(categoryDetails);
 
       } catch (error) {
+
+        console.error("Error from getProductCategoryDetails admin-helper: ", error);
 
         reject(error);
 
@@ -254,9 +258,9 @@ module.exports = {
 
             if (err) {
 
-              reject(err);
-
               console.error(`Error deleting file ${imagePath}: ${err}`);
+
+              reject(err);
 
             }else{
 
@@ -316,7 +320,7 @@ module.exports = {
 
       try {
 
-        let user = await db.get().collection(collections.USER_COLLECTION).findOne({_id:ObjectId(userId)});
+        const user = await db.get().collection(collections.USER_COLLECTION).findOne({_id:ObjectId(userId)});
 
         if(user.blocked){ // If the user is already blocked => UN-BLOCK
 
@@ -407,31 +411,15 @@ module.exports = {
 
         const orderData = await db.get().collection(collections.ORDERS_COLLECTION).aggregate([
                 
-          {
+          { $match:{_id:ObjectId(orderId)} },
 
-            $match:{_id:ObjectId(orderId)}
+          { $unwind:'$products' },
+          
+          { $project:{ item:'$products.item', quantity:'$products.quantity'} },
 
-          },
-          {
-
-            $unwind:'$products'
-
-          },
-          {
-
-            $project:{
-
-              item:'$products.item',
-
-              quantity:'$products.quantity'
-
-            }
-
-          },
-          {
-
-            $lookup:{
-
+          { $lookup:
+            
+            {
               from:collections.PRODUCT_COLLECTION,
 
               localField:'item',
@@ -439,23 +427,11 @@ module.exports = {
               foreignField:'_id',
 
               as:'product'
-
             }
 
           },
-          {
 
-            $project:{
-
-              item:1,
-
-              quantity:1,
-
-              product:{$arrayElemAt:['$product',0]}
-
-            }
-
-          }
+          { $project:{item:1, quantity:1, product:{$arrayElemAt:['$product',0]}} }
 
         ]).toArray();
         
@@ -560,7 +536,6 @@ module.exports = {
               reject(error);
 
             }
-            
 
           }
           
@@ -667,8 +642,11 @@ module.exports = {
             try {
 
               await db.get().collection(collections.WALLET_COLLECTION).updateOne(
+
                 { userId: ObjectId(userId) },
+
                 { $inc: { walletBalance: refundAmount } }
+                
               );
     
               resolve({refundSuccess : true});
