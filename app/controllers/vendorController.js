@@ -14,74 +14,104 @@ let PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
 const vendorLogInGET = (req,res)=>{
 
-  if(req.session.vendorSession){
+  try{
 
-    res.redirect('/vendor');
+    if(req.session.vendorSession){
 
-  }else{
+      res.redirect('/vendor');
+  
+    }else{
+  
+      res.render('vendor/vendor-login',{"loginError":req.session.vendorLogginErr, title:PLATFORM_NAME + " || Vendor Login", vendor:true, PLATFORM_NAME});
+  
+      req.session.vendorLogginErr = false; 
+      /*
+      Resetting the flag for checking if the login page post request was due to invalid username or password.
+      This is done so that the login page will show the message only once if there was a redirect to this page due to invalid credentials.
+      */
+      
+    }
 
-    res.render('vendor/vendor-login',{"loginError":req.session.vendorLogginErr, title:PLATFORM_NAME + " || Vendor Login", vendor:true, PLATFORM_NAME});
+  }catch(error){
 
-    req.session.vendorLogginErr = false; 
-    /*
-    Resetting the flag for checking if the login page post request was due to invalid username or password.
-    This is done so that the login page will show the message only once if there was a redirect to this page due to invalid credentials.
-    */
-    
+    console.log("Error from vendorLogInGET vendorController: ", error);
+
+    res.redirect('/error-page');
+
   }
 
 }
 
 const vendorLogInPOST = (req,res)=>{
 
-  if(req.session.vendorLoggedIn){
+  try{
 
-    res.redirect('/vendor');
+    if(req.session.vendorLoggedIn){
 
-  }else{
-
-    vendorHelper.doVendorLogin(req.body).then((doVendorLoginResponse)=>{
-
-      if(doVendorLoginResponse.status){
+      res.redirect('/vendor');
   
-        req.session.vendorSession = doVendorLoginResponse.vendorData; // Storing response from doVendorLogin function in session storage
+    }else{
   
-        req.session.vendorLoggedIn = true;
+      vendorHelper.doVendorLogin(req.body).then((doVendorLoginResponse)=>{
   
-        res.redirect('/vendor');
-  
-      }else if(doVendorLoginResponse.emailError){
-  
-        req.session.vendorLogginErr = "Entered Email is Invalid !!!"; 
-        /*Setting a flag for keeping a record of the login error which happened due to vendor entering invalid credentials.
-         This flag will be checked in every login request so that we can display an error message in the case of reloading the login page due to invalid credentials entered by vendor.
-         This flag variable is stored in the session using req.session so that it will be accesible everywhere.
-         The name of this flag variable can be anything ie, this is NOT an predefined name in the session module.
-        */
-  
-        res.redirect('/vendor/login');
-  
-      }else{
-  
-        req.session.vendorLogginErr = "Incorrect Password Entered!!!";
-  
-        res.redirect('/vendor/login');
-  
-      }
-  
-    })
+        if(doVendorLoginResponse.status){
     
+          req.session.vendorSession = doVendorLoginResponse.vendorData; // Storing response from doVendorLogin function in session storage
+    
+          req.session.vendorLoggedIn = true;
+    
+          res.redirect('/vendor');
+    
+        }else if(doVendorLoginResponse.emailError){
+    
+          req.session.vendorLogginErr = "Entered Email is Invalid !!!"; 
+          /*Setting a flag for keeping a record of the login error which happened due to vendor entering invalid credentials.
+           This flag will be checked in every login request so that we can display an error message in the case of reloading the login page due to invalid credentials entered by vendor.
+           This flag variable is stored in the session using req.session so that it will be accesible everywhere.
+           The name of this flag variable can be anything ie, this is NOT an predefined name in the session module.
+          */
+    
+          res.redirect('/vendor/login');
+    
+        }else{
+    
+          req.session.vendorLogginErr = "Incorrect Password Entered!!!";
+    
+          res.redirect('/vendor/login');
+    
+        }
+    
+      })
+      
+    }
+
+  }catch(error){
+
+    console.log("Error from vendorLogInPOST vendorController: ", error);
+
+    res.redirect('/error-page');
+
   }
 
 }
 
 const vendorLogOutPOST = (req,res)=>{
 
-  req.session.vendorSession = false;
+  try{
 
-  req.session.vendorLoggedIn = false;
+    req.session.vendorSession = false;
 
-  res.redirect('/vendor')
+    req.session.vendorLoggedIn = false;
+  
+    res.redirect('/vendor');
+
+  }catch(error){
+
+    console.log("Error from vendorLogOutPOST vendorController: ", error);
+
+    res.redirect('/error-page');
+
+  }
 
 }
 
@@ -90,23 +120,41 @@ const vendorLogOutPOST = (req,res)=>{
 
 const vendorSignUpGET = (req,res)=>{
 
-  res.render('vendor/vendor-signup',{title:PLATFORM_NAME + " || Vendor Sign-up", vendor:true, PLATFORM_NAME});
-  
+  try{
+
+    res.render('vendor/vendor-signup',{title:PLATFORM_NAME + " || Vendor Sign-up", vendor:true, PLATFORM_NAME});
+
+  }catch(error){
+
+    console.log("Error from vendorSignUpGET vendorController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
 }
   
 const vendorSignUpPOST = (req,res)=>{
 
-  vendorHelper.doVendorSignup(req.body).then((vendorData)=>{
-      
-    // console.log(user);
+  try{
 
-    req.session.vendorSession = vendorData;
+    vendorHelper.doVendorSignup(req.body).then((vendorData)=>{
+  
+      req.session.vendorSession = vendorData;
+  
+      req.session.vendorLoggedIn = true;
+  
+      res.redirect('/vendor');
+  
+    });
 
-    req.session.vendorLoggedIn = true;
+  }catch(error){
 
-    res.redirect('/vendor');
+    console.log("Error from vendorSignUpPOST vendorController: ", error);
 
-  })
+    res.redirect('/error-page');
+
+  }
 
 }
 
@@ -115,13 +163,23 @@ const vendorSignUpPOST = (req,res)=>{
 
 const vendorDashboardGET =  (req, res)=>{
 
-  let vendorData = req.session.vendorSession;
+  try{
 
-  productHelpers.getAllProducts().then((products)=>{
-   
-    res.render('vendor/view-products',{title: PLATFORM_NAME + " || Seller Dashboard", vendor:true, vendorData, PLATFORM_NAME, products});
-    
-  });
+    const vendorData = req.session.vendorSession;
+
+    productHelpers.getAllProducts().then((products)=>{
+     
+      res.render('vendor/view-products',{title: PLATFORM_NAME + " || Seller Dashboard", vendor:true, vendorData, PLATFORM_NAME, products});
+      
+    });
+
+  }catch(error){
+
+    console.log("Error from vendorDashboardGET vendorController: ", error);
+
+    res.redirect('/error-page');
+
+  }
 
 }
 

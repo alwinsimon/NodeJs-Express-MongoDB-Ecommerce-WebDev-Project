@@ -276,11 +276,11 @@ const verifyUserSignUpPOST = (req,res)=>{
 
   try{
 
-    let otpFromUser = req.body.otp;
+    const otpFromUser = req.body.otp;
 
-    let userSignUpRequestData = req.session.userSignupData;
+    const userSignUpRequestData = req.session.userSignupData;
 
-    let userPhoneNumber = userSignUpRequestData.phone;
+    const userPhoneNumber = userSignUpRequestData.phone;
 
     userHelpers.verifyUserSignUpOtp(otpFromUser, userPhoneNumber).then((verificationData)=>{
 
@@ -408,9 +408,9 @@ const userProfileUpdateRequestPOST =  async (req, res) => {
 
       }
 
-    }).catch((err)=>{
+    }).catch((error)=>{
 
-      console.log("Error from updateUserData userHelper at userProfileUpdateRequestPOST controller : ", err);
+      console.log("Error from updateUserData userHelper at userProfileUpdateRequestPOST controller : ", error);
       
     });
 
@@ -467,7 +467,7 @@ const modifyUserWishlistPOST =  async (req, res) => {
 
     const user = req.session.userSession;
 
-    const userId = req.session.userSession._id;
+    const userId = user._id;
 
     const productId = req.body.productId
 
@@ -1120,9 +1120,9 @@ const verifyPaymentPOST = (req,res)=>{
       // The below function updateOnlineOrderPaymentStatus will be called upon succesful verification of payment by verifyOnlinePayment above
       // updateOnlineOrderPaymentStatus function will update the payment status in DB
 
-      let receiptId = req.body['serverOrderDetails[receipt]'];
+      const receiptId = req.body['serverOrderDetails[receipt]'];
 
-      let paymentSuccess = true;
+      const paymentSuccess = true;
 
       userHelpers.updateOnlineOrderPaymentStatus(receiptId, paymentSuccess).then(()=>{
 
@@ -1142,7 +1142,7 @@ const verifyPaymentPOST = (req,res)=>{
         
         console.log("Error from verifyOnlinePayment userHelper at verifyPaymentPOST userController: ", error);
 
-        let paymentSuccess = false;
+        const paymentSuccess = false;
 
         userHelpers.updateOnlineOrderPaymentStatus(receiptId, paymentSuccess).then(()=>{
 
@@ -1174,13 +1174,13 @@ const savePaymentDataPOST = async (req,res)=>{
 
   try{
 
-    let paymentGatewayResponse = req.body;
+    const paymentGatewayResponse = req.body;
   
     if(req.body.razorpay_signature){
   
-      let orderId = req.body.razorpay_order_id;
+      const orderId = req.body.razorpay_order_id;
   
-      let dbPaymentHistoryCollectionId = await userHelpers.getPaymentHistoryId(orderId);
+      const dbPaymentHistoryCollectionId = await userHelpers.getPaymentHistoryId(orderId);
   
       userHelpers.updatePaymentHistory(dbPaymentHistoryCollectionId, paymentGatewayResponse).then(()=>{
   
@@ -1190,11 +1190,11 @@ const savePaymentDataPOST = async (req,res)=>{
   
     }else{
   
-      let failedPaymentData = req.body;
+      const failedPaymentData = req.body;
   
-      let orderId = failedPaymentData['error[metadata][order_id]'];
+      const orderId = failedPaymentData['error[metadata][order_id]'];
   
-      let dbPaymentHistoryCollectionId = await userHelpers.getPaymentHistoryId(orderId);
+      const dbPaymentHistoryCollectionId = await userHelpers.getPaymentHistoryId(orderId);
   
       userHelpers.updatePaymentHistory(dbPaymentHistoryCollectionId, paymentGatewayResponse).then(()=>{
   
@@ -1221,7 +1221,7 @@ const orderCancellationRequestPOST = async (req,res)=>{
 
   try{
 
-    let orderId = req.body.orderId;
+    const orderId = req.body.orderId;
 
     await userHelpers.requestOrderCancellation(orderId).then((response)=>{
   
@@ -1250,17 +1250,15 @@ const orderReturnRequestPOST = async (req,res)=>{
 
   try{
 
-    let orderId = req.body.orderId;
+    const orderId = req.body.orderId;
 
     await userHelpers.requestOrderReturn(orderId).then((response)=>{
   
       res.redirect('/orders');
   
-    }).catch((err) => {
+    }).catch((error) => {
   
-      console.log("Error from orderReturnRequestPOST controller: " , err);
-  
-      res.redirect('/error-page'); // Redirect to an error page if there was an error
+      console.log("Error from requestOrderReturn userHelper at orderReturnRequestPOST controller: " , error);
   
     });
 
