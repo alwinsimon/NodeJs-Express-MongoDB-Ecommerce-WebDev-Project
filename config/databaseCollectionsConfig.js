@@ -12,6 +12,8 @@ module.exports = {
     WALLET_COLLECTION : 'user wallet',
     USER_ADDRESS_COLLECTION : 'user address',
     COUPON_COLLECTION : 'coupons',
-    USED_COUPON_COLLECTION : 'coupons log'
+    USED_COUPON_COLLECTION : 'coupons log',
+    OFFER_COLLECTION : 'offers',
+    USED_OFFER_COLLECTION : 'offers log'
 
 }
