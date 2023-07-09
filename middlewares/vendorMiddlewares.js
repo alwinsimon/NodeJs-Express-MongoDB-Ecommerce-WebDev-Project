@@ -17,7 +17,7 @@ const verifyVendorLogin = (req,res,next)=>{
 
   }catch(error){
 
-    console.error("Error from verifyVendorLogin admin-midddleware: ", error);
+    console.error("Error from verifyVendorLogin vendor-midddleware: ", error);
 
     const errorMessage = " Something went wrong!!!, It's a 500 - Server Error "
     const instructionForUser = " Hi there, just grab a cup of coffee for now & visit the website after sometime, we'll fix it for you by then. "

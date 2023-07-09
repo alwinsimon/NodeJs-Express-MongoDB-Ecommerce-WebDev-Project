@@ -46,7 +46,7 @@ const verifyUserLogin = async (req,res,next)=>{
 
   }catch(error){
 
-    console.error("Error from verifyUserLogin admin-midddleware: ", error);
+    console.error("Error from verifyUserLogin user-midddleware: ", error);
 
     const errorMessage = " Something went wrong!!!, It's a 500 - Server Error "
     const instructionForUser = " Hi there, just grab a cup of coffee for now & visit the website after sometime, we'll fix it for you by then. "
