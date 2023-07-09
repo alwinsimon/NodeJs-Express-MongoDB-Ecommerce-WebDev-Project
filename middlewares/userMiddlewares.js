@@ -7,8 +7,10 @@ const userHelpers = require('../helpers/user-helpers');
 // Function to use as Middleware to verify if the request are made by a user or guest
 const verifyUserLogin = async (req,res,next)=>{
 
+  try{
+
     if(req.session.userLoggedIn){
-    
+  
       /* 
       Updating the user session everytime (when a loggedIn user makes any kind of request) with the data from DB so that if the user was blocked by Admin,
       The userSession data will be updated with data from DB with the change in blocked Status in the very next time user makes a request if he's loggedIn already. 
@@ -21,7 +23,7 @@ const verifyUserLogin = async (req,res,next)=>{
       });
     
       if(req.session.userSession.blocked){
-
+  
         delete req.session.userLoggedIn;
     
         delete req.session.userSession;
@@ -41,12 +43,24 @@ const verifyUserLogin = async (req,res,next)=>{
       res.redirect('/login');
     
     }
+
+  }catch(error){
+
+    console.error("Error from verifyUserLogin admin-midddleware: ", error);
+
+    const errorMessage = " Something went wrong!!!, It's a 500 - Server Error "
+    const instructionForUser = " Hi there, just grab a cup of coffee for now & visit the website after sometime, we'll fix it for you by then. "
+
+    // If Middleware FAILED, Send a response to client indicating server error
+    res.status(500).json({ Server_Error : errorMessage, Required_Action : instructionForUser});
+
+  }
     
 }
 
 
 module.exports = {
 
-    verifyUserLogin
+  verifyUserLogin
 
 }
