@@ -10,8 +10,73 @@ require('dotenv').config(); // Module to Load environment variables from .env fi
 
 const PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
+
+
+
 /*========================================================================================================================
-                       ==================== ADMIN SIDE OFFER CONTROLLERS ====================
+                       ==================== ADMIN SIDE PRODUCT OFFER CONTROLLERS ====================
+==========================================================================================================================*/
+
+const setProductOfferPOST =  async (req, res)=>{
+
+    try{
+
+        const adminData = req.session.adminSession;
+
+        const productId = req.body.productId;
+
+        const productOfferPercentage = parseInt(req.body.productOfferPercentage);
+
+        const updateProductOffer = offerHelpers.setProductOffer( productId, productOfferPercentage );
+
+        res.redirect("/admin/manage-products")
+    
+    }catch(error){
+    
+        console.log("Error from setProductOfferPOST offerController: ", error);
+    
+        res.redirect('/admin/error-page');
+    
+    }
+
+};
+
+
+const removeProductOfferPOST =  async (req, res)=>{
+
+    try{
+
+        const adminData = req.session.adminSession;
+
+        const productId = req.body.productId;
+
+        const productOfferPercentage = 0;
+
+        const updateProductOffer = offerHelpers.setProductOffer( productId, productOfferPercentage );
+
+        res.redirect("/admin/manage-products")
+    
+    }catch(error){
+    
+        console.log("Error from removeProductOfferPOST offerController: ", error);
+    
+        res.redirect('/admin/error-page');
+    
+    }
+
+};
+
+
+
+
+
+
+
+
+
+
+/*========================================================================================================================
+                       ==================== ADMIN SIDE CATEGORY OFFER CONTROLLERS ====================
 ==========================================================================================================================*/
 
 
@@ -343,5 +408,7 @@ module.exports = {
     editOfferGET,
     updateOfferPOST,
     changeOfferStatusPOST,
+    setProductOfferPOST,
+    removeProductOfferPOST
 
 }
