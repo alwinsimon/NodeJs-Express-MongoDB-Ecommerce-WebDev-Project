@@ -6,7 +6,39 @@ const moment = require('moment-timezone'); // Module to modify the time to vario
 
 
 /*========================================================================================================================
-                       ==================== ADMIN SIDE OFFER HELPERS ====================
+                       ==================== ADMIN SIDE PRODUCT OFFER HELPERS ====================
+==========================================================================================================================*/
+
+const setProductOffer = ( productId, percentageOffer )=>{
+
+    return new Promise( async (resolve, reject)=>{
+
+        try{
+
+            const updateProductDetails = await db.get().collection(dataBasecollections.PRODUCT_COLLECTION).updateOne({_id:ObjectId(productId)}, { $set: { productOffer: percentageOffer } });
+
+            resolve(updateProductDetails);
+    
+        }catch (error){
+    
+            console.error("Error from setProductOffer offer-helpers: ", error);
+
+            reject(error);
+    
+        }
+
+    })
+    
+}
+
+
+
+
+
+
+
+/*========================================================================================================================
+                       ==================== ADMIN SIDE CATEGORY OFFER HELPERS ====================
 ==========================================================================================================================*/
 
 
@@ -315,6 +347,7 @@ module.exports = {
     getSingleOfferData,
     updateOfferData,
     changeOfferStatus,
-    getSingleOfferDataWithOfferName
+    getSingleOfferDataWithOfferName,
+    setProductOffer
 
 }

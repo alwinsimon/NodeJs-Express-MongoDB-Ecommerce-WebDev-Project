@@ -1,3 +1,4 @@
+
 <section>
 
     <div class="container">
@@ -19,12 +20,13 @@
             <thead>
                 <tr>
                     <th scope="col">Product Id</th>
-                    <th scope="col">Database Id</th>
                     <th scope="col">Product</th>
-                    <th scope="col">Category</th>
                     <th scope="col">Description</th>
+                    <th scope="col">Category</th>
                     <th scope="col">Price</th>
                     <th scope="col">Image</th>
+                    <th scope="col">Offers</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
 
@@ -34,19 +36,65 @@
 
                 {{#each products}}
 
-                <tr>
-                    <th scope="row">{{this.id}}</th>
-                    <td>{{this._id}}</td>
-                    <td>{{this.name}}</td>
-                    <td>{{this.category.name}}</td>
-                    <td>{{this.description}}</td>
-                    <td>{{this.price}}</td>
-                    <td><img style="width: 50px; height: 50px" src="/product-images/{{this._id}}.jpg" alt="{{this.name}}"></td>
-                    <td>
-                        <a href="/admin/edit-product/{{this._id}}" class="btn btn-primary">Edit</a>
-                        <a href="/admin/delete-product/{{this._id}}" class="btn btn-danger" onclick="return confirm('Are you sure that you want to delete {{this.name}} ?')">DELETE</a>
-                    </td>
-                </tr>
+                    <tr>
+                        <th scope="row">{{this.id}}</th>
+                        <td>{{this.name}}</td>
+                        <td>{{this.description}}</td>
+                        <td>{{this.category.name}}</td>
+                        <td>₹ {{this.price}}</td>
+                        <td><img style="width: 50px; height: 50px" src="/product-images/{{this._id}}.jpg" alt="{{this.name}}"></td>
+                        <td>
+                            
+                            <button class="btn btn-sm btn-primary" data-bs-toggle = "modal" data-bs-target="#set-product-offer-{{this._id}}">Add</button>
+
+                            <form action="/admin/remove-product-offer" method="post">
+                                <input type="hidden" name="productId" value="{{this._id}}">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure that you want to remove product offer ?')">Remove</button>
+                            </form>
+
+                        </td>
+                        <td>
+                            <a href="/admin/edit-product/{{this._id}}" class="btn btn-primary">Edit</a>
+                            <a href="/admin/delete-product/{{this._id}}" class="btn btn-danger" onclick="return confirm('Are you sure that you want to delete {{this.name}} ?')">DELETE</a>
+                        </td>
+                    </tr>
+
+                    {{!-- ========================== Modal for Adding product offer ========================== --}}
+
+                    <div class="modal fade" id="set-product-offer-{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+
+                                    <h5 class="modal-title" id="exampleModalCenterTitle">Set Product Offer</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+
+                                </div>
+
+                                <form action="/admin/set-product-offer" method="POST">
+
+                                    <div class="modal-body">
+                                        <label for="offer">Offer Percentage:</label>
+                                        <input type="number" id="productOfferPercentage" name="productOfferPercentage" required min="1" max="99">
+
+                                        <input type="hidden" class="form-control" id="productId" name="productId" value="{{this._id}}" required>
+
+                                        <br><br>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
 
                 {{/each}}
 
