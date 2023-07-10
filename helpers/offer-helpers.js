@@ -1,6 +1,7 @@
 const db = require("../config/externalConnectionsConfig");
 const dataBasecollections = require('../config/databaseCollectionsConfig');
 const ObjectId = require("mongodb").ObjectId;
+const moment = require('moment-timezone'); // Module to modify the time to various time zones
 
 
 
@@ -98,7 +99,17 @@ const getActiveOffers = ()=>{
 
         try{
     
-            const activeOffers = await db.get().collection(dataBasecollections.OFFER_COLLECTION).find( {activeOffer:true} ).toArray();
+            let activeOffers = await db.get().collection(dataBasecollections.OFFER_COLLECTION).find( {activeOffer:true} ).toArray();
+
+            activeOffers = activeOffers.map(offers => { // For Converting the time from DB to IST
+    
+                const expiresOnIST = moment(offers.expiryDate)
+                .tz('Asia/Kolkata')
+                .format('DD-MMM-YYYY hh:mm:ss A');
+        
+                return { ...offers, expiryDate: expiresOnIST + " IST"};
+  
+            });
     
             resolve(activeOffers);
     

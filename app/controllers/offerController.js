@@ -26,9 +26,7 @@ const manageOfferGET =  async (req, res)=>{
 
         const adminData = req.session.adminSession;
 
-        const activeOffers = await offerHelpers.getActiveOffers();
-    
-        const inActiveOffers = await offerHelpers.getInActiveOffers();
+        const activeOfferData = await offerHelpers.getActiveOffers();
     
         const dataToRender = {
     
@@ -36,8 +34,7 @@ const manageOfferGET =  async (req, res)=>{
             title: PLATFORM_NAME + " || Manage Offers",
             PLATFORM_NAME,
             adminData,
-            activeOffers,
-            inActiveOffers
+            activeOfferData
     
         }
       
@@ -59,7 +56,7 @@ const inactiveOffersGET =  async (req, res)=>{
 
         const adminData = req.session.adminSession;
 
-        const inActiveCoupons = await couponHelpers.getInActiveCoupons();
+        const inActiveOffers = await offerHelpers.getInActiveOffers();
     
         const dataToRender = {
     
