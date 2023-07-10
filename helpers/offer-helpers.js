@@ -157,19 +157,19 @@ const getInActiveOffers = ()=>{
     
 }
 
-const getSingleCouponData = (couponId)=>{
+const getSingleOfferData = (offerId)=>{
 
     return new Promise( async (resolve, reject)=>{
 
         try{
     
-            const couponData = await db.get().collection(dataBasecollections.COUPON_COLLECTION).findOne( {_id : ObjectId(couponId) } );
+            const offerData = await db.get().collection(dataBasecollections.OFFER_COLLECTION).findOne( {_id : ObjectId(offerId) } );
     
-            resolve(couponData);
+            resolve(offerData);
     
         }catch (error){
     
-            console.error("Error from getSingleCouponData coupon-helpers: ", error);
+            console.error("Error from getSingleOfferData offer-helpers: ", error);
 
             reject(error);
             
@@ -230,37 +230,37 @@ const updateCouponData = (couponDataForUpdate, adminData)=>{
     
 }
 
-const changeCouponStatus = (couponDataForUpdate, statusToModify, adminData)=>{
+const changeOfferStatus = (offerDataForUpdate, statusToModify, adminData)=>{
 
     return new Promise( async (resolve, reject)=>{
 
         try{
 
-            couponDataForUpdate.statusModifiedBy = ObjectId(adminData._id);
+            offerDataForUpdate.statusModifiedBy = ObjectId(adminData._id);
 
-            couponDataForUpdate.statusModifiedOn = new Date();
+            offerDataForUpdate.statusModifiedOn = new Date();
 
             if(statusToModify === "Activate"){
 
-                couponDataForUpdate.activeCoupon = true;
+                offerDataForUpdate.activeOffer = true;
 
             }else if(statusToModify === "Deactivate"){
 
-                couponDataForUpdate.activeCoupon = false;
+                offerDataForUpdate.activeOffer = false;
 
             }
 
             // Updating coupon status in Database
-            const dbQuery = { _id : ObjectId(couponDataForUpdate._id)};
-            const dbAction = { $set : couponDataForUpdate};
+            const dbQuery = { _id : ObjectId(offerDataForUpdate._id)};
+            const dbAction = { $set : offerDataForUpdate};
     
-            const couponStatusUpdation = await db.get().collection(dataBasecollections.COUPON_COLLECTION).updateOne( dbQuery, dbAction );
+            const offerStatusUpdation = await db.get().collection(dataBasecollections.OFFER_COLLECTION).updateOne( dbQuery, dbAction );
     
-            resolve(couponStatusUpdation);
+            resolve(offerStatusUpdation);
     
         }catch (error){
     
-            console.error("Error from changeCouponStatus coupon-helpers: ", error);
+            console.error("Error from changeOfferStatus offer-helpers: ", error);
 
             reject(error);
             
@@ -684,9 +684,9 @@ module.exports = {
     verifyOfferExist,
     getActiveOffers,
     getInActiveOffers,
-    getSingleCouponData,
+    getSingleOfferData,
     updateCouponData,
-    changeCouponStatus,
+    changeOfferStatus,
 
     /*=== User Coupon Controllers ===*/
     verifyCouponEligibility,

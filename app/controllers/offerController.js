@@ -274,7 +274,7 @@ const changeOfferStatusPOST =  async (req, res)=>{
     
             if(offerUpdateStatus.modifiedCount === 1){
     
-                res.redirect('/admin/manage-coupons');
+                res.redirect('/admin/manage-offers');
     
             }else{
     
@@ -289,7 +289,7 @@ const changeOfferStatusPOST =  async (req, res)=>{
     
             if(offerUpdateStatus.modifiedCount === 1){
     
-                res.redirect('/admin/inactive-coupons');
+                res.redirect('/admin/inactive-offers');
     
             }else{
     

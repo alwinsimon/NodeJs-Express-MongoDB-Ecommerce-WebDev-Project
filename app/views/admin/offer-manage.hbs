@@ -28,6 +28,7 @@
                                 <th scope="col">Min Order Value</th>
                                 <th scope="col">Expires On</th>
                                 <th scope="col">Usage Count</th>
+                                <th scope="col">Action</th>
                             </tr>
 
                         </thead>
@@ -52,6 +53,23 @@
                                     <td>{{this.minOrderValue}}</td>
                                     <td>{{this.expiryDate}}</td>
                                     <td>{{this.usageCount}}</td>
+
+                                    <td>
+
+                                        <a href="/admin/edit-offer/{{this.offerName}}" class="btn btn-info rounded-pill m-1">EDIT</a>
+                                    
+                                        <form action="/admin/change-offer-status" method="POST" class="col-md-2">
+                                    
+                                            <input type="hidden" name="offerId" value="{{this._id}}">
+                                    
+                                            <button class="btn btn-danger rounded-pill m-1"
+                                                onclick="return confirm('Are you sure that you want to deactivate {{this.offerName}} offer?')"
+                                                type="submit" >DEACTIVATE</button>
+                                    
+                                        </form>
+
+                                    </td>
+
                                 </tr>
 
                             {{/each}}
