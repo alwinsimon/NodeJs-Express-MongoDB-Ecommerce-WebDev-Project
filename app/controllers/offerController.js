@@ -56,7 +56,7 @@ const inactiveOffersGET =  async (req, res)=>{
 
         const adminData = req.session.adminSession;
 
-        const inActiveOffers = await offerHelpers.getInActiveOffers();
+        const inActiveOfferData = await offerHelpers.getInActiveOffers();
     
         const dataToRender = {
     
@@ -64,7 +64,7 @@ const inactiveOffersGET =  async (req, res)=>{
             title: PLATFORM_NAME + " || Inactive coupons",
             PLATFORM_NAME,
             adminData,
-            inActiveCoupons
+            inActiveOfferData
     
         }
       

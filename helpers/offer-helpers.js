@@ -131,7 +131,17 @@ const getInActiveOffers = ()=>{
 
         try{
     
-            const inActiveOffers = await db.get().collection(dataBasecollections.OFFER_COLLECTION).find( {activeOffer:false} ).toArray();
+            let inActiveOffers = await db.get().collection(dataBasecollections.OFFER_COLLECTION).find( {activeOffer:false} ).toArray();
+
+            inActiveOffers = inActiveOffers.map(offers => { // For Converting the time from DB to IST
+    
+                const expiresOnIST = moment(offers.expiryDate)
+                .tz('Asia/Kolkata')
+                .format('DD-MMM-YYYY hh:mm:ss A');
+        
+                return { ...offers, expiryDate: expiresOnIST + " IST"};
+  
+            });
     
             resolve(inActiveOffers);
     
