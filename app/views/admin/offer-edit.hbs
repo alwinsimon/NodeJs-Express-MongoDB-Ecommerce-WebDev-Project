@@ -2,7 +2,7 @@
     
   <div class="container">
 
-    <h1>Add Offer</h1>
+    <h1>Edit Offer</h1>
 
 
     {{!-- ==================================================== Add Offer Form ==================================================== --}}
@@ -12,7 +12,7 @@
       <div class="form-group">
         <label for="category Id">Offer Name</label>
         <div class="input-group">
-          <input type="text" class="form-control" id="offerName" name="offerName" value="{{offerData.}}" required>
+          <input type="text" class="form-control" id="offerName" name="offerName" value="{{offerData.offerName}}" required>
         </div>
       </div>
 
@@ -23,35 +23,35 @@
       {{/if}}
 
       <div class="form-group">
-        <label for="Offer description">Offer Description:</label>
-        <textarea class="form-control" id="offerDescription" name="offerDescription" rows="5" value="{{offerData.}}" required></textarea>
+        <label for="Coupon description">Coupon Description:</label>
+        <textarea class="form-control" id="offerDescription" name="offerDescription" rows="5" required>{{offerData.offerDescription}}</textarea>
       </div>
 
       <div class="form-group">
         <label for="Discount percentage">Discount percentage:</label>
         <div class="input-group">
-          <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" min="1" max="99" step="1" value="{{offerData.}}" required>
+          <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" min="1" max="99" step="1" value="{{offerData.discountPercentage}}" required>
         </div>
       </div>
 
       <div class="form-group">
         <label for="Max discount">Max discount Amount: </label>
         <div class="input-group">
-          <input type="number" class="form-control" id="maxDiscountAmount" name="maxDiscountAmount" min="0" step="1" value="{{offerData.}}" required>
+          <input type="number" class="form-control" id="maxDiscountAmount" name="maxDiscountAmount" min="0" step="1" value="{{offerData.maxDiscountAmount}}" required>
         </div>
       </div>
 
       <div class="form-group">
         <label for="Min order value">Min order value: </label>
         <div class="input-group">
-          <input type="number" class="form-control" id="minOrderValue" name="minOrderValue" min="0" step="1" value="{{offerData.}}" required>
+          <input type="number" class="form-control" id="minOrderValue" name="minOrderValue" min="0" step="1" value="{{offerData.minOrderValue}}" required>
         </div>
       </div>
 
       <div class="form-group">
         <label for="Valid For">Valid For:</label>
         <div class="input-group">
-          <input type="number" class="form-control" id="validFor" name="validFor" min="1" max="180" step="1" placeholder="Number of days for which offer is valid" value="{{offerData.}}" required>
+          <input type="number" class="form-control" id="validFor" name="validFor" min="1" max="180" step="1" placeholder="Number of days for which offer is valid" value="{{offerData.validFor}}" required>
         </div>
       </div>
 
@@ -63,12 +63,14 @@
         </select>
       </div>
 
+      <input type="hidden" class="form-control" id="offerId" name="offerId" value="{{offerData._id}}" required>
+
       <br>
 
       
       {{!-- ========================== Form Submission Button ========================== --}}
 
-      <button type="submit" class="btn btn-primary">Add Coupon</button>
+      <button type="submit" class="btn btn-primary">Add New Offer</button>
       <button type="reset" class="btn btn-secondary ml-2">Reset</button>
 
 

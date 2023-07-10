@@ -108,7 +108,7 @@ router.get('/add-offer', verifyAdminLogin, offerController.addNewOfferGET);
 
 router.post('/add-offer', verifyAdminLogin, offerController.addNewOfferPOST);
 
-router.get('/edit-offer/:offerId', verifyAdminLogin, offerController.editOfferGET);
+router.get('/edit-offer/:offerName', verifyAdminLogin, offerController.editOfferGET);
 
 router.post('/update-offer', verifyAdminLogin, offerController.updateOfferPOST);
 

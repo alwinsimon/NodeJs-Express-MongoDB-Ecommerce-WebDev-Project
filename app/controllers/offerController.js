@@ -61,7 +61,7 @@ const inactiveOffersGET =  async (req, res)=>{
         const dataToRender = {
     
             layout: 'admin-layout',
-            title: PLATFORM_NAME + " || Inactive coupons",
+            title: PLATFORM_NAME + " || Inactive offers",
             PLATFORM_NAME,
             adminData,
             inActiveOfferData
@@ -72,7 +72,7 @@ const inactiveOffersGET =  async (req, res)=>{
     
     }catch(error){
     
-        console.log("Error from inactiveCouponsGET couponController: ", error);
+        console.log("Error from inactiveOffersGET offerController: ", error);
     
         res.redirect('/admin/error-page');
     
@@ -81,7 +81,7 @@ const inactiveOffersGET =  async (req, res)=>{
 };
 
 
-/* ======================== ADD COUPON ======================== */
+/* ======================== ADD OFFER ======================== */
 
 const addNewOfferGET =  (req, res)=>{
 
@@ -165,25 +165,19 @@ const addNewOfferPOST =  async (req, res)=>{
 };
 
 
-/* ======================== EDIT COUPON ======================== */
+/* ======================== EDIT OFFER ======================== */
 
 const editOfferGET =  async (req, res)=>{
 
     try{
 
+        const offerName = req.params.offerName;
+        
         const adminData = req.session.adminSession;
 
-        let offerExistError = false;
+        const offerExistError = req.session.offerExistError;
 
-        if(req.session.offerExistError){
-
-            offerExistError = req.session.offerExistError;
-            
-        }
-
-        const offerId = req.params.offerId;
-
-        const offerData = await offerHelpers.getSingleOfferData(offerId);
+        const offerData = await offerHelpers.getSingleOfferDataWithOfferName(offerName);
 
         const dataToRender = {
             
@@ -191,8 +185,8 @@ const editOfferGET =  async (req, res)=>{
             title: PLATFORM_NAME + " || Edit offer",
             PLATFORM_NAME,
             adminData,
-            couponExistError,
-            couponData
+            offerExistError,
+            offerData
 
         }
   
@@ -218,7 +212,7 @@ const updateOfferPOST =  async (req, res)=>{
 
         const offerDataForUpdate = req.body;
 
-        const offerId = offerDataForUpdate.offerId;
+        const offerName = offerDataForUpdate.offerName;
     
         const offerExist = await offerHelpers.verifyOfferExist(offerDataForUpdate);
     
@@ -232,16 +226,16 @@ const updateOfferPOST =  async (req, res)=>{
     
             }else{
     
-                console.log("Error-1 from updateOfferPOST Controller: ", couponUpdateStatus);
+                console.log("Error-1 from updateOfferPOST Controller: ", offerUpdateStatus);
     
                 res.redirect('/admin/error-page');
             }
     
-        }else if (offerUpdateStatus.duplicateOffer){
+        }else if (offerExist.duplicateOffer){
     
             req.session.offerExistError = "Offer name already exist, try some other name."
 
-            res.redirect('/admin/edit-offer/' + offerId );
+            res.redirect('/admin/edit-offer/' + offerName );
     
         }
 
@@ -256,7 +250,7 @@ const updateOfferPOST =  async (req, res)=>{
 };
 
 
-/* ======================== ACTIVATE/DEACTIVATE COUPON ======================== */
+/* ======================== ACTIVATE/DEACTIVATE OFFER ======================== */
 
 const changeOfferStatusPOST =  async (req, res)=>{
 
@@ -293,7 +287,7 @@ const changeOfferStatusPOST =  async (req, res)=>{
     
             }else{
     
-                console.log("Error-2 from changeOfferStatusPOST offerController: ", couponUpdateStatus);
+                console.log("Error-2 from changeOfferStatusPOST offerController: ", offerUpdateStatus);
     
                 res.redirect('/admin/error-page');
             }
