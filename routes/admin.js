@@ -4,6 +4,7 @@ const adminMiddlewares = require('../middlewares/adminMiddlewares');
 const adminController = require('../app/controllers/adminController');
 const productController = require('../app/controllers/productController');
 const couponController = require('../app/controllers/couponController');
+const offerController = require('../app/controllers/offerController');
 
 
 /*=======================================MIDDLEWARES=======================================*/
@@ -82,6 +83,12 @@ router.post('/edit-product-category/:categoryId', verifyAdminLogin, productContr
 router.post('/delete-product-category/:categoryId', verifyAdminLogin, productController.deleteProductCategoryPOST);
 
 
+// ====================Routes for Product Offer Management ====================
+
+router.post('/set-product-offer', verifyAdminLogin, offerController.setProductOfferPOST);
+
+router.post('/remove-product-offer', verifyAdminLogin, offerController.removeProductOfferPOST);
+
 // ====================Routes for Coupon Management ====================
 
 router.get('/manage-coupons', verifyAdminLogin, couponController.manageCouponGET);
@@ -97,6 +104,23 @@ router.post('/update-coupon', verifyAdminLogin, couponController.updateCouponPOS
 router.post('/change-coupon-status', verifyAdminLogin, couponController.changeCouponStatusPOST);
 
 router.get('/inactive-coupons', verifyAdminLogin, couponController.inactiveCouponsGET );
+
+
+// ====================Routes for Offer Management ====================
+
+router.get('/manage-offers', verifyAdminLogin, offerController.manageOfferGET);
+
+router.get('/add-offer', verifyAdminLogin, offerController.addNewOfferGET);
+
+router.post('/add-offer', verifyAdminLogin, offerController.addNewOfferPOST);
+
+router.get('/edit-offer/:offerName', verifyAdminLogin, offerController.editOfferGET);
+
+router.post('/update-offer', verifyAdminLogin, offerController.updateOfferPOST);
+
+router.post('/change-offer-status', verifyAdminLogin, offerController.changeOfferStatusPOST);
+
+router.get('/inactive-offers', verifyAdminLogin, offerController.inactiveOffersGET);
 
 
 // ====================Routes for Managing Orders====================
