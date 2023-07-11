@@ -22,6 +22,7 @@
                     <th scope="col">Category</th>
                     <th scope="col">Created By</th>
                     <th scope="col">Created On</th>
+                    <th scope="col">Description</th>
                     <th scope="col">Image</th>
                     <th scope="col">Offers</th>
                     <th scope="col">Manage Offer</th>
@@ -30,20 +31,21 @@
             </thead>
 
             {{!-- ==========Table Body========== --}}
-
             <tbody>
 
                 {{#each productCategories}}
 
                 <tr>
-                    <th scope="row">{{this.categoryId}}</th>
+                    <td scope="row">{{this.categoryId}}</td>
                     <td>{{this.name}}</td>
-                    <th scope="row">{{this.creatorDetails.name}}</th>
-                    <th scope="row">{{this.createdOn}}</th>
+                    <td scope="row">{{this.creatorDetails.name}}</td>
+                    <td scope="row">{{this.createdOn}}</td>
+                    <td scope="row">{{this.description}}</td>
                     <td><img style="width: 50px; height: 50px" src="/product-category-images/{{this._id}}.jpg" alt="{{this.name}}"></td>
+                    <th style="color: coral;">{{this.categoryOffer}} %</th>
                     <td>
                     
-                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                        <button class="btn btn btn-primary mb-1" data-bs-toggle="modal"
                             data-bs-target="#set-category-offer-{{this._id}}">Add</button>
                     
                         <form action="/admin/remove-category-offer" method="post">
@@ -56,7 +58,7 @@
                     <td>
                         
                         <form action="/admin/edit-product-category/{{this._id}}" method="GET" class="col-md-2">
-                            <button class="btn btn-success" type="submit">EDIT</button>
+                            <button class="btn btn-success mb-1" type="submit">EDIT</button>
                         </form>
                         <form action="/admin/delete-product-category/{{this._id}}" method="POST" class="col-md-2">
                             <button class="btn btn-danger" onclick="return confirm('Are you sure that you want to delete {{this.name}} category?')" type="submit">DELETE</button>
