@@ -1377,6 +1377,8 @@ module.exports = {
                     date: new Date(),
         
                     couponDiscount : orderData.couponDiscount,
+
+                    productOfferDiscount : orderData.productOfferDiscount,
                 
                     orderValue:totalOrderValue,
         
