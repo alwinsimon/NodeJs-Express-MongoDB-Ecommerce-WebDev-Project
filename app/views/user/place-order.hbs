@@ -396,10 +396,10 @@
                                             <div class="col">
                                                 <div class="row justify-content-between">
                                                     <div class="col-4">
-                                                        <p class="mb-1"><b>Order Value:</b></p>
+                                                        <p class="mb-1"><b>Original Order Value:</b></p>
                                                     </div>
                                                     <div class="flex-sm-col col-auto">
-                                                        <p class="mb-1"><b>₹ 000</b></p>
+                                                        <p class="mb-1"><b>₹ {{originalCartValue}}</b></p>
                                                     </div>
                                                 </div>
                                                 <div class="row justify-content-between">
@@ -412,18 +412,19 @@
                                                 </div>
                                                 <div class="row justify-content-between">
                                                     <div class="col">
-                                                        <p class="mb-1"><b>Offer Discounts:</b></p>
+                                                        <p class="mb-1"><b>Product Offer Discounts:</b></p>
                                                     </div>
                                                     <div class="flex-sm-col col-auto">
-                                                        <p class="mb-1"><b>₹ 000</b></p>
+                                                        <p class="mb-1"><b>₹ {{productOfferDiscount}}</b></p>
                                                     </div>
                                                 </div>
+                                                <hr>
                                                 <div class="row justify-content-between">
                                                     <div class="col-4">
-                                                        <p><b>Total Amount:</b></p>
+                                                        <p style="color: #21b503;"><b>Total Amount:</b></p>
                                                     </div>
                                                     <div class="flex-sm-col col-auto">
-                                                        <p class="mb-1"><b>₹ {{cartValue}}  </b></p>
+                                                        <p class="mb-1" style="color: #21b503;" ><b>₹ {{cartValue}}  </b></p>
                                                     </div>
                                                 </div>
 
