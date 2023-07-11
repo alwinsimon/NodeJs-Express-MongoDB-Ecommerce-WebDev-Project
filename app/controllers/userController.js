@@ -1038,6 +1038,8 @@ const placeOrderPOST = async (req,res)=>{
       // Finding the total order value of the cart without any discounts
       let totalOrderValue = await userHelpers.getCartValue(user._id);
 
+      // Inserting the actual order value of the cart without any discounts for storing into the DB OrderDetails
+      orderDetails.actualOrderValue = totalOrderValue;
 
       // ====================================== Coupon Discounts Calculation ======================================
 
