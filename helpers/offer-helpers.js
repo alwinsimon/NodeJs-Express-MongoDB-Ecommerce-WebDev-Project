@@ -32,6 +32,35 @@ const setProductOffer = ( productId, percentageOffer )=>{
 }
 
 
+/*========================================================================================================================
+                       ==================== ADMIN SIDE CATEGORY OFFER HELPERS ====================
+==========================================================================================================================*/
+
+const setCategoryOffer = ( categoryId, percentageOffer )=>{
+
+  return new Promise( async (resolve, reject)=>{
+
+    try{
+
+      percentageOffer = parseInt(percentageOffer);
+
+      const updateCategoryDetails = await db.get().collection(dataBasecollections.PRODUCT_CATEGORY_COLLECTION).updateOne({_id:ObjectId(categoryId)}, { $set: { categoryOffer: percentageOffer } });
+
+      resolve(updateCategoryDetails);
+
+    }catch (error){
+
+      console.error("Error from setCategoryOffer offer-helpers: ", error);
+
+      reject(error);
+
+    }
+
+  })
+    
+}
+
+
 
 /*========================================================================================================================
                        ==================== USER SIDE PRODUCT OFFER HELPERS ====================
@@ -528,6 +557,7 @@ module.exports = {
     getSingleOfferDataWithOfferName,
     setProductOffer,
     getCartItemsWithOfferData,
-    calculateProductOfferDiscountsForCart
+    calculateProductOfferDiscountsForCart,
+    setCategoryOffer
 
 }
