@@ -939,6 +939,8 @@ const placeOrderGET = async (req,res)=>{
 
       const primaryAddress = await userHelpers.getUserPrimaryAddress(user._id);
 
+      const originalCartValue = await userHelpers.getCartValue(user._id);
+
       // Coupon Request configuration
       let couponError = false;
       let couponApplied = false;
@@ -952,6 +954,8 @@ const placeOrderGET = async (req,res)=>{
         couponApplied = req.session.couponApplied;
 
       }
+
+      // ====================================== Coupon Discounts Calculation ======================================
 
       // Existing Coupon Status Validation & Discount amount calculation using couponHelper
 
@@ -973,10 +977,21 @@ const placeOrderGET = async (req,res)=>{
       // Updating the cart value to display in the front-end after applying coupon discount - note that this will not be modify the cart value in the DB
       cartValue = cartValue - couponDiscount;
 
+      // ========================================== Product Offer Discounts Calculation ==========================================
+
+      // Finding existing product offer applicable to the cart and applying it to the cart value
+
+      const applicableProductOffers = await offerHelpers.calculateProductOfferDiscountsForCart(user._id);
+
+      const productOfferDiscount = applicableProductOffers.totalCartDiscount;
+
+      // Updating the cart value to display in the front-end after applying product offer discount - note that this will not be modify the cart value in the DB
+      cartValue = cartValue - productOfferDiscount;
+
 
       if(primaryAddress){
 
-        res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, primaryAddress, wishlistCount, couponApplied, couponError, couponDiscount });
+        res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, originalCartValue, cartValue, userAddress, primaryAddress, wishlistCount, couponApplied, couponError, couponDiscount, productOfferDiscount });
 
         delete req.session.couponApplied;
 
@@ -1020,16 +1035,21 @@ const placeOrderPOST = async (req,res)=>{
 
     if(orderedProducts){ // If there are products inside user cart , Proceed executing checkout functions
 
+      // Finding the total order value of the cart without any discounts
       let totalOrderValue = await userHelpers.getCartValue(user._id);
+
+      // Inserting the actual order value of the cart without any discounts for storing into the DB OrderDetails
+      orderDetails.actualOrderValue = totalOrderValue;
+
+      // ====================================== Coupon Discounts Calculation ======================================
 
       const availableCouponData = await couponHelpers.checkCurrentCouponValidityStatus(user._id, totalOrderValue);
 
+      let couponDiscountAmount = 0;
+
       if(availableCouponData.status){
 
-        const couponDiscountAmount = availableCouponData.couponDiscount;
-
-        // Inserting the value of coupon discount into the order details object created above
-        orderDetails.couponDiscount = couponDiscountAmount;
+        couponDiscountAmount = availableCouponData.couponDiscount;
 
         // Updating the total order value with coupon discount applied
         totalOrderValue = totalOrderValue - couponDiscountAmount;
@@ -1037,6 +1057,27 @@ const placeOrderPOST = async (req,res)=>{
         const updateCouponUsedStatusResult = await couponHelpers.updateCouponUsedStatus(user._id, availableCouponData.couponId);
 
       }
+
+      // Inserting the value of coupon discount into the order details object created above
+      orderDetails.couponDiscount = couponDiscountAmount;
+
+
+      // ========================================== Product Offer Discounts Calculation ==========================================
+
+      // Finding existing product offer applicable to the cart and applying it to the cart value
+
+      const applicableProductOffers = await offerHelpers.calculateProductOfferDiscountsForCart(user._id);
+
+      const productOfferDiscount = applicableProductOffers.totalCartDiscount;
+
+      // Inserting the value of product offer discount into the order details object created above
+      orderDetails.productOfferDiscount = productOfferDiscount;
+
+      // Updating the total order value with the eligible product offer discount
+      totalOrderValue = totalOrderValue - productOfferDiscount;
+
+
+      // =============================================== Proceeding for order Creation ===============================================
 
       userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue).then((orderId)=>{
 

@@ -1375,8 +1375,12 @@ module.exports = {
                     userName:user.name,
         
                     date: new Date(),
+
+                    actualOrderValue : orderData.actualOrderValue,
         
                     couponDiscount : orderData.couponDiscount,
+
+                    productOfferDiscount : orderData.productOfferDiscount,
                 
                     orderValue:totalOrderValue,
         
