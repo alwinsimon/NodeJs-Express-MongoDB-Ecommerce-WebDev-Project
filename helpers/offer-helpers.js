@@ -63,13 +63,14 @@ const setCategoryOffer = ( categoryId, percentageOffer )=>{
 
 
 /*========================================================================================================================
-                       ==================== USER SIDE PRODUCT OFFER HELPERS ====================
+                       ==================== USER SIDE OFFER HELPERS ====================
 ==========================================================================================================================*/
 
+// Function that return object containing all data including product & category offers and final amount based on quantity for each cart product. 
 const getCartItemsWithOfferData = async (userId) => {
-
-  return new Promise( async (resolve, reject)=>{
-
+  
+  return new Promise(async (resolve, reject) => {
+    
     try {
 
       const cartItems = await db.get().collection(dataBasecollections.CART_COLLECTION).aggregate([
@@ -91,73 +92,77 @@ const getCartItemsWithOfferData = async (userId) => {
             productId: "$products.item",
             item: "$products.item",
             quantity: "$products.quantity",
+            category: "$product.category",
             product: { $arrayElemAt: ["$product", 0] },
-          },
-        },
-        {
-          $project: {
-            userId: 1,
-            cartId: 1,
-            productId: 1,
-            item: 1,
-            quantity: 1,
-            productName: "$product.name",
-            productDescription: "$product.description",
-            price: { $toInt: "$product.price" },
-            discountPercentage: {
-              $toInt: "$product.productOffer",
-            },
-            discountAmount: {
-              $multiply: [
-                { $divide: [{ $toInt: "$product.price" }, 100] },
-                { $toInt: "$product.productOffer" },
-                "$quantity",
-              ],
-            },
           },
         }
 
       ]).toArray();
 
-  
-      // Creating a object for each cart product with all the necessary data and the discounts calculated.
-      const cartItemsWithOfferData = cartItems.map((item) => {
+      const cartItemsWithOfferData = await Promise.all( // Final object with all product objects having data about the products and discounts
 
-        const totalAmount = item.quantity * item.price;
-        const finalAmount = totalAmount - item.discountAmount;
-  
-        return {
+        // Finding category offer for each product returned by above query and adding it to the product object and calculating finalized prices based on various discounts.
+        cartItems.map(async (item) => {
 
-          userId: item.userId,
-          cartId: item.cartId,
-          productId: item.productId,
-          productName: item.productName,
-          productDescription: item.productDescription,
-          price: item.price,
-          quantity: item.quantity,
-          totalAmount,
-          discountAmount: item.discountAmount,
-          discountPercentage: item.discountPercentage,
-          finalAmount: finalAmount
+          const productCategory = item.category[0];
 
-        };
+          const category = await db.get().collection(dataBasecollections.PRODUCT_CATEGORY_COLLECTION).findOne({ _id: ObjectId(productCategory) });
 
-      });
-  
+          const categoryOfferPercentage = category.categoryOffer;
+          const productOfferPercentage = item.product.productOffer;
+
+          const actualProductAmount = item.product.price * item.quantity;
+
+          const categoryDiscountAmount = (actualProductAmount * categoryOfferPercentage) / 100;
+          const productDiscountAmount = (actualProductAmount * productOfferPercentage) / 100;
+
+          const finalAmount = actualProductAmount - productDiscountAmount - categoryDiscountAmount;
+
+          return {
+ 
+            userId: item.userId,
+            cartId: item.cartId,
+
+            productId: item.productId,
+            productName: item.product.name,
+            productDescription: item.product.description,
+            price: item.product.price,
+
+            quantity: item.quantity,
+            totalAmount: actualProductAmount,
+            productOfferPercentage: productOfferPercentage,
+            categoryOfferPercentage: categoryOfferPercentage,
+            productDiscountAmount: productDiscountAmount,
+            categoryDiscountAmount: categoryDiscountAmount,
+            totalDiscountPercentage: productOfferPercentage + categoryOfferPercentage,
+
+            discountAmount: productDiscountAmount + categoryDiscountAmount,
+            finalAmount: finalAmount
+
+          };
+
+        })
+
+      );
+
       resolve(cartItemsWithOfferData);
 
     } catch (error) {
-
+      
       console.error("Error from getCartItemsWithOfferData offer-helpers: ", error);
 
       reject(error);
 
     }
 
-  })
+  });
 
 };
 
+
+/*========================================================================================================================
+                       ==================== USER SIDE PRODUCT OFFER HELPERS ====================
+==========================================================================================================================*/
 
 const calculateProductOfferDiscountsForCart = async (userId) => {
 
@@ -240,6 +245,17 @@ const calculateProductOfferDiscountsForCart = async (userId) => {
   })
 
 };
+
+
+/*========================================================================================================================
+                       ==================== USER SIDE CATEGORY OFFER HELPERS ====================
+==========================================================================================================================*/
+
+
+
+
+
+
 
 
 
