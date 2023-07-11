@@ -340,6 +340,11 @@
                 <a href="#" class="stext-103 cl2 hov-cl1 trans-04 js-name-b2 p-b-6" onclick="viewProduct('{{this._id}}'); return false;">
                   {{this.name}}
                 </a>
+                <span class="stext-107 cl4" style="color: #00ad5f;">
+                  {{#if (gt productOffer 0)}}
+                    Purchase NOW with {{productOffer}} % Discount.
+                  {{/if}}
+                </span>
                 <span class="stext-107 cl4">
                   {{this.description}}
                 </span>
