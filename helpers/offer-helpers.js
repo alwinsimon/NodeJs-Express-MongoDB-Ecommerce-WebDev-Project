@@ -11,23 +11,23 @@ const moment = require('moment-timezone'); // Module to modify the time to vario
 
 const setProductOffer = ( productId, percentageOffer )=>{
 
-    return new Promise( async (resolve, reject)=>{
+  return new Promise( async (resolve, reject)=>{
 
-        try{
+    try{
 
-            const updateProductDetails = await db.get().collection(dataBasecollections.PRODUCT_COLLECTION).updateOne({_id:ObjectId(productId)}, { $set: { productOffer: percentageOffer } });
+      const updateProductDetails = await db.get().collection(dataBasecollections.PRODUCT_COLLECTION).updateOne({_id:ObjectId(productId)}, { $set: { productOffer: percentageOffer } });
 
-            resolve(updateProductDetails);
-    
-        }catch (error){
-    
-            console.error("Error from setProductOffer offer-helpers: ", error);
+      resolve(updateProductDetails);
 
-            reject(error);
-    
-        }
+    }catch (error){
 
-    })
+      console.error("Error from setProductOffer offer-helpers: ", error);
+
+      reject(error);
+
+    }
+
+  })
     
 }
 
