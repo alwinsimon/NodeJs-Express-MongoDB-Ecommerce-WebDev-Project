@@ -26,6 +26,7 @@
                     <th scope="col">Price</th>
                     <th scope="col">Image</th>
                     <th scope="col">Offers</th>
+                    <th scope="col">Offer Action</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -43,6 +44,7 @@
                         <td>{{this.category.name}}</td>
                         <td>₹ {{this.price}}</td>
                         <td><img style="width: 50px; height: 50px" src="/product-images/{{this._id}}.jpg" alt="{{this.name}}"></td>
+                        <td>{{this.productOffer}} %</td>
                         <td>
                             
                             <button class="btn btn-sm btn-primary" data-bs-toggle = "modal" data-bs-target="#set-product-offer-{{this._id}}">Add</button>
@@ -67,7 +69,7 @@
 
                                 <div class="modal-header">
 
-                                    <h5 class="modal-title" id="exampleModalCenterTitle">Set Product Offer</h5>
+                                    <h5 class="modal-title" id="exampleModalCenterTitle">Set Product Offer for {{this.name}}</h5>
                                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>

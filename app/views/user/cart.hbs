@@ -4,8 +4,8 @@
 }
 .card{
     margin: auto;
-    max-width: 950px;
-    width: 90%;
+    max-width: 1450px;
+    width: 100%;
     box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 1rem;
     border: transparent;
@@ -163,27 +163,31 @@ a:hover{
 
                         <div class="row main align-items-center">
 
-                            <div class="col-2"><img class="img-fluid" style="height: 100px; width:100px " src="/product-images/{{this.product._id}}.jpg"></div>
+                            <div class="col-2"><img class="img-fluid" style="height: 100px; width:100px " src="/product-images/{{this.productId}}.jpg"></div>
 
                             <div class="col">
 
-                                <div class="row text-muted"><i>{{this.product.description}}</i></div>
+                                <div class="row text-muted"><i>{{this.productDescription}}</i></div>
 
-                                <div class="row"><b>{{this.product.name}}</b></div>
+                                <div class="row"><b>{{this.productName}}</b></div>
                                 
                             </div>
 
                             <div class="col">
 
-                                <a class="quantity-btn minus" onclick="changeQuantity('{{this._id}}','{{this.product._id}}', '{{../user._id}}', -1)"> - </a>
+                                <a class="quantity-btn minus" onclick="changeQuantity('{{this.cartId}}','{{this.productId}}', '{{this.userId}}', -1)"> - </a>
 
-                                <a id="{{this.product._id}}" class="border quantity">{{this.quantity}}</a> 
+                                <a id="{{this.productId}}" class="border quantity">{{this.quantity}}</a> 
 
-                                <a class="quantity-btn plus" onclick="changeQuantity('{{this._id}}','{{this.product._id}}', '{{../user._id}}', 1)">+</a>
+                                <a class="quantity-btn plus" onclick="changeQuantity('{{this.cartId}}','{{this.productId}}', '{{this.userId}}', 1)">+</a>
 
                             </div>
 
-                            <div class="col"> <b>₹ </b> {{this.product.price}} <span class="close" onclick="removeProductFromCart('{{this._id}}','{{this.product._id}}')" >&#10005;</span></div>
+                            <div class="col"> <b>Price:</b><br>₹{{this.price}}</div>
+                            <div class="col"> <b>Total:</b><br>{{this.totalAmount}}</div>
+                            <div class="col"> <b>Discount:</b><br>{{this.discountPercentage}}%</div>
+                            <div class="col"> <b>Discounted Total:</b><br>₹ {{this.finalAmount}} </div>
+                            <div class="col"><span class="close" onclick="removeProductFromCart('{{this.cartId}}','{{this.productId}}')" >&#10005;</span></div>
 
                         </div>
 
