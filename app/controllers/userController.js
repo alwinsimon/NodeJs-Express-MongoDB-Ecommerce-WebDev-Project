@@ -4,6 +4,7 @@ const productHelpers = require('../../helpers/product-helpers');
 const userHelpers = require('../../helpers/user-helpers');
 const adminHelpers = require('../../helpers/admin-helpers');
 const couponHelpers = require('../../helpers/coupon-helpers');
+const offerHelpers = require('../../helpers/offer-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -718,11 +719,19 @@ const cartGET = async (req,res)=>{
 
     if(cartCount > 0){  // If there is atleast 1 item in the database, then calculate fetch items and value from db
       
-      let cartItems = await userHelpers.getCartProducts(req.session.userSession._id);
+      const cartItems = await offerHelpers.getCartItemsWithOfferData(user._id);
 
       const wishlistCount = await userHelpers.getWishlistCount(user._id);
 
-      let cartValue = await userHelpers.getCartValue(user._id);
+      // The below function will return the original cart value without any discounts.
+      const originalCartValue = await userHelpers.getCartValue(user._id);
+
+      let productOfferDiscounts = await offerHelpers.calculateProductOfferDiscountsForCart(user._id);
+
+      productOfferDiscounts = productOfferDiscounts.totalCartDiscount;
+
+      // Finding the finalised cart value after substracting the offer amounts. 
+      const cartValue = originalCartValue - productOfferDiscounts;
 
       res.render('user/cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue, wishlistCount });
 
@@ -798,7 +807,15 @@ const changeCartProductQuantityPOST = (req,res,next)=>{
 
     userHelpers.changeCartProductQuantity(req.body).then( async (response)=>{
 
-      response.cartValue =  await userHelpers.getCartValue(req.body.userId); // Adding a cartValue feild to response object 
+      const originalCartValue = await userHelpers.getCartValue(req.body.userId);
+
+      const applicableProductDiscounts = await offerHelpers.calculateProductOfferDiscountsForCart(req.body.userId);
+
+      const productOfferDiscountOnCartValue = applicableProductDiscounts.totalCartDiscount;
+
+      const discountedCartValue = originalCartValue - productOfferDiscountOnCartValue;
+
+      response.cartValue = discountedCartValue; // Adding a cartValue feild to response object 
   
       res.json(response); 
       /* 
