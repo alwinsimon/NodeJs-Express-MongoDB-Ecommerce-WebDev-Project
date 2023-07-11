@@ -33,6 +33,184 @@ const setProductOffer = ( productId, percentageOffer )=>{
 
 
 
+/*========================================================================================================================
+                       ==================== USER SIDE PRODUCT OFFER HELPERS ====================
+==========================================================================================================================*/
+
+const getCartItemsWithOfferData = async (userId) => {
+
+  return new Promise( async (resolve, reject)=>{
+
+    try {
+
+      const cartItems = await db.get().collection(dataBasecollections.CART_COLLECTION).aggregate([
+
+        { $match: { user: ObjectId(userId) } },
+        { $unwind: "$products" },
+        {
+          $lookup: {
+            from: dataBasecollections.PRODUCT_COLLECTION,
+            localField: "products.item",
+            foreignField: "_id",
+            as: "product",
+          },
+        },
+        {
+          $project: {
+            userId: userId,
+            cartId: "$_id",
+            productId: "$products.item",
+            item: "$products.item",
+            quantity: "$products.quantity",
+            product: { $arrayElemAt: ["$product", 0] },
+          },
+        },
+        {
+          $project: {
+            userId: 1,
+            cartId: 1,
+            productId: 1,
+            item: 1,
+            quantity: 1,
+            productName: "$product.name",
+            productDescription: "$product.description",
+            price: { $toInt: "$product.price" },
+            discountPercentage: {
+              $toInt: "$product.productOffer",
+            },
+            discountAmount: {
+              $multiply: [
+                { $divide: [{ $toInt: "$product.price" }, 100] },
+                { $toInt: "$product.productOffer" },
+                "$quantity",
+              ],
+            },
+          },
+        }
+
+      ]).toArray();
+
+  
+      // Creating a object for each cart product with all the necessary data and the discounts calculated.
+      const cartItemsWithOfferData = cartItems.map((item) => {
+
+        const totalAmount = item.quantity * item.price;
+        const finalAmount = totalAmount - item.discountAmount;
+  
+        return {
+
+          userId: item.userId,
+          cartId: item.cartId,
+          productId: item.productId,
+          productName: item.productName,
+          productDescription: item.productDescription,
+          price: item.price,
+          quantity: item.quantity,
+          totalAmount,
+          discountAmount: item.discountAmount,
+          discountPercentage: item.discountPercentage,
+          finalAmount: finalAmount
+
+        };
+
+      });
+  
+      resolve(cartItemsWithOfferData);
+
+    } catch (error) {
+
+      console.error("Error from getCartItemsWithOfferData offer-helpers: ", error);
+
+      reject(error);
+
+    }
+
+  })
+
+};
+
+
+const calculateProductOfferDiscountsForCart = async (userId) => {
+
+  return new Promise( async (resolve, reject)=>{
+
+    try {
+
+      const cartItems = await db.get().collection(dataBasecollections.CART_COLLECTION).aggregate([
+
+        { $match: { user: ObjectId(userId) } },
+        { $unwind: "$products" },
+        {
+          $lookup: {
+            from: dataBasecollections.PRODUCT_COLLECTION,
+            localField: "products.item",
+            foreignField: "_id",
+            as: "product",
+          },
+        },
+        {
+          $project: {
+            item: "$products.item",
+            quantity: "$products.quantity",
+            product: { $arrayElemAt: ["$product", 0] },
+          },
+        },
+        {
+          $project: {
+            item: 1,
+            quantity: 1,
+            productName: "$product.name",
+            price: { $toInt: "$product.price" },
+            discountPercentage: {
+              $toInt: "$product.productOffer",
+            },
+          },
+        }
+
+      ]).toArray();
+  
+      const productDiscounts = {};
+      let totalCartDiscount = 0;
+  
+      cartItems.forEach((item) => {
+
+        const discountAmount = (item.quantity * item.price * item.discountPercentage) / 100;
+
+        totalCartDiscount += discountAmount;
+  
+        if (!productDiscounts[item.productName]) {
+
+          productDiscounts[item.productName] = discountAmount;
+
+        } else {
+
+          productDiscounts[item.productName] += discountAmount;
+
+        }
+
+      });
+  
+      const productDiscountsAndTotalCartDiscount = {
+
+        productDiscounts,
+
+        totalCartDiscount
+
+      };
+  
+      resolve(productDiscountsAndTotalCartDiscount);
+
+    } catch (error) {
+
+      console.error("Error from calculateProductOfferDiscountsForCart offer-helpers: ", error);
+
+      reject(error);
+
+    }
+
+  })
+
+};
 
 
 
@@ -348,6 +526,8 @@ module.exports = {
     updateOfferData,
     changeOfferStatus,
     getSingleOfferDataWithOfferName,
-    setProductOffer
+    setProductOffer,
+    getCartItemsWithOfferData,
+    calculateProductOfferDiscountsForCart
 
 }
