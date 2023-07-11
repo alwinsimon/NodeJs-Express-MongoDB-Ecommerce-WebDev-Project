@@ -147,7 +147,7 @@ a:hover{
 
     <div class="card">
         <div class="row">
-            <div class="col-md-8 cart">
+            <div class="col-md-9 cart">
 
                 <div class="title">
                     <div class="row">
@@ -184,8 +184,16 @@ a:hover{
                             </div>
 
                             <div class="col"> <b>Price:</b><br>₹{{this.price}}</div>
-                            <div class="col"> <b>Total:</b><br>{{this.totalAmount}}</div>
-                            <div class="col"> <b>Discount:</b><br>{{this.discountPercentage}}%</div>
+                            <div class="col"> <b>Actual Total:</b><br>{{this.totalAmount}}</div>
+
+                            {{#if (gt this.productOfferPercentage 0)}}
+                                <div class="col"> <b>Product Discount:</b><br><span style="color: chartreuse;"><b>{{this.productOfferPercentage}}%</b></span></div>
+                            {{/if}}
+
+                            {{#if (gt this.categoryOfferPercentage 0)}}
+                                <div class="col"> <b>Category Discount:</b><br><span style="color: chartreuse;"><b>{{this.categoryOfferPercentage}}%</b></span></div>
+                            {{/if}}
+
                             <div class="col"> <b>Discounted Total:</b><br>₹ {{this.finalAmount}} </div>
                             <div class="col"><span class="close" onclick="removeProductFromCart('{{this.cartId}}','{{this.productId}}')" >&#10005;</span></div>
 
@@ -201,7 +209,7 @@ a:hover{
             </div>
 
 
-            <div class="col-md-4 summary">
+            <div class="col-md-3 summary">
 
                 <div ><h5><b>Cart Summary</b></h5></div>
 
