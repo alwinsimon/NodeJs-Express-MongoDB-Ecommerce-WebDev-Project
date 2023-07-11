@@ -939,6 +939,8 @@ const placeOrderGET = async (req,res)=>{
 
       const primaryAddress = await userHelpers.getUserPrimaryAddress(user._id);
 
+      const originalCartValue = await userHelpers.getCartValue(user._id);
+
       // Coupon Request configuration
       let couponError = false;
       let couponApplied = false;
@@ -952,6 +954,8 @@ const placeOrderGET = async (req,res)=>{
         couponApplied = req.session.couponApplied;
 
       }
+
+      // ====================================== Coupon Configuration ======================================
 
       // Existing Coupon Status Validation & Discount amount calculation using couponHelper
 
@@ -973,10 +977,23 @@ const placeOrderGET = async (req,res)=>{
       // Updating the cart value to display in the front-end after applying coupon discount - note that this will not be modify the cart value in the DB
       cartValue = cartValue - couponDiscount;
 
+      // ========================================== Product Offer Configuration ==========================================
+
+      // Finding existing product offer applicable to the cart and applying it to the cart value
+
+      let productOfferDiscount = 0;
+
+      const applicableProductOffers = await offerHelpers.calculateProductOfferDiscountsForCart(user._id);
+
+      productOfferDiscount = applicableProductOffers.totalCartDiscount;
+
+      // Updating the cart value to display in the front-end after applying product offer discount - note that this will not be modify the cart value in the DB
+      cartValue = cartValue - productOfferDiscount;
+
 
       if(primaryAddress){
 
-        res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, primaryAddress, wishlistCount, couponApplied, couponError, couponDiscount });
+        res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, originalCartValue, cartValue, userAddress, primaryAddress, wishlistCount, couponApplied, couponError, couponDiscount, productOfferDiscount });
 
         delete req.session.couponApplied;
 
