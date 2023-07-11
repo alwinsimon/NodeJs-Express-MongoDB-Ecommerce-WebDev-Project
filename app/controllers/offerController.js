@@ -68,6 +68,61 @@ const removeProductOfferPOST =  async (req, res)=>{
 
 
 
+/*========================================================================================================================
+                       ==================== ADMIN SIDE CATEGORY OFFER CONTROLLERS ====================
+==========================================================================================================================*/
+
+const setCategoryOfferPOST =  async (req, res)=>{
+
+    try{
+
+        const adminData = req.session.adminSession;
+
+        const categoryId = req.body.categoryId;
+
+        const categoryOfferPercentage = parseInt(req.body.categoryOfferPercentage);
+
+        const updateProductOffer = offerHelpers.setCategoryOffer( categoryId, categoryOfferPercentage );
+
+        res.redirect("/admin/manage-product-categories")
+    
+    }catch(error){
+    
+        console.log("Error from setCategoryOfferPOST offerController: ", error);
+    
+        res.redirect('/admin/error-page');
+    
+    }
+
+};
+
+
+const removeCategoryOfferPOST =  async (req, res)=>{
+
+    try{
+
+        const adminData = req.session.adminSession;
+
+        const categoryId = req.body.productId;
+
+        const categoryOfferPercentage = 0;
+
+        const updateCategoryOffer = offerHelpers.setCategoryOffer( categoryId, categoryOfferPercentage );
+
+        res.redirect("/admin/manage-product-categories")
+    
+    }catch(error){
+    
+        console.log("Error from removeCategoryOfferPOST offerController: ", error);
+    
+        res.redirect('/admin/error-page');
+    
+    }
+
+};
+
+
+
 
 
 
@@ -409,6 +464,8 @@ module.exports = {
     updateOfferPOST,
     changeOfferStatusPOST,
     setProductOfferPOST,
-    removeProductOfferPOST
+    removeProductOfferPOST,
+    setCategoryOfferPOST,
+    removeCategoryOfferPOST
 
 }
