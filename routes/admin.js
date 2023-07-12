@@ -14,7 +14,8 @@ const multer = require('../config/imageUploadConfig');
 const verifyAdminLogin = adminMiddlewares.verifyAdminLogin;
 
 // Multer Middlewares to upload images
-const multerUploadProductImage = multer.uploadProductImage.array('image'); 
+const multerUploadProductImage = multer.uploadProductImage.array('image');
+const multerUploadProductCategoryImage = multer.uploadProductCategoryImage.single('category-image');
 
 
 /*=================================================ADMIN ROUTES=================================================*/
@@ -78,7 +79,7 @@ router.get('/manage-product-categories', verifyAdminLogin, productController.pro
 
 router.get('/add-new-product-category', verifyAdminLogin, productController.addProductCategoryGET);
 
-router.post('/add-new-product-category', verifyAdminLogin, productController.addProductCategoryPOST);
+router.post('/add-new-product-category', verifyAdminLogin, multerUploadProductCategoryImage, productController.addProductCategoryPOST);
 
 router.get('/edit-product-category/:categoryId', verifyAdminLogin, productController.editProductCategoryGET);
 
