@@ -199,7 +199,7 @@ const productCategoriesGET = async (req,res)=>{
 
     const productCategories = await adminHelpers.getProductCategories();
   
-    res.render('admin/view-product-categories', { layout: 'admin-layout', title: PLATFORM_NAME + " || Product Categories", admin:true, adminData, productCategories});
+    res.render('admin/view-product-categories', { layout: 'admin-layout', title: PLATFORM_NAME + " || Product Categories", PLATFORM_NAME, admin:true, adminData, productCategories});
 
   }catch(error){
 
