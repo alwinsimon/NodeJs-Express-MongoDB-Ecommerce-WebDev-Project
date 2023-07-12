@@ -1101,6 +1101,20 @@ const placeOrderPOST = async (req,res)=>{
       totalOrderValue = totalOrderValue - productOfferDiscount;
 
 
+      // ========================================== Category Offer Discounts Calculation ==========================================
+
+      // Finding existing category offer applicable to the cart and applying it to the cart value
+
+      const applicableCategoryOffers = await offerHelpers.calculateCategoryOfferAmountForCart(user._id);
+
+      const categoryOfferDiscount = applicableCategoryOffers.totalCategoryDiscountAmount;
+
+      // Inserting the value of category offer discount into the order details object created above
+      orderDetails.categoryOfferDiscount = categoryOfferDiscount;
+
+      // Updating the total order value with the eligible category offer discount
+      totalOrderValue = totalOrderValue - categoryOfferDiscount;
+
       // =============================================== Proceeding for order Creation ===============================================
 
       userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue).then((orderId)=>{
