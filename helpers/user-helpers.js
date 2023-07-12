@@ -1314,7 +1314,10 @@ module.exports = {
     
                 ]).toArray();
     
-                resolve(totalCartValue[0].cartValue);
+                // Check if there is any cart value, if there is any value take it, else keep the cartValue as zero
+                const cartValue = totalCartValue.length > 0 ? totalCartValue[0].cartValue : 0;
+
+                resolve(parseInt(cartValue));
             
             }catch(error){
             
@@ -1381,6 +1384,8 @@ module.exports = {
                     couponDiscount : orderData.couponDiscount,
 
                     productOfferDiscount : orderData.productOfferDiscount,
+
+                    categoryOfferDiscount : orderData.categoryOfferDiscount,
                 
                     orderValue:totalOrderValue,
         

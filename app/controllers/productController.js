@@ -61,7 +61,11 @@ const addProductPOST = (req,res)=>{
 
   try{
 
-    productHelpers.addProduct(req.body,(result)=>{
+    let productData = req.body;
+
+    productData.productOffer = 0;
+
+    productHelpers.addProduct(productData,(result)=>{
 
       const adminData = req.session.adminSession;
   
