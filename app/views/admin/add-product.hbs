@@ -1,6 +1,8 @@
 <section>
   <div class="container">
     <h1>Add Product</h1>
+
+
     <form id="add-product-form" action="/admin/add-product" method="post" enctype="multipart/form-data">
       <div class="form-group">
         <label for="price">Product Id:</label>
@@ -37,43 +39,16 @@
       <div class="form-group">
         <label for="image">Image:</label>
         <div class="custom-file">
-          <input type="file" class="custom-file-input" id="image" name="image" accept="image/*" required>
+          <input type="file" class="custom-file-input" id="image" name="image" accept="image/*" multiple required>
           <label class="custom-file-label" for="image">Choose file</label>
         </div>
         <div id="image-preview" class="mt-2"></div>
       </div>
       <button type="submit" class="btn btn-primary">Add Product</button>
       <button type="reset" class="btn btn-secondary ml-2">Reset</button>
-      <button type="button" class="btn btn-info ml-2" data-toggle="modal" data-target="#preview-modal">Preview</button>
+      
     </form>
+
+
   </div>
 </section>
-
-
-{{!-- <!-- Preview Modal -->
-<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="previewModalLabel">Product Preview</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6">
-            <img src="#" id="previewImage" class="img-fluid" alt="Product Image">
-          </div>
-          <div class="col-md-6">
-            <h4 id="previewName">Product Name</h4>
-            <p id="previewCategory">Product Category</p>
-            <p id="previewDescription">Product Description</p>
-            <p id="previewPrice">Product Price</p>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div> --}}

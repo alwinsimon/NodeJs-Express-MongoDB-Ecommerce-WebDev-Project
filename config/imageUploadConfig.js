@@ -1,10 +1,13 @@
+
+const path = require('path');
+const multer = require('multer');
+
 /*========================================================================================================================
                 ==================== MULTER IMAGE UPLOAD Configuration to export ====================
 ========================================================================================================================== */
 
 
-const multer = require('multer');
-
+// ================================================ Product Image Upload Configuration ================================================
 
 const productImageStorage = multer.diskStorage({
 
@@ -14,7 +17,7 @@ const productImageStorage = multer.diskStorage({
 
 })
   
-const productImageUpload = multer({ storage: productImageStorage })
+const uploadProductImage = multer({ storage: productImageStorage })
 
 
 
@@ -27,7 +30,6 @@ const productImageUpload = multer({ storage: productImageStorage })
 
 module.exports = {
 
-    productImageStorage,
-    productImageUpload
+    uploadProductImage
 
 }
