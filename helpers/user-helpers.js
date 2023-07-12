@@ -1384,6 +1384,8 @@ module.exports = {
                     couponDiscount : orderData.couponDiscount,
 
                     productOfferDiscount : orderData.productOfferDiscount,
+
+                    categoryOfferDiscount : orderData.categoryOfferDiscount,
                 
                     orderValue:totalOrderValue,
         
