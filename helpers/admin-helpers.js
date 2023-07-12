@@ -245,33 +245,27 @@ module.exports = {
 
       try {
 
-        await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).deleteOne({_id:ObjectId(categoryId)}).then((result)=>{
+        //Function find the product category document to delete from MongoDb collection
+        const productCategoryToRemove = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).findOne({ _id: ObjectId(categoryId) });
 
-          let imageId = categoryId;
+        // Function to Delete the image file from the server using fs.unlink
+        const image = productCategoryToRemove.categoryImage;
+        const imagePath = './public/product-category-images/' + image;
 
-          // Defining the path of the product image to be deleted
-          const imageName = imageId.concat('.jpg')
-          const imagePath = path.join(__dirname, '..', 'public', 'product-category-images', imageName);
+        fs.unlink(imagePath, (error) => {
 
-          // Function to Delete the image file from the server using the above defined path
-          fs.unlink(imagePath, (err) => {
+          if (error) {
 
-            if (err) {
+            console.error("Error-1 from fs.unlink function at deleteProductCategory admin-helpers: ", error);
 
-              console.error(`Error deleting file ${imagePath}: ${err}`);
-
-              reject(err);
-
-            }else{
-
-              resolve(result);
-
-            }
-              
-          });
+          }
 
         })
-  
+
+        //Function to delete the document from MongoDb collection
+        const removeProductCategory = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).deleteOne({ _id: ObjectId(categoryId) });
+
+        resolve(removeProductCategory);
 
       } catch (error) {
 
