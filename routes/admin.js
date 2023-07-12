@@ -83,11 +83,19 @@ router.post('/edit-product-category/:categoryId', verifyAdminLogin, productContr
 router.post('/delete-product-category/:categoryId', verifyAdminLogin, productController.deleteProductCategoryPOST);
 
 
+// ================================================ OFFER MANAGEMENT ================================================
+
 // ====================Routes for Product Offer Management ====================
 
 router.post('/set-product-offer', verifyAdminLogin, offerController.setProductOfferPOST);
 
 router.post('/remove-product-offer', verifyAdminLogin, offerController.removeProductOfferPOST);
+
+// ====================Routes for Category Offer Management ====================
+
+router.post('/set-category-offer', verifyAdminLogin, offerController.setCategoryOfferPOST);
+
+router.post('/remove-category-offer', verifyAdminLogin, offerController.removeCategoryOfferPOST);
 
 // ====================Routes for Coupon Management ====================
 

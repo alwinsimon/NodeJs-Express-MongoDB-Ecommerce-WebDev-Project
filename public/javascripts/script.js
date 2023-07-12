@@ -50,7 +50,6 @@ function addToCart(productId, productName) {
 
 function changeQuantity(cartId, productId, userId, count){
 
-  // console.log(userId);
   // console.log('Change Quantity Function Called');
   // The above message will be consoled in the browser console as it is happening at client side
 
