@@ -402,23 +402,42 @@
                                                         <p class="mb-1"><b>₹ {{originalCartValue}}</b></p>
                                                     </div>
                                                 </div>
-                                                <div class="row justify-content-between">
-                                                    <div class="col">
-                                                        <p class="mb-1"><b>Coupon Discounts:</b></p>
+
+                                                {{#if (gt couponDiscount 0)}}
+                                                    <div class="row justify-content-between">
+                                                        <div class="col">
+                                                            <p class="mb-1"><b>Coupon Discounts:</b></p>
+                                                        </div>
+                                                        <div class="flex-sm-col col-auto">
+                                                            <p class="mb-1"><b>₹ {{couponDiscount}}</b></p>
+                                                        </div>
                                                     </div>
-                                                    <div class="flex-sm-col col-auto">
-                                                        <p class="mb-1"><b>₹ {{couponDiscount}}</b></p>
+                                                {{/if}}
+
+                                                {{#if (gt productOfferDiscount 0)}}
+                                                    <div class="row justify-content-between">
+                                                        <div class="col">
+                                                            <p class="mb-1"><b>Product Offer Discounts:</b></p>
+                                                        </div>
+                                                        <div class="flex-sm-col col-auto">
+                                                            <p class="mb-1"><b>₹ {{productOfferDiscount}}</b></p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="row justify-content-between">
-                                                    <div class="col">
-                                                        <p class="mb-1"><b>Product Offer Discounts:</b></p>
+                                                {{/if}}
+
+                                                {{#if (gt categoryOfferDiscount 0)}}
+                                                    <div class="row justify-content-between">
+                                                        <div class="col">
+                                                            <p class="mb-1"><b>Category Offer Discounts:</b></p>
+                                                        </div>
+                                                        <div class="flex-sm-col col-auto">
+                                                            <p class="mb-1"><b>₹ {{categoryOfferDiscount}}</b></p>
+                                                        </div>
                                                     </div>
-                                                    <div class="flex-sm-col col-auto">
-                                                        <p class="mb-1"><b>₹ {{productOfferDiscount}}</b></p>
-                                                    </div>
-                                                </div>
+                                                {{/if}}
+
                                                 <hr>
+
                                                 <div class="row justify-content-between">
                                                     <div class="col-4">
                                                         <p style="color: #21b503;"><b>Total Amount:</b></p>
