@@ -252,11 +252,99 @@ const calculateProductOfferDiscountsForCart = async (userId) => {
 ==========================================================================================================================*/
 
 
+const calculateCategoryOfferAmountForCart = async (userId) => {
 
+  return new Promise(async (resolve, reject) => {
 
+    try {
 
+      const cartItems = await db.get().collection(dataBasecollections.CART_COLLECTION).aggregate([
 
+        { $match: { user: ObjectId(userId) } },
+        { $unwind: "$products" },
+        {
+          $lookup: {
+            from: dataBasecollections.PRODUCT_COLLECTION,
+            localField: "products.item",
+            foreignField: "_id",
+            as: "product",
+          },
+        },
+        {
+          $project: {
+            userId: userId,
+            cartId: "$_id",
+            productId: "$products.item",
+            item: "$products.item",
+            quantity: "$products.quantity",
+            category: "$product.category",
+            product: { $arrayElemAt: ["$product", 0] },
+          },
+        }
 
+      ]).toArray();
+
+      // Initiate a variable to accumulate the category discount amount
+      let totalCategoryDiscountAmount = 0;
+
+      const cartItemsWithCategoryOfferData = await Promise.all(
+
+        cartItems.map(async (item) => {
+
+          const productCategory = item.category[0];
+
+          const category = await db.get().collection(dataBasecollections.PRODUCT_CATEGORY_COLLECTION).findOne({ _id: ObjectId(productCategory) });
+
+          const actualProductAmount = item.product.price * item.quantity;
+
+          const categoryOfferPercentage = category.categoryOffer;
+
+          const categoryDiscountAmount = (actualProductAmount * categoryOfferPercentage) / 100;
+          
+          totalCategoryDiscountAmount += categoryDiscountAmount; // Accumulate the category discount amount to the pre-declared variable
+
+          const productDataWithCategoryOfferData =  {
+
+            userId: item.userId,
+            cartId: item.cartId,
+            productId: item.productId,
+            productName: item.product.name,
+            price: item.product.price,
+            quantity: item.quantity,
+            totalAmount: actualProductAmount,
+            categoryName: category.name,
+            categoryOfferPercentage: categoryOfferPercentage,
+            categoryDiscountAmount: categoryDiscountAmount
+
+          };
+
+          return productDataWithCategoryOfferData;
+
+        })
+
+      );
+
+      const dataToResolve = {
+        
+        cartItemsWithCategoryOfferData,  // Contains all the details of cart, product and category discounts
+        
+        totalCategoryDiscountAmount // Contains the total category discount value applicable to the cart
+      
+      };
+
+      resolve(dataToResolve);
+
+    } catch (error) {
+
+      console.error("Error from calculateCategoryOfferAmountForCart offer-helpers: ", error);
+
+      reject(error);
+
+    }
+
+  });
+
+};
 
 
 
@@ -563,17 +651,21 @@ const changeOfferStatus = (offerDataForUpdate, statusToModify, adminData)=>{
 /* ======================== Exporting Helpers ======================== */
 module.exports = {
 
-    addNewOffer,
-    verifyOfferExist,
-    getActiveOffers,
-    getInActiveOffers,
-    getSingleOfferData,
-    updateOfferData,
-    changeOfferStatus,
-    getSingleOfferDataWithOfferName,
-    setProductOffer,
-    getCartItemsWithOfferData,
-    calculateProductOfferDiscountsForCart,
-    setCategoryOffer
+  addNewOffer,
+  verifyOfferExist,
+  getActiveOffers,
+  getInActiveOffers,
+  getSingleOfferData,
+  updateOfferData,
+  changeOfferStatus,
+  getSingleOfferDataWithOfferName,
+
+  getCartItemsWithOfferData,
+
+  setProductOffer,
+  calculateProductOfferDiscountsForCart,
+  
+  setCategoryOffer,
+  calculateCategoryOfferAmountForCart
 
 }
