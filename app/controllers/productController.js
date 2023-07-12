@@ -249,13 +249,13 @@ const addProductCategoryPOST = async (req,res)=>{
 
     let categoryDetails = req.body;
   
-    await adminHelpers.checkProductCategoryExists(categoryDetails.name).then((response)=>{
+    await adminHelpers.checkProductCategoryExists(categoryDetails.name).then( async (response)=>{
   
       if(response.status){ // The Product category Already Exist - Denying the addition of category to prevent Duplication
         
         req.session.adminSession.categoryExistsErr = response.message; // Storing the error message in Admin session for displaying to Admin
   
-        res.redirect('/admin/add-new-product-category')
+        res.redirect('/admin/add-new-product-category');
   
       }else{ // Product category Dosen't exist - Adding the Product Category
   
@@ -268,32 +268,16 @@ const addProductCategoryPOST = async (req,res)=>{
         }
       
         categoryDetails.createdOn = new Date();
+
+        categoryDetails.categoryOffer = 0;
+
+        const categoryImage = req.file.filename;
+        
+        categoryDetails.categoryImage = categoryImage;
       
-        adminHelpers.addProductCategory(categoryDetails).then((categoryId)=>{
-      
-          const id = categoryId;
-      
-          if(req.files){
-      
-            let image = req.files['category-image'];
-      
-            image.mv('./public/product-category-images/' + id +'.jpg',(err,done)=>{
-      
-              if(err){
-      
-                console.log(err);
-      
-              }else{
-      
-                res.redirect('/admin/add-new-product-category');
-      
-              }
-      
-            });
-      
-          }
-      
-        })
+        const productCategoryAddition = await adminHelpers.addProductCategory(categoryDetails);
+
+        res.redirect('/admin/add-new-product-category');
   
       }
   
