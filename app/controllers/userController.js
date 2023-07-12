@@ -1000,10 +1000,22 @@ const placeOrderGET = async (req,res)=>{
       // Updating the cart value to display in the front-end after applying product offer discount - note that this will not be modify the cart value in the DB
       cartValue = cartValue - productOfferDiscount;
 
+      // ========================================== Category Offer Discounts Calculation ==========================================
+
+      // Finding existing category offer applicable to the cart and applying it to the cart value
+
+      const applicableCategoryOffers = await offerHelpers.calculateCategoryOfferAmountForCart(user._id);
+
+      const categoryOfferDiscount = applicableCategoryOffers.totalCategoryDiscountAmount;
+
+      // Updating the cart value to display in the front-end after applying category offer discount - note that this will not be modify the cart value in the DB
+      cartValue = cartValue - categoryOfferDiscount;
+
+
 
       if(primaryAddress){
 
-        res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, originalCartValue, cartValue, userAddress, primaryAddress, wishlistCount, couponApplied, couponError, couponDiscount, productOfferDiscount });
+        res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, originalCartValue, cartValue, userAddress, primaryAddress, wishlistCount, couponApplied, couponError, couponDiscount, productOfferDiscount, categoryOfferDiscount });
 
         delete req.session.couponApplied;
 
@@ -1011,7 +1023,7 @@ const placeOrderGET = async (req,res)=>{
 
       }else{
 
-        res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, wishlistCount, couponApplied, couponError, couponDiscount });
+        res.render('user/place-order',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Summary" , admin:false, user, cartProducts, cartValue, userAddress, wishlistCount, couponApplied, couponError, couponDiscount, productOfferDiscount, categoryOfferDiscount });
 
         delete req.session.couponApplied;
 
