@@ -726,12 +726,16 @@ const cartGET = async (req,res)=>{
       // The below function will return the original cart value without any discounts.
       const originalCartValue = await userHelpers.getCartValue(user._id);
 
+      // ==================== Product Offer Discounts ====================
       let productOfferDiscounts = await offerHelpers.calculateProductOfferDiscountsForCart(user._id);
-
       productOfferDiscounts = productOfferDiscounts.totalCartDiscount;
 
+      // ==================== Category Offer Discounts ====================
+      let categoryOfferDiscounts = await offerHelpers.calculateCategoryOfferAmountForCart(user._id);
+      categoryOfferDiscounts = categoryOfferDiscounts.totalCategoryDiscountAmount;
+
       // Finding the finalised cart value after substracting the offer amounts. 
-      const cartValue = originalCartValue - productOfferDiscounts;
+      const cartValue = originalCartValue - productOfferDiscounts - categoryOfferDiscounts;
 
       res.render('user/cart',{ layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || Cart" , admin:false, user, cartItems, cartCount, cartValue, wishlistCount });
 
@@ -805,15 +809,23 @@ const changeCartProductQuantityPOST = (req,res,next)=>{
 
   try{
 
+    const user = req.session.userSession;
+
     userHelpers.changeCartProductQuantity(req.body).then( async (response)=>{
 
-      const originalCartValue = await userHelpers.getCartValue(req.body.userId);
+      // The below function will return the original cart value without any discounts.
+      const originalCartValue = await userHelpers.getCartValue(user._id);
 
-      const applicableProductDiscounts = await offerHelpers.calculateProductOfferDiscountsForCart(req.body.userId);
+      // ==================== Product Offer Discounts ====================
+      let productOfferDiscounts = await offerHelpers.calculateProductOfferDiscountsForCart(user._id);
+      productOfferDiscounts = productOfferDiscounts.totalCartDiscount;
 
-      const productOfferDiscountOnCartValue = applicableProductDiscounts.totalCartDiscount;
+      // ==================== Category Offer Discounts ====================
+      let categoryOfferDiscounts = await offerHelpers.calculateCategoryOfferAmountForCart(user._id);
+      categoryOfferDiscounts = categoryOfferDiscounts.totalCategoryDiscountAmount;
 
-      const discountedCartValue = originalCartValue - productOfferDiscountOnCartValue;
+      // Finding the finalised cart value after substracting the offer amounts. 
+      const discountedCartValue = originalCartValue - productOfferDiscounts - categoryOfferDiscounts;
 
       response.cartValue = discountedCartValue; // Adding a cartValue feild to response object 
   
