@@ -130,7 +130,11 @@ module.exports = {
 
       try{
 
-        const productCategory = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).find({name:categoryName}).toArray();
+        let categoryNameToMatch = categoryName;
+
+        categoryNameToMatch = new RegExp(`^${categoryNameToMatch}$`, 'i'); // Used for making an case insensitive search in DB
+
+        const productCategory = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).find({name:categoryNameToMatch}).toArray();
 
         if(productCategory[0]){  // Product category already exist in DB
   
