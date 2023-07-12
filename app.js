@@ -8,7 +8,6 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const hbs = require('express-handlebars');
 const handlebarsHelpers = require('handlebars-helpers');
-const fileUpload = require('express-fileupload');
 const db = require('./config/externalConnectionsConfig');
 const session = require('express-session');
 const nocache = require('nocache');
@@ -44,7 +43,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(fileUpload());
 app.use(session({secret:process.env.SESSION_SECRET_KEY,cookie:{maxAge:6000000}}))
 app.use(nocache());
 

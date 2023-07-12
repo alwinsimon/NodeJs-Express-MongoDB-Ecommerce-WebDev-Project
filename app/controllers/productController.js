@@ -57,37 +57,29 @@ const addProductGET = async (req,res)=>{
 
 }
   
-const addProductPOST = (req,res)=>{
+const addProductPOST = async (req,res)=>{
 
   try{
 
-    let productData = req.body;
+    const adminData = req.session.adminSession;
+
+    const productData = req.body;
 
     productData.productOffer = 0;
 
-    productHelpers.addProduct(productData,(result)=>{
+    let productImageArray = [];
 
-      const adminData = req.session.adminSession;
-  
-      const id = result.insertedId
-  
-      let image = req.files.image;
-  
-      image.mv('./public/product-images/' + id +'.jpg',(err,done)=>{
-  
-        if(err){
-  
-          console.log(err);
-  
-        }else{
-  
-          res.render('admin/add-product',{ layout: 'admin-layout', title:"Add product",admin:true, adminData, PLATFORM_NAME});
-  
-        }
-  
-      });
-  
-    });
+    for (let i = 0; i < req.files.length; i++) {
+
+      productImageArray[i] = req.files[i].filename;
+
+    }
+
+    productData.images = productImageArray;
+
+    const addNewProduct = await productHelpers.addProduct(productData);
+
+    res.render('admin/add-product',{ layout: 'admin-layout', title:"Add product", adminData, PLATFORM_NAME});
 
   }catch(error){
 
@@ -102,19 +94,15 @@ const addProductPOST = (req,res)=>{
 
 // ====================Route to DELETE a PRODUCT====================
   
-const deleteProductGET = (req,res)=>{
+const deleteProductGET = async (req,res)=>{
 
   try{
 
     const productId = req.params.id;
-
-    const productImageId = productId
   
-    productHelpers.deleteProduct(productId,productImageId).then((response)=>{
-      // console.log(response);
-    })
+    await productHelpers.deleteProduct(productId);
   
-    res.redirect('/admin');
+    res.redirect('/admin/manage-products');
 
   }catch(error){
 

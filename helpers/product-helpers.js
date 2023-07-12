@@ -3,35 +3,40 @@ const collections = require('../config/databaseCollectionsConfig');
 const ObjectId = require("mongodb").ObjectId;
 const path = require('path');
 const fs = require('fs');
+const { error } = require("console");
 
 
 
 module.exports = {
 
-    addProduct:(product,callback)=>{
+    addProduct: (product)=>{
 
-        try{
+        return new Promise( (resolve,reject)=>{
 
-            db.get().collection(collections.PRODUCT_COLLECTION).insertOne(product).then((data)=>{
+            try{
 
-                callback(data);
-                /*In the above line, we are passing the object named data.
-                This object  is obtained as a result of calling .then in the promise returned by the insertOne function of MongoDb.
-                This object has a key namely insertedId this is the insert id of document created in the db.
-                We send it back as an argument of the callback in admin.js where this function was called.
-                There this id is utilised for setting the name of uploaded image so that,
-                we can establish a relation between each product document in db and its image in server
-                */
-                
-            })
+                db.get().collection(collections.PRODUCT_COLLECTION).insertOne(product).then((data)=>{
 
-        }catch(error){
-        
-            console.error("Error from addProduct product-helpers: ", error);
-        
-            reject(error);
-        
-        }
+                    resolve(data);
+                    /*In the above line, we are passing the object named data.
+                    This object  is obtained as a result of calling .then in the promise returned by the insertOne function of MongoDb.
+                    This object has a key namely insertedId this is the insert id of document created in the db.
+                    We send it back in promise resolve.
+                    There this id is utilised for setting the name of uploaded image so that,
+                    we can establish a relation between each product document in db and its image in server
+                    */
+                    
+                })
+            
+            }catch(error){
+            
+                console.error("Error from addProduct product-helpers: ", error);
+            
+                reject(error);
+            
+            }
+
+        })
 
     },
     getAllProducts: () => {
@@ -72,7 +77,8 @@ module.exports = {
                         description: product.description,
                         price: product.price,
                         category: category ? { _id: category._id.toString(), name: category.name } : null,
-                        productOffer:product.productOffer
+                        productOffer:product.productOffer,
+                        images:product.images
                     };
 
                 });
@@ -92,33 +98,36 @@ module.exports = {
         });
 
     },
-    deleteProduct: (productId, image) => {
+    deleteProduct: (productId) => {
 
-        return new Promise((resolve, reject) => {
+        return new Promise( async (resolve, reject) => {
 
             try{
 
-                //Function to delete the document from MongoDb collection
-                db.get().collection(collections.PRODUCT_COLLECTION).deleteOne({ _id: ObjectId(productId) }).then((deleteResult) => {
+                //Function find the product document to delete from MongoDb collection
+                const productToRemove = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({ _id: ObjectId(productId) });
 
-                    // Defining the path of the product image to be deleted
-                    const imageName = image.concat('.jpg')
-                    const imagePath = path.join(__dirname, '..', 'public', 'product-images', imageName);
+                // Function to Delete the image file from the server using fs.unlink
+                productToRemove.images.forEach((image) => {
 
-                    // Function to Delete the image file from the server using the above defined path
-                    fs.unlink(imagePath, (err) => {
-
-                        if (err) {
-                            console.error(`Error deleting file ${imagePath}: ${err}`);
+                    let imagePath = './public/product-images/' + image;
+    
+                    fs.unlink(imagePath, (error) => {
+        
+                        if (error) {
+            
+                            console.error("Error-1 from fs.unlink fuction at deleteProduct product-helpers: ", error);
+            
                         }
-                        
-                    });
-
-                    // console.log(deleteResult);
-
-                    resolve();
+        
+                    })
 
                 });
+
+                //Function to delete the document from MongoDb collection
+                const removeProduct = await db.get().collection(collections.PRODUCT_COLLECTION).deleteOne({ _id: ObjectId(productId) });
+
+                resolve(removeProduct);
 
             }catch(error){
             
