@@ -94,19 +94,15 @@ const addProductPOST = async (req,res)=>{
 
 // ====================Route to DELETE a PRODUCT====================
   
-const deleteProductGET = (req,res)=>{
+const deleteProductGET = async (req,res)=>{
 
   try{
 
     const productId = req.params.id;
-
-    const productImageId = productId
   
-    productHelpers.deleteProduct(productId,productImageId).then((response)=>{
-      // console.log(response);
-    })
+    await productHelpers.deleteProduct(productId);
   
-    res.redirect('/admin');
+    res.redirect('/admin/manage-products');
 
   }catch(error){
 

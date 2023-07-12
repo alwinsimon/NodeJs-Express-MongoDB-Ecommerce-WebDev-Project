@@ -3,6 +3,7 @@ const collections = require('../config/databaseCollectionsConfig');
 const ObjectId = require("mongodb").ObjectId;
 const path = require('path');
 const fs = require('fs');
+const { error } = require("console");
 
 
 
@@ -76,7 +77,8 @@ module.exports = {
                         description: product.description,
                         price: product.price,
                         category: category ? { _id: category._id.toString(), name: category.name } : null,
-                        productOffer:product.productOffer
+                        productOffer:product.productOffer,
+                        images:product.images
                     };
 
                 });
@@ -96,33 +98,36 @@ module.exports = {
         });
 
     },
-    deleteProduct: (productId, image) => {
+    deleteProduct: (productId) => {
 
-        return new Promise((resolve, reject) => {
+        return new Promise( async (resolve, reject) => {
 
             try{
 
-                //Function to delete the document from MongoDb collection
-                db.get().collection(collections.PRODUCT_COLLECTION).deleteOne({ _id: ObjectId(productId) }).then((deleteResult) => {
+                //Function find the product document to delete from MongoDb collection
+                const productToRemove = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({ _id: ObjectId(productId) });
 
-                    // Defining the path of the product image to be deleted
-                    const imageName = image.concat('.jpg')
-                    const imagePath = path.join(__dirname, '..', 'public', 'product-images', imageName);
+                // Function to Delete the image file from the server using fs.unlink
+                productToRemove.images.forEach((image) => {
 
-                    // Function to Delete the image file from the server using the above defined path
-                    fs.unlink(imagePath, (err) => {
-
-                        if (err) {
-                            console.error(`Error deleting file ${imagePath}: ${err}`);
+                    let imagePath = './public/product-images/' + image;
+    
+                    fs.unlink(imagePath, (error) => {
+        
+                        if (error) {
+            
+                            console.error("Error-1 from fs.unlink fuction at deleteProduct product-helpers: ", error);
+            
                         }
-                        
-                    });
-
-                    // console.log(deleteResult);
-
-                    resolve();
+        
+                    })
 
                 });
+
+                //Function to delete the document from MongoDb collection
+                const removeProduct = await db.get().collection(collections.PRODUCT_COLLECTION).deleteOne({ _id: ObjectId(productId) });
+
+                resolve(removeProduct);
 
             }catch(error){
             
