@@ -1573,6 +1573,55 @@ module.exports = {
         });
 
     },
+    getDetailedOrderData : (orderId)=>{
+
+        return new Promise( async (resolve,reject)=>{
+
+            try{
+
+                const orderDetails = await db.get().collection(collections.ORDERS_COLLECTION).aggregate([
+                
+                    { $match:{_id:ObjectId(orderId)} },
+
+                    {
+    
+                        $project:{
+
+                            actualOrderValue:'$actualOrderValue',
+
+                            couponDiscount:'$couponDiscount',
+
+                            productOfferDiscount:'$productOfferDiscount',
+
+                            categoryOfferDiscount:'$categoryOfferDiscount',
+
+                            orderValue:'$orderValue',
+
+                            paymentMethod:'$paymentMethod',
+
+                            orderStatus:'$orderStatus',
+
+                            deliveryDetails:'$deliveryDetails'
+    
+                        }
+    
+                    }
+    
+                ]).toArray();
+    
+                resolve(orderDetails);
+            
+            }catch(error){
+            
+                console.error("Error from getDetailedOrderData user-helpers: ", error);
+            
+                reject(error);
+            
+            }
+ 
+        });
+
+    },
     getOrderDate : (orderId)=>{
 
         return new Promise( async (resolve,reject)=>{
