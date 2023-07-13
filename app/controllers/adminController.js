@@ -2,6 +2,7 @@
 
 const productHelpers = require('../../helpers/product-helpers');
 const adminHelpers = require('../../helpers/admin-helpers');
+const userHelpers = require('../../helpers/user-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -262,8 +263,10 @@ const singleOrderDetailsPOST = async (req,res)=>{
     const orderDetails = await adminHelpers.getSingleOrderData(orderId);
   
     const productDetails = await adminHelpers.getSingleOrderDataForOrdersDisplay(orderId);
+
+    const orderData = await userHelpers.getDetailedOrderData(orderId); // For passing order data to the page
   
-    res.render('admin/admin-single-order-summary', { layout: 'admin-layout', title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails});
+    res.render('admin/admin-single-order-summary', { layout: 'admin-layout', title: PLATFORM_NAME + " || Order details", PLATFORM_NAME, admin:true, adminData, orderDetails, productDetails, orderData});
 
 
   }catch(error){
