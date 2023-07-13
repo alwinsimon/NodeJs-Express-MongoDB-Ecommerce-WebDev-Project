@@ -6,15 +6,13 @@
 
         <h1 style="text-align: center;">Orders</h1>
 
-        <table id="cartTable" style="width: 100%; border-collapse: collapse;">
+        <table id="admin-order-summary-table" style="width: 100%; border-collapse: collapse;">
 
             <thead style="background-color: #f2f2f2;">
                 <tr>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Date</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Date & Time</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">User</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Order Id</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Phone</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Address</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Payment</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Amount</th>
                     <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
@@ -34,8 +32,6 @@
                         <td>{{this.date}}</td>
                         <td>{{this.userName}}</td>
                         <td>{{this._id}}</td>
-                        <td>{{this.deliveryDetails.mobile}}</td>
-                        <td>{{this.deliveryDetails.address}}</td>
                         <td>{{this.paymentMethod}}</td>
                         <td>{{this.orderValue}}</td>
                         <td>{{this.orderStatus}}</td>

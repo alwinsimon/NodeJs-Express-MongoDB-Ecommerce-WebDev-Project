@@ -355,7 +355,7 @@ module.exports = {
 
       try {
 
-        let platformOrders = await db.get().collection(collections.ORDERS_COLLECTION).find({}).toArray();
+        let platformOrders = await db.get().collection(collections.ORDERS_COLLECTION).find({}).sort({ date: -1 }).toArray();
 
         platformOrders = platformOrders.map(order => {
 
