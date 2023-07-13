@@ -127,6 +127,7 @@ const getCartItemsWithOfferData = async (userId) => {
             productName: item.product.name,
             productDescription: item.product.description,
             price: item.product.price,
+            images: item.product.images,
 
             quantity: item.quantity,
             totalAmount: actualProductAmount,

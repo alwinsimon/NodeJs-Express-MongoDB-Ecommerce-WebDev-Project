@@ -25,7 +25,7 @@
       {{#each productDetails}}
         <div class="col-md-4" style="width: 15rem; height: 23rem;">
           <div class="card mb-4">
-            <img src="/product-images/{{this.product._id}}.jpg" class="card-img-top" alt="{{this.product.name}}">
+            <img src="/product-images/{{this.product.images.[0]}}" class="card-img-top" alt="{{this.product.name}}">
             <div class="card-body">
               <h5 class="card-title">{{this.product.name}}</h5>
               <p class="card-text">{{this.product.description}}</p>

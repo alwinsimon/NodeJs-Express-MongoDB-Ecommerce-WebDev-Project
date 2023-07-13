@@ -16,36 +16,21 @@
 							<div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
 
 							<div class="slick3 gallery-lb">
-								<div class="item-slick3" data-thumb="/product-images/{{productDetails._id}}.jpg">
-									<div class="wrap-pic-w pos-relative">
-										<img src="/product-images/{{productDetails._id}}.jpg" alt="{{productDetails.name}}">
 
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="/product-images/{{productDetails._id}}.jpg">
-											<i class="fa fa-expand"></i>
-										</a>
+								{{#each productDetails.images}}
+									<div class="item-slick3" data-thumb="/product-images/{{this}}">
+										<div class="wrap-pic-w pos-relative">
+											<img src="/product-images/{{this}}" alt="{{productDetails.name}}">
+
+											<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="/product-images/{{this}}">
+												<i class="fa fa-expand"></i>
+											</a>
+										</div>
 									</div>
-								</div>
+								{{/each}}
 
-								<div class="item-slick3" data-thumb="/product-images/{{productDetails._id}}.jpg">
-									<div class="wrap-pic-w pos-relative">
-										<img src="/product-images/{{productDetails._id}}.jpg" alt="{{productDetails.name}}">
-
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="/product-images/{{productDetails._id}}.jpg">
-											<i class="fa fa-expand"></i>
-										</a>
-									</div>
-								</div>
-
-								<div class="item-slick3" data-thumb="/product-images/{{productDetails._id}}.jpg">
-									<div class="wrap-pic-w pos-relative">
-										<img src="/product-images/{{productDetails._id}}.jpg" alt="{{productDetails.name}}">
-
-										<a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="/product-images/{{productDetails._id}}.jpg">
-											<i class="fa fa-expand"></i>
-										</a>
-									</div>
-								</div>
 							</div>
+
 						</div>
 					</div>
 				</div>

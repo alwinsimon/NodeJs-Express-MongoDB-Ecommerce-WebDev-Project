@@ -57,37 +57,29 @@ const addProductGET = async (req,res)=>{
 
 }
   
-const addProductPOST = (req,res)=>{
+const addProductPOST = async (req,res)=>{
 
   try{
 
-    let productData = req.body;
+    const adminData = req.session.adminSession;
+
+    const productData = req.body;
 
     productData.productOffer = 0;
 
-    productHelpers.addProduct(productData,(result)=>{
+    let productImageArray = [];
 
-      const adminData = req.session.adminSession;
-  
-      const id = result.insertedId
-  
-      let image = req.files.image;
-  
-      image.mv('./public/product-images/' + id +'.jpg',(err,done)=>{
-  
-        if(err){
-  
-          console.log(err);
-  
-        }else{
-  
-          res.render('admin/add-product',{ layout: 'admin-layout', title:"Add product",admin:true, adminData, PLATFORM_NAME});
-  
-        }
-  
-      });
-  
-    });
+    for (let i = 0; i < req.files.length; i++) {
+
+      productImageArray[i] = req.files[i].filename;
+
+    }
+
+    productData.images = productImageArray;
+
+    const addNewProduct = await productHelpers.addProduct(productData);
+
+    res.render('admin/add-product',{ layout: 'admin-layout', title:"Add product", adminData, PLATFORM_NAME});
 
   }catch(error){
 
@@ -102,19 +94,15 @@ const addProductPOST = (req,res)=>{
 
 // ====================Route to DELETE a PRODUCT====================
   
-const deleteProductGET = (req,res)=>{
+const deleteProductGET = async (req,res)=>{
 
   try{
 
     const productId = req.params.id;
-
-    const productImageId = productId
   
-    productHelpers.deleteProduct(productId,productImageId).then((response)=>{
-      // console.log(response);
-    })
+    await productHelpers.deleteProduct(productId);
   
-    res.redirect('/admin');
+    res.redirect('/admin/manage-products');
 
   }catch(error){
 
@@ -211,7 +199,7 @@ const productCategoriesGET = async (req,res)=>{
 
     const productCategories = await adminHelpers.getProductCategories();
   
-    res.render('admin/view-product-categories', { layout: 'admin-layout', title: PLATFORM_NAME + " || Product Categories", admin:true, adminData, productCategories});
+    res.render('admin/view-product-categories', { layout: 'admin-layout', title: PLATFORM_NAME + " || Product Categories", PLATFORM_NAME, admin:true, adminData, productCategories});
 
   }catch(error){
 
@@ -261,13 +249,13 @@ const addProductCategoryPOST = async (req,res)=>{
 
     let categoryDetails = req.body;
   
-    await adminHelpers.checkProductCategoryExists(categoryDetails.name).then((response)=>{
+    await adminHelpers.checkProductCategoryExists(categoryDetails.name).then( async (response)=>{
   
       if(response.status){ // The Product category Already Exist - Denying the addition of category to prevent Duplication
         
         req.session.adminSession.categoryExistsErr = response.message; // Storing the error message in Admin session for displaying to Admin
   
-        res.redirect('/admin/add-new-product-category')
+        res.redirect('/admin/add-new-product-category');
   
       }else{ // Product category Dosen't exist - Adding the Product Category
   
@@ -280,32 +268,16 @@ const addProductCategoryPOST = async (req,res)=>{
         }
       
         categoryDetails.createdOn = new Date();
+
+        categoryDetails.categoryOffer = 0;
+
+        const categoryImage = req.file.filename;
+        
+        categoryDetails.categoryImage = categoryImage;
       
-        adminHelpers.addProductCategory(categoryDetails).then((categoryId)=>{
-      
-          const id = categoryId;
-      
-          if(req.files){
-      
-            let image = req.files['category-image'];
-      
-            image.mv('./public/product-category-images/' + id +'.jpg',(err,done)=>{
-      
-              if(err){
-      
-                console.log(err);
-      
-              }else{
-      
-                res.redirect('/admin/add-new-product-category');
-      
-              }
-      
-            });
-      
-          }
-      
-        })
+        const productCategoryAddition = await adminHelpers.addProductCategory(categoryDetails);
+
+        res.redirect('/admin/add-new-product-category');
   
       }
   

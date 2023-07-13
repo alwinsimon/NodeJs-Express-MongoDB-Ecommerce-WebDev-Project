@@ -5,12 +5,17 @@ const adminController = require('../app/controllers/adminController');
 const productController = require('../app/controllers/productController');
 const couponController = require('../app/controllers/couponController');
 const offerController = require('../app/controllers/offerController');
+const multer = require('../config/imageUploadConfig');
 
 
 /*=======================================MIDDLEWARES=======================================*/
 
 // Middleware to verify if the requests are made by admin
 const verifyAdminLogin = adminMiddlewares.verifyAdminLogin;
+
+// Multer Middlewares to upload images
+const multerUploadProductImage = multer.uploadProductImage.array('image');
+const multerUploadProductCategoryImage = multer.uploadProductCategoryImage.single('category-image');
 
 
 /*=================================================ADMIN ROUTES=================================================*/
@@ -53,7 +58,7 @@ router.get('/manage-products', verifyAdminLogin, productController.manageProduct
 
 router.get('/add-product', verifyAdminLogin, productController.addProductGET);
 
-router.post('/add-product', verifyAdminLogin, productController.addProductPOST);
+router.post('/add-product', verifyAdminLogin, multerUploadProductImage, productController.addProductPOST);
 
 
 // ====================Route to DELETE a PRODUCT====================
@@ -74,7 +79,7 @@ router.get('/manage-product-categories', verifyAdminLogin, productController.pro
 
 router.get('/add-new-product-category', verifyAdminLogin, productController.addProductCategoryGET);
 
-router.post('/add-new-product-category', verifyAdminLogin, productController.addProductCategoryPOST);
+router.post('/add-new-product-category', verifyAdminLogin, multerUploadProductCategoryImage, productController.addProductCategoryPOST);
 
 router.get('/edit-product-category/:categoryId', verifyAdminLogin, productController.editProductCategoryGET);
 
