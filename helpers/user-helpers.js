@@ -847,7 +847,7 @@ module.exports = {
         
                 if (userWishListData.length > 0) {
 
-                    resolve(result[0].products);
+                    resolve(userWishListData[0].products);
 
                 } else {
 
