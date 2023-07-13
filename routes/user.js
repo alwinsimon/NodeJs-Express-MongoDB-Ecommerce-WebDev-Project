@@ -43,6 +43,10 @@ router.get('/verify-user-signup', userController.verifyUserSignUpGET);
 
 router.post('/verify-user-signup', userController.verifyUserSignUpPOST);
 
+router.get('/resend-otp', userController.reSendUserSignUpOTPGET);
+
+router.post('/resend-otp', userController.requestToReSendUserSignUpOTPPOST);
+
 
 /* ========================USER PROFILE ROUTES======================== */
 

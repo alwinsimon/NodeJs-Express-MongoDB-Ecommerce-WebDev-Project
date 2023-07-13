@@ -1,0 +1,44 @@
+<!-- Order Failed Page -->
+
+<div class="container" style="height: 100vh; display: flex; align-items: center; justify-content: center; padding-top: 100px;">
+  <div class="row">
+    <div class="col-md-12 d-flex align-items-center justify-content-center vh-100">
+      <div class="text-center">
+        <h2 class="animate__animated animate__shakeX" style="animation-duration: 1s; color:red; ">OTP Expired!!!</h2>
+        <div class="mt-4">
+          <form id="resend-otp-form" action="/resend-otp" method="post">
+            <button type="submit" class="btn btn-primary animate__animated animate__fadeInLeft" style="animation-duration: 1s; animation-delay: 1s; margin-top: 10px; margin-right: 10px;">Re-send OTP</button>
+          </form>
+          <a href="/" class="btn btn-warning animate__animated animate__fadeInRight" style="animation-duration: 1s; animation-delay: 1s; margin-top: 10px; margin-right: 10px;">Go Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+
+  // Add interactivity and additional animations
+  document.addEventListener('DOMContentLoaded', function() {
+        
+        // Add a delay before fading in the buttons
+        setTimeout(function() {
+        var buttons = document.querySelectorAll('.btn');
+        buttons.forEach(function(button) {
+            button.classList.add('animate__fadeIn');
+        });
+        }, 500);
+
+        // Add a shaking effect to the heading
+        var heading = document.querySelector('h2');
+        heading.addEventListener('animationiteration', function() {
+        heading.classList.remove('animate__shakeX');
+        void heading.offsetWidth; // Trigger reflow to restart the animation
+        heading.classList.add('animate__shakeX');
+        });
+
+    });
+
+</script>

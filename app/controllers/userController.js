@@ -219,6 +219,8 @@ const userSignUpPOST = async (req,res)=>{
 
         if(response.statusMessageSent){
     
+          req.session.signUpOtpFromTwilioAwaited = true;
+          
           res.redirect('/verify-user-signup');
     
         }else{
@@ -253,7 +255,7 @@ const verifyUserSignUpGET = (req,res)=>{
 
   try{
 
-    if(req.session.userSignupData){
+    if(req.session.userSignupData && req.session.signUpOtpFromTwilioAwaited ){
 
       res.render('user/sign-in-otp-validation',{ layout: 'user-layout', title:PLATFORM_NAME + " || Verify Sign-Up OTP", user:true});
   
@@ -272,6 +274,79 @@ const verifyUserSignUpGET = (req,res)=>{
   }
   
 }
+
+
+const reSendUserSignUpOTPGET = (req, res) => {
+
+  try {
+
+    if (req.session.userSignupData && req.session.signUpOtpFromTwilioAwaited ) {
+
+      delete req.session.signUpOtpFromTwilioAwaited;
+
+      res.render('user/signup-resend-otp', { layout: 'user-layout', title: PLATFORM_NAME + " || Re-send Sign-Up OTP" });
+
+    } else {
+
+      res.redirect('/signup');
+
+    }
+
+  } catch (error) {
+
+    console.log("Error from reSendUserSignUpOTPGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
+}
+
+const requestToReSendUserSignUpOTPPOST = (req, res) => {
+
+  try {
+
+    req.session.signUpOtpFromTwilioAwaited = true;
+
+    const signUpFormData = req.session.userSignupData; // Retriving the sign-up data in session for Re-sending otp.
+
+    if (signUpFormData) {
+
+      userHelpers.createUserSignUpOtp(signUpFormData).then((response)=>{
+
+        if(response.statusMessageSent){
+    
+          req.session.signUpOtpFromTwilioAwaited = true;
+          
+          res.redirect('/verify-user-signup');
+    
+        }else{
+    
+          let signUpErrMessage = "Unable to sent OTP to the provided phone number, Please re-check the number!";
+    
+          res.render('user/signup',{ layout: 'user-layout', title:PLATFORM_NAME + " || Sign-up", user:true, signUpErrMessage});
+    
+        }
+    
+      })
+
+    } else {
+
+      res.redirect('/signup');
+
+    }
+
+  } catch (error) {
+
+    console.log("Error from reSendUserSignUpOTPGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
+}
+
+
   
 const verifyUserSignUpPOST = (req,res)=>{
 
@@ -289,7 +364,7 @@ const verifyUserSignUpPOST = (req,res)=>{
 
         userHelpers.doUserSignup(userSignUpRequestData).then((userData)=>{
       
-          // console.log(user);
+          delete req.session.signUpOtpFromTwilioAwaited
       
           req.session.userSession = userData;
       
@@ -1450,6 +1525,8 @@ module.exports = {
   userLogOutPOST,
   userSignUpGET,
   userSignUpPOST,
+  reSendUserSignUpOTPGET,
+  requestToReSendUserSignUpOTPPOST,
   verifyUserSignUpGET,
   verifyUserSignUpPOST,
   userProfileGET,
