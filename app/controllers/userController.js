@@ -918,7 +918,9 @@ const userOrderDetailsPOST = async (req,res)=>{
 
     const orderDate = await userHelpers.getOrderDate(orderId); // For passing order date to the page
 
-    res.render('user/ordered-product-details',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Ordered Product Details" , admin:false, user, productDetails, orderDate});
+    const orderData = await userHelpers.getDetailedOrderData(orderId); // For passing order data to the page
+
+    res.render('user/ordered-product-details',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Ordered Product Details" , admin:false, user, productDetails, orderData, orderDate});
 
 
   }catch(error){
