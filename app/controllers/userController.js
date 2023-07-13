@@ -338,7 +338,7 @@ const requestToReSendUserSignUpOTPPOST = (req, res) => {
 
   } catch (error) {
 
-    console.log("Error from reSendUserSignUpOTPGET userController: ", error);
+    console.log("Error from requestToReSendUserSignUpOTPPOST userController: ", error);
 
     res.redirect('/error-page');
 
