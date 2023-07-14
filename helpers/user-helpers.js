@@ -1491,6 +1491,58 @@ module.exports = {
         })
 
     },
+    updateInventoryOfOrder : (userId)=>{
+
+        return new Promise( async(resolve,reject)=>{
+
+            try{
+
+                const cart = await db.get().collection(collections.CART_COLLECTION).findOne({user:ObjectId(userId)});
+
+                if( cart && cart != null ){
+                  
+                    // if cart exist for user in db cart collection
+                    const cartProductsWithQuantity = cart.products;
+
+                    // Iterate over each product in the cart
+                    for (const cartProduct of cartProductsWithQuantity) {
+
+                        const productId = cartProduct.item;
+
+                        const quantity = cartProduct.quantity;
+
+                        // Reduce the available stock of the product in the product collection
+                        await db.get().collection(collections.PRODUCT_COLLECTION).updateOne(
+                            
+                            { _id: ObjectId(productId) },
+
+                            { $inc: { availableStock: - quantity } }
+
+                        )
+
+                    }
+
+                  resolve({ status: true });
+
+                }else{ 
+                    
+                    // Send a error message if cart dosen't exist for user in db cart collection
+    
+                    reject({error:"Cart Dosent Exist or No products in the cart"});
+    
+                }
+            
+            }catch(error){
+            
+                console.error("Error from updateInventoryOfOrder user-helpers: ", error);
+            
+                reject(error);
+            
+            }
+
+        })
+
+    },
     placeOrder : (user,orderData,orderedProducts,totalOrderValue)=>{
 
         return new Promise((resolve,reject)=>{
