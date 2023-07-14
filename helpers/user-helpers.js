@@ -145,6 +145,111 @@ module.exports = {
         });
 
     },
+    createVerificationOTPWithTwilio : (phoneNumberWithoutCountryCode)=>{
+
+        return new Promise( async (resolve, reject) => {
+
+            try {
+
+                const phoneNumber = '+91' + phoneNumberWithoutCountryCode;
+
+                twilio.sendOTPwithTwilio({ to: phoneNumber, channel: "sms" })
+                .then((verificationData) => {
+
+                    if(verificationData.status === 'pending'){
+
+                        verificationData.statusMessageSent = true;
+
+                        resolve(verificationData);
+
+                    }else{
+
+                        verificationData.statusMessageSent = false;
+
+                        reject(verificationData);
+
+                    }
+                
+                });
+      
+            } catch (error) {
+
+                console.error("Error from createVerificationOTPWithTwilio user-helpers: ", error);
+      
+                reject(error);
+      
+            }
+      
+        });
+
+    },
+    verifyOTPCreatedWithTwilio : (otpToVerify, phoneNumberWithoutCountryCode)=>{
+
+        return new Promise( async (resolve, reject) => {
+
+            try {
+
+                const phoneNumberForVerification = "+91" + phoneNumberWithoutCountryCode;
+      
+                twilio.verifyOTPwithTwilio({ to: phoneNumberForVerification, code: otpToVerify })
+                .then((verificationResult) => {
+
+                    if(verificationResult.status === "approved"){
+
+                        verificationResult.verified = true;
+
+                        resolve(verificationResult);
+
+                    }else{
+
+                        verificationResult.verified = false;
+
+                        verificationResult.otpErrorMessage = "In-correct OTP Provided, Please enter correct OTP";
+
+                        resolve(verificationResult);
+
+                    }
+                
+                });
+      
+            } catch (error) {
+
+                console.error("Error from verifyOTPCreatedWithTwilio user-helpers: ", error);
+      
+                reject(error);
+      
+            }
+      
+        });
+
+    },
+    resetUserPassword : (requestedUserId, passwordToUpdate)=>{
+
+        return new Promise(async (resolve,reject)=>{
+
+            try{
+
+                const userId = requestedUserId;
+
+                let newPassword = passwordToUpdate;
+
+                newPassword = await bcrypt.hash(newPassword,10);
+
+                const updateUserPassword = await db.get().collection(collections.USER_COLLECTION).updateOne({_id:ObjectId(userId)},{$set:{password:newPassword}});
+
+                resolve(updateUserPassword);
+            
+            }catch(error){
+            
+                console.error("Error from resetUserPassword user-helpers: ", error);
+            
+                reject(error);
+            
+            }
+
+        })
+
+    },
     doUserSignup:(userData)=>{
 
         return new Promise(async (resolve,reject)=>{
@@ -254,6 +359,29 @@ module.exports = {
             }catch(error){
             
                 console.error("Error from doUserLogin user-helpers: ", error);
+            
+                reject(error);
+            
+            }
+
+        })
+
+    },
+    findUserwithEmail : (emailToSearch)=>{
+        
+        return new Promise( async (resolve,reject)=>{
+
+            try{
+
+                const requestEmail = emailToSearch;
+
+                const userToFind = await db.get().collection(collections.USER_COLLECTION).findOne({email : requestEmail});
+
+                resolve(userToFind);
+            
+            }catch(error){
+            
+                console.error("Error from findUserwithEmail user-helpers: ", error);
             
                 reject(error);
             
