@@ -1491,6 +1491,58 @@ module.exports = {
         })
 
     },
+    updateInventoryOfOrder : (userId)=>{
+
+        return new Promise( async(resolve,reject)=>{
+
+            try{
+
+                const cart = await db.get().collection(collections.CART_COLLECTION).findOne({user:ObjectId(userId)});
+
+                if( cart && cart != null ){
+                  
+                    // if cart exist for user in db cart collection
+                    const cartProductsWithQuantity = cart.products;
+
+                    // Iterate over each product in the cart
+                    for (const cartProduct of cartProductsWithQuantity) {
+
+                        const productId = cartProduct.item;
+
+                        const quantity = cartProduct.quantity;
+
+                        // Reduce the available stock of the product in the product collection
+                        await db.get().collection(collections.PRODUCT_COLLECTION).updateOne(
+                            
+                            { _id: ObjectId(productId) },
+
+                            { $inc: { availableStock: - quantity } }
+
+                        )
+
+                    }
+
+                  resolve({ status: true });
+
+                }else{ 
+                    
+                    // Send a error message if cart dosen't exist for user in db cart collection
+    
+                    reject({error:"Cart Dosent Exist or No products in the cart"});
+    
+                }
+            
+            }catch(error){
+            
+                console.error("Error from updateInventoryOfOrder user-helpers: ", error);
+            
+                reject(error);
+            
+            }
+
+        })
+
+    },
     placeOrder : (user,orderData,orderedProducts,totalOrderValue)=>{
 
         return new Promise((resolve,reject)=>{
@@ -1553,20 +1605,9 @@ module.exports = {
     
                     const dbOrderId = dbOrderDetails.insertedId.toString(); 
                     // To return back the inserted Id of the order which is returned from Db to use in payment gateway order creation.
-    
-                    db.get().collection(collections.CART_COLLECTION).deleteOne({user:ObjectId(user._id)}).then((deleteResult)=>{
-    
-                        // Returning back the order Id in orders collection of DB to use in payment gateway order creation
-                        resolve(dbOrderId); 
-    
-                    }).catch((error)=>{
-        
-                        console.error("Error-1 from Db delete action at placeOrder user-helpers: ", error);
-        
-                        reject(error);
-        
-                    });
-    
+
+                    // Returning back the order Id in orders collection of DB to use in payment gateway order creation
+                    resolve(dbOrderId);
     
                 }).catch((error)=>{
         
@@ -1579,6 +1620,34 @@ module.exports = {
             }catch(error){
             
                 console.error("Error from placeOrder user-helpers: ", error);
+            
+                reject(error);
+            
+            }
+
+        });
+        
+    },
+    deleteUserCart : (userId)=>{
+
+        return new Promise((resolve,reject)=>{
+
+            try{
+
+                db.get().collection(collections.CART_COLLECTION).deleteOne({user:ObjectId(userId)}).then((deleteResult)=>{
+    
+                    // Returning back the order Id in orders collection of DB to use in payment gateway order creation
+                    resolve(deleteResult);
+
+                }).catch((error)=>{
+    
+                    console.error("Error-1 from Db delete action at deleteUserCart user-helpers: ", error);
+    
+                });
+            
+            }catch(error){
+            
+                console.error("Error from deleteUserCart user-helpers: ", error);
             
                 reject(error);
             

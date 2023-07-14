@@ -1437,6 +1437,15 @@ const orderSuccessGET = (req,res)=>{
 
     const user = req.session.userSession // Used for storing user details for further use in this route
 
+    // ========================================== Inventory Updation ==========================================
+
+    const updateInventory = userHelpers.updateInventoryOfOrder(user._id);
+
+    // ================================ Delete user cart after succesful order ================================
+
+    const deleteUserCart = userHelpers.deleteUserCart(user._id);
+
+
     res.render('user/order-success',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
 
   }catch(error){
