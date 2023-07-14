@@ -45,7 +45,7 @@ const addProductGET = async (req,res)=>{
 
     const productCategories = await adminHelpers.getProductCategories();
   
-    res.render('admin/add-product',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Add Product",admin:true, adminData, PLATFORM_NAME, productCategories});
+    res.render('admin/add-product',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Add Product", PLATFORM_NAME, adminData, productCategories});
 
   }catch(error){
 
