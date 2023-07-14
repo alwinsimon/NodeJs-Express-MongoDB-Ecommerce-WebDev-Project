@@ -163,27 +163,77 @@ module.exports = {
         })
 
     },
-    updateProduct:(productId,productDetails)=>{
+    updateProduct : (productId,productDetails)=>{
 
-        return new Promise((resolve,reject)=>{
+        return new Promise(async (resolve,reject)=>{
 
             try{
 
-                db.get().collection(collections.PRODUCT_COLLECTION)
-                .updateOne({_id:ObjectId(productId)},{
-                    $set:{
-                        id:productDetails.id,
-                        name:productDetails.name,
-                        category:productDetails.category,
-                        description:productDetails.description,
-                        price:productDetails.price
-                    }
-                }
-                ).then(()=>{
-    
+                if(productDetails.images.length >0 ){
+
+                    // Delete Old Images of Product before inserting new images
+
+                    const productData = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectId(productId)});
+
+                    const productImagesArray = productData.images;
+
+                    // Function to Delete the image file from the server using fs.unlink
+                    productImagesArray.forEach((image) => {
+
+                        let imagePath = './public/product-images/' + image;
+        
+                        fs.unlink(imagePath, (error) => {
+            
+                            if (error) {
+                
+                                console.error("Error-1 from fs.unlink fuction at updateProduct product-helpers: ", error);
+                
+                            }
+            
+                        })
+
+                    });
+
+                    const productUpdate = await db.get().collection(collections.PRODUCT_COLLECTION).updateOne(
+                        
+                        {_id:ObjectId(productId)},
+                        
+                        {$set:
+                            
+                            {
+                                id:productDetails.id,
+                                name:productDetails.name,
+                                category:productDetails.category,
+                                description:productDetails.description,
+                                price:productDetails.price,
+                                images:productDetails.images
+                            }
+
+                        }
+
+                    )
+
                     resolve();
-    
-                })
+
+                }else{
+
+                    db.get().collection(collections.PRODUCT_COLLECTION)
+                    .updateOne({_id:ObjectId(productId)},{
+                        $set:{
+                            id:productDetails.id,
+                            name:productDetails.name,
+                            category:productDetails.category,
+                            description:productDetails.description,
+                            price:productDetails.price
+                        }
+                    }
+                    ).then(()=>{
+        
+                        resolve();
+        
+                    })
+
+                }
 
             }catch(error){
             
