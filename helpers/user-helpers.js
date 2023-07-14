@@ -1605,20 +1605,9 @@ module.exports = {
     
                     const dbOrderId = dbOrderDetails.insertedId.toString(); 
                     // To return back the inserted Id of the order which is returned from Db to use in payment gateway order creation.
-    
-                    db.get().collection(collections.CART_COLLECTION).deleteOne({user:ObjectId(user._id)}).then((deleteResult)=>{
-    
-                        // Returning back the order Id in orders collection of DB to use in payment gateway order creation
-                        resolve(dbOrderId); 
-    
-                    }).catch((error)=>{
-        
-                        console.error("Error-1 from Db delete action at placeOrder user-helpers: ", error);
-        
-                        reject(error);
-        
-                    });
-    
+
+                    // Returning back the order Id in orders collection of DB to use in payment gateway order creation
+                    resolve(dbOrderId);
     
                 }).catch((error)=>{
         
@@ -1631,6 +1620,34 @@ module.exports = {
             }catch(error){
             
                 console.error("Error from placeOrder user-helpers: ", error);
+            
+                reject(error);
+            
+            }
+
+        });
+        
+    },
+    deleteUserCart : (userId)=>{
+
+        return new Promise((resolve,reject)=>{
+
+            try{
+
+                db.get().collection(collections.CART_COLLECTION).deleteOne({user:ObjectId(userId)}).then((deleteResult)=>{
+    
+                    // Returning back the order Id in orders collection of DB to use in payment gateway order creation
+                    resolve(deleteResult);
+
+                }).catch((error)=>{
+    
+                    console.error("Error-1 from Db delete action at deleteUserCart user-helpers: ", error);
+    
+                });
+            
+            }catch(error){
+            
+                console.error("Error from deleteUserCart user-helpers: ", error);
             
                 reject(error);
             
