@@ -1445,7 +1445,6 @@ const orderSuccessGET = (req,res)=>{
 
     const deleteUserCart = userHelpers.deleteUserCart(user._id);
 
-    
 
     res.render('user/order-success',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
 
