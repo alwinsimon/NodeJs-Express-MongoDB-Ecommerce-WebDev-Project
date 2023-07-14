@@ -9,13 +9,19 @@ const { error } = require("console");
 
 module.exports = {
 
-    addProduct: (product)=>{
+    addProduct: (productDetails)=>{
 
         return new Promise( (resolve,reject)=>{
 
             try{
 
-                db.get().collection(collections.PRODUCT_COLLECTION).insertOne(product).then((data)=>{
+                // Making numerical values to specific data types before storing
+
+                productDetails.price = parseFloat(productDetails.price);
+
+                productDetails.availableStock = parseInt(productDetails.availableStock);
+
+                db.get().collection(collections.PRODUCT_COLLECTION).insertOne(productDetails).then((data)=>{
 
                     resolve(data);
                     /*In the above line, we are passing the object named data.
@@ -169,7 +175,13 @@ module.exports = {
 
             try{
 
-                if(productDetails.images.length >0 ){
+                // Making numerical values to specific data types before storing
+
+                productDetails.price = parseFloat(productDetails.price);
+
+                productDetails.availableStock = parseInt(productDetails.availableStock);
+
+                if(productDetails.images.length >0 ){ // If there are any new product Images added
 
                     // Delete Old Images of Product before inserting new images
 
@@ -201,12 +213,15 @@ module.exports = {
                         {$set:
                             
                             {
+                                
                                 id:productDetails.id,
                                 name:productDetails.name,
                                 category:productDetails.category,
                                 description:productDetails.description,
+                                availableStock:productDetails.availableStock,
                                 price:productDetails.price,
                                 images:productDetails.images
+
                             }
 
                         }
@@ -215,19 +230,22 @@ module.exports = {
 
                     resolve();
 
-                }else{
+                }else{ // If there is no new product Images added
 
                     db.get().collection(collections.PRODUCT_COLLECTION)
                     .updateOne({_id:ObjectId(productId)},{
                         $set:{
+
                             id:productDetails.id,
                             name:productDetails.name,
                             category:productDetails.category,
                             description:productDetails.description,
+                            availableStock:productDetails.availableStock,
                             price:productDetails.price
+
                         }
-                    }
-                    ).then(()=>{
+
+                    }).then(()=>{
         
                         resolve();
         
