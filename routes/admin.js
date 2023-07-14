@@ -70,7 +70,7 @@ router.get('/delete-product/:id', verifyAdminLogin, productController.deleteProd
 
 router.get('/edit-product/:id', verifyAdminLogin, productController.editProductGET);
 
-router.post('/edit-product/:id', verifyAdminLogin, productController.editProductPOST);
+router.post('/edit-product/:id', verifyAdminLogin, multerUploadProductImage, productController.editProductPOST);
 
 
 // ====================Routes for PRODUCT CATEGORIES====================

@@ -149,32 +149,27 @@ const editProductPOST = (req,res)=>{
 
     const productId = req.params.id;
 
-    productHelpers.updateProduct(productId,req.body).then(()=>{
+    let updatedProductData = req.body;
+
+    let productImageArray = [];
+
+    updatedProductData.images = productImageArray;
+
+    if(req.files.length > 0){
+
+      for (let i = 0; i < req.files.length; i++) {
   
-      /*
-      Redirect the user to admin page first, if there is any new image uploaded, update that in server after redirecting user.
-      This will prevent user from keeping the user waiting in the edit page itself till the image gets uploaded.
-      */
-      res.redirect('/admin')
-  
-      // Fuction to update the image if new image is uploaded in the edit page
-      if(req.files){
-  
-        const id = req.params.id;
-  
-        let image = req.files.image
-  
-        image.mv('./public/product-images/' + id +'.jpg',(err,done)=>{
-  
-          if(err){
-    
-            console.log(err);
-    
-          }
-    
-        });
+        productImageArray[i] = req.files[i].filename;
   
       }
+  
+      updatedProductData.images = productImageArray;
+
+    }
+
+    productHelpers.updateProduct(productId,updatedProductData).then(()=>{
+  
+      res.redirect('/admin/manage-products');
   
     })
 

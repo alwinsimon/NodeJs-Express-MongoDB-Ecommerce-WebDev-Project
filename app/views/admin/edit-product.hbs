@@ -38,14 +38,13 @@
         <label for="image">Image:</label>
         <img src="/product-images/{{productDetails._id}}.jpg" alt="" style="width: 100px;height:auto" id="imageView" class="pt-3">
         <div class="custom-file">
-          <input type="file" class="custom-file-input" id="image" name="image" accept="image/*" onchange="displayImage(event)">
+          <input type="file" class="custom-file-input" id="image" name="image" accept="image/*" multiple onchange="displayImage(event)">
           <label class="custom-file-label" for="image">Choose file</label>
         </div>
         <div id="image-preview" class="mt-2"></div>
       </div>
       <button type="submit" class="btn btn-primary">Edit Product</button>
       <button type="reset" class="btn btn-secondary ml-2">Reset</button>
-      <button type="button" class="btn btn-info ml-2" data-toggle="modal" data-target="#preview-modal">Preview</button>
     </form>
   </div>
 </section>
