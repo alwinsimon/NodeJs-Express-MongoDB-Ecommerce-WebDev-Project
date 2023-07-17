@@ -201,10 +201,6 @@ $(document).ready(function() {
 
   function makeRazorpayPayment(serverOrderData){
 
-    // console.log("makeRazorpayPayment Function Called");
-
-    // console.log(serverOrderData);
-
     let razorpayKeyId = serverOrderData.razorpayKeyId;
 
     let orderDetails = serverOrderData.orderDetails;
