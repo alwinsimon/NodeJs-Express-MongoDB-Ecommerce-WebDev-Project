@@ -1380,9 +1380,17 @@ const placeOrderPOST = async (req,res)=>{
 
       userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue).then((orderId)=>{
 
-        if(req.body['payment-method']==='COD'){
+        if(req.body['payment-method']==='COD'){ // If the payment method is COD - send a status and directly place the order.
 
           res.json({COD_CHECKOUT:true});
+
+
+          // ========================================== Inventory Updation ==========================================
+          const updateInventory = userHelpers.updateInventoryOfOrder(user._id);
+
+          // ================================ Delete user cart after succesful order ================================
+          const deleteUserCart = userHelpers.deleteUserCart(user._id);
+
     
         }else if(req.body['payment-method']==='ONLINE'){
     
@@ -1437,16 +1445,7 @@ const orderSuccessGET = (req,res)=>{
 
     const user = req.session.userSession // Used for storing user details for further use in this route
 
-    // ========================================== Inventory Updation ==========================================
-
-    const updateInventory = userHelpers.updateInventoryOfOrder(user._id);
-
-    // ================================ Delete user cart after succesful order ================================
-
-    const deleteUserCart = userHelpers.deleteUserCart(user._id);
-
-
-    res.render('user/order-success',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
+    res.render('user/order-success',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , user});
 
   }catch(error){
 
@@ -1480,6 +1479,8 @@ const verifyPaymentPOST = (req,res)=>{
 
   try{
 
+    const user = req.session.userSession;
+
     // The below verifyOnlinePayment function will match the signature returned by Razorpay with our server generated signature
     userHelpers.verifyOnlinePayment(req.body).then(()=>{
 
@@ -1500,6 +1501,13 @@ const verifyPaymentPOST = (req,res)=>{
         // console.log('Payment Succesful from Update online Orders');
 
       })
+
+
+      // ========================================== Inventory Updation ==========================================
+      const updateInventory = userHelpers.updateInventoryOfOrder(user._id);
+
+      // ================================ Delete user cart after succesful order ================================
+      const deleteUserCart = userHelpers.deleteUserCart(user._id);
       
 
     }).catch((error)=>{
