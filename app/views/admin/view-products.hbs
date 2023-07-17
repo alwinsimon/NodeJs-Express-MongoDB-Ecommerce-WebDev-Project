@@ -68,13 +68,19 @@
                         <td>₹ {{this.price}}</td>
 
                         {{#if (lt this.availableStock 25)}}
-                        <td><span style="color: red; font-weight: bold;">{{this.availableStock}} <br> <span class="blink" style="color: red; font-weight: bold;">Low !!!</span></span></td>
+                            <td><span style="color: red; font-weight: bold;">{{this.availableStock}} <br> <span class="blink" style="color: red; font-weight: bold;">Low!!!</span></span></td>
                         {{else}}
-                        <td>{{this.availableStock}}</td>
+                            <td>{{this.availableStock}}</td>
                         {{/if}}
                         
                         <td><img style="width: 50px; height: 50px" src="/product-images/{{images.[0]}}" alt="{{this.name}}"></td>
-                        <td>{{this.productOffer}} %</td>
+
+                        {{#if (gt this.productOffer 25)}}
+                            <td><span style="color: red; font-weight: bold;">{{this.productOffer}} %<br> <span class="blink" style="color: darkorange;">Carefull!</span></span></td>
+                        {{else}}
+                            <td>{{this.productOffer}} %</td>
+                        {{/if}}
+
                         <td>
                             
                             <button class="btn btn-primary mb-1" data-bs-toggle = "modal" data-bs-target="#set-product-offer-{{this._id}}">Add</button>
