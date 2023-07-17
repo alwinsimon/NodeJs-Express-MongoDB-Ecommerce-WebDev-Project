@@ -507,6 +507,8 @@ const changeOrderReturnStatusPOST = async (req,res)=>{
 
     }
 
+    res.redirect('/admin/order-summary');
+
   }catch(error){
 
     console.log("Error from changeOrderReturnStatusPOST adminController: ", error);
