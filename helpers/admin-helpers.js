@@ -571,6 +571,59 @@ module.exports = {
     });
 
   },
+  updateInventoryForOrderCancellation : (orderId)=>{
+
+    return new Promise( async(resolve,reject)=>{
+
+      try{
+
+        const orderToCancell = await db.get().collection(collections.ORDERS_COLLECTION).findOne({_id:ObjectId(orderId)});
+
+        if( orderToCancell && orderToCancell != null ){
+          
+          // if order exist in db orders collection
+          const orderProductsWithQuantity = orderToCancell.products;
+
+          // Iterate over each product in the order
+          for (const product of orderProductsWithQuantity) {
+
+            const productId = product.item;
+
+            const quantity = product.quantity;
+
+            // Add to the available stock of the product in the product collection
+            const updateInventory = await db.get().collection(collections.PRODUCT_COLLECTION)
+            .updateOne(
+                
+              { _id: ObjectId(productId) },
+
+              { $inc: { availableStock: quantity } }
+
+            )
+
+          }
+
+          resolve({ status: true });
+
+        }else{ 
+            
+          // Send a error message if order dosen't exist in db orders collection
+
+          resolve({status: false, result: orderToCancell, error: "Order Dosent Exist or No products in the Order"});
+
+        }
+      
+      }catch(error){
+      
+        console.error("Error from updateInventoryForOrderCancellation admin-helpers: ", error);
+    
+        reject(error);
+      
+      }
+
+    })
+
+  },
   manageOrderReturn : (orderId, approve)=>{
 
     return new Promise( async (resolve, reject) => {
