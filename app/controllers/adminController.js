@@ -353,7 +353,7 @@ const approveOrderCancellationPOST = async (req,res)=>{
       }
 
       // ============================== Update Inventory ==============================
-      const inventoryUpdateStatus = await adminHelpers.updateInventoryForOrderCancellation(orderId);
+      const inventoryUpdateStatus = await adminHelpers.updateInventoryForOrderCancellationAndReturn(orderId);
 
       if(inventoryUpdateStatus.status){
 
@@ -361,7 +361,7 @@ const approveOrderCancellationPOST = async (req,res)=>{
 
       }else{
 
-        console.error("Error-1 from updateInventoryForOrderCancellation admin-helper at approveOrderCancellationPOST adminController: ", inventoryUpdateStatus);
+        console.error("Error-1 from updateInventoryForOrderCancellationAndReturn admin-helper at approveOrderCancellationPOST adminController: ", inventoryUpdateStatus);
 
         res.redirect('/admin/error-page');
 
@@ -420,7 +420,7 @@ const adminSideOrderCancellationPOST = async (req,res)=>{
       }
 
       // ============================== Update Inventory ==============================
-      const inventoryUpdateStatus = await adminHelpers.updateInventoryForOrderCancellation(orderId);
+      const inventoryUpdateStatus = await adminHelpers.updateInventoryForOrderCancellationAndReturn(orderId);
 
       if(inventoryUpdateStatus.status){
 
@@ -493,23 +493,21 @@ const changeOrderReturnStatusPOST = async (req,res)=>{
   
     }
   
-    await adminHelpers.manageOrderReturn(orderId,adminResponse).then((response)=>{
+    const processOrderReturn = await adminHelpers.manageOrderReturn(orderId,adminResponse);
+
+    if(adminResponse){
+      
+      // Processing refund to wallet and inventory updation , if the admin has approved order return.
   
-      if(response.refundAvailable){
-  
-        adminHelpers.addRefundToWalletBalance(orderId, false, true).then((response)=>{
-  
-          res.redirect('/admin/order-summary');
-  
-        })
-  
-      }else{
-  
-        res.redirect('/admin/order-summary');
-  
-      }
-  
-    })
+      // ============================== Process Wallet Refund  ==============================
+      const processWalletRefund = await adminHelpers.addRefundToWalletBalance(orderId, false, true);
+
+      // ============================== Update Inventory ==============================
+      const inventoryUpdateStatus = await adminHelpers.updateInventoryForOrderCancellationAndReturn(orderId);
+
+    }
+
+    res.redirect('/admin/order-summary');
 
   }catch(error){
 

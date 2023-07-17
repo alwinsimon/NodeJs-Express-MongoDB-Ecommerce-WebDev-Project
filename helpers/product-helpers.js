@@ -84,7 +84,8 @@ module.exports = {
                         price: product.price,
                         category: category ? { _id: category._id.toString(), name: category.name } : null,
                         productOffer:product.productOffer,
-                        images:product.images
+                        images:product.images,
+                        availableStock:product.availableStock
                     };
 
                 });

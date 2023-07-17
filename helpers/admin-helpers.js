@@ -571,7 +571,7 @@ module.exports = {
     });
 
   },
-  updateInventoryForOrderCancellation : (orderId)=>{
+  updateInventoryForOrderCancellationAndReturn : (orderId)=>{
 
     return new Promise( async(resolve,reject)=>{
 
@@ -615,7 +615,7 @@ module.exports = {
       
       }catch(error){
       
-        console.error("Error from updateInventoryForOrderCancellation admin-helpers: ", error);
+        console.error("Error from updateInventoryForOrderCancellationAndReturn admin-helpers: ", error);
     
         reject(error);
       
