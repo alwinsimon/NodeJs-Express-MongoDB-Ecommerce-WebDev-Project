@@ -411,20 +411,27 @@ const adminSideOrderCancellationPOST = async (req,res)=>{
 
     const orderId = req.body.orderId;
   
-    await adminHelpers.manageOrderCancellation(orderId, true, true).then((response)=>{
+    await adminHelpers.manageOrderCancellation(orderId, true, true).then( async (response)=>{
   
       if(response.refundAvailable){
   
-        adminHelpers.addRefundToWalletBalance(orderId, true, false).then((response)=>{
+        const refundProcess = adminHelpers.addRefundToWalletBalance(orderId, true, false);
   
-          res.redirect('/admin/order-summary');
-  
-        })
-  
-      }else{
-  
+      }
+
+      // ============================== Update Inventory ==============================
+      const inventoryUpdateStatus = await adminHelpers.updateInventoryForOrderCancellation(orderId);
+
+      if(inventoryUpdateStatus.status){
+
         res.redirect('/admin/order-summary');
-  
+
+      }else{
+
+        console.error("Error-1 from updateInventoryForOrderCancellation admin-helper at adminSideOrderCancellationPOST adminController: ", inventoryUpdateStatus);
+
+        res.redirect('/admin/error-page');
+
       }
   
     })
