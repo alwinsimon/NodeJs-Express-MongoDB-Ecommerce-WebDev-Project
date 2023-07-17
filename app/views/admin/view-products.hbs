@@ -68,7 +68,7 @@
                         <td>₹ {{this.price}}</td>
 
                         {{#if (lt this.availableStock 25)}}
-                        <td><span class="blink" style="color: red; font-weight: bold;">{{this.availableStock}} - Low Stock!!!</span></td>
+                        <td><span style="color: red; font-weight: bold;">{{this.availableStock}} <br> <span class="blink" style="color: red; font-weight: bold;">Low !!!</span></span></td>
                         {{else}}
                         <td>{{this.availableStock}}</td>
                         {{/if}}
