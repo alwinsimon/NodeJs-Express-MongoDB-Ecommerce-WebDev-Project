@@ -105,6 +105,67 @@ module.exports = {
         });
 
     },
+    deleteSingleProductImage: (productId, imageName) => {
+
+        return new Promise(async (resolve, reject) => {
+
+            try{
+
+                // Find the product document to delete from the MongoDB collection
+                const productToModify = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({ _id: ObjectId(productId) });
+
+                if(productToModify.images.length > 1){ // Delete the requested product image if there are more than 1 image available for the product.
+
+                    // Delete the image file from the server using fs.unlink
+                    productToModify.images.forEach((image) => {
+
+                        if(image === imageName){
+
+                            let imagePath = './public/product-images/' + image;
+
+                            fs.unlink(imagePath, (error) => {
+
+                                if (error) {
+
+                                    console.error("Error-1 from fs.unlink function at deleteSingleProductImage in product-helpers: ", error);
+                                    
+                                }
+
+                            });
+
+                        }
+
+                    });
+            
+                    // Remove the image name from the images array in the products collection
+                    const removeProductImage = await db.get().collection(collections.PRODUCT_COLLECTION).updateOne(
+                        
+                        { _id: ObjectId(productId) },
+
+                        { $pull: { images: imageName } }
+
+                    );
+            
+                    resolve({status: true, result:removeProductImage});
+
+                }else{
+
+                    resolve({status: false, errorStatus: "Only 1 product Image exist, Image Deletion request REJECTED."});
+
+                }
+        
+
+            }catch(error){
+
+                console.error("Error from deleteSingleProductImage in product-helpers: ", error);
+
+                reject(error);
+
+            }
+
+        });
+
+    },
     deleteProduct: (productId) => {
 
         return new Promise( async (resolve, reject) => {
