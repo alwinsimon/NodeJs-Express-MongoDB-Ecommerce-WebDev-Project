@@ -130,8 +130,12 @@ const editProductGET = async (req,res)=>{
     const productCategory = await productHelpers.getProductCategoryById(productID); // Product category of this product to display
   
     const allProductCategories = await adminHelpers.getProductCategories();
+
+    const singleProductImageDeletionerror = req.session.singleProductImageDeletionError;
   
-    res.render('admin/edit-product',{ layout: 'admin-layout', title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategory, allProductCategories});
+    res.render('admin/edit-product',{ layout: 'admin-layout', title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategory, allProductCategories, singleProductImageDeletionerror });
+
+    delete req.session.singleProductImageDeletionError;
 
   }catch(error){
 
@@ -176,6 +180,39 @@ const editProductPOST = (req,res)=>{
   }catch(error){
 
     console.log("Error from editProductPOST productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
+}
+
+
+const deleteSingleProductImagePOST = async (req,res)=>{
+
+  try{
+
+    const productId = req.body.productId;
+
+    const imageName = req.body.imageName;
+
+    const deleteSingleProductImage = await productHelpers.deleteSingleProductImage( productId, imageName );
+
+    if(deleteSingleProductImage.status){
+
+      res.json({status:true});
+
+    }else{
+
+      req.session.singleProductImageDeletionError = deleteSingleProductImage.errorStatus;
+
+      res.json({status:true});
+
+    }
+
+  }catch(error){
+
+    console.log("Error from deleteSingleProductImagePOST productController: ", error);
 
     res.redirect('/admin/error-page');
 
@@ -384,6 +421,7 @@ module.exports = {
   deleteProductGET,
   editProductGET,
   editProductPOST,
+  deleteSingleProductImagePOST,
   productCategoriesGET,
   addProductCategoryGET,
   addProductCategoryPOST,
