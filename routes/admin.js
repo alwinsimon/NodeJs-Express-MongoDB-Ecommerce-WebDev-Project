@@ -72,6 +72,8 @@ router.get('/edit-product/:id', verifyAdminLogin, productController.editProductG
 
 router.post('/edit-product/:id', verifyAdminLogin, multerUploadProductImage, productController.editProductPOST);
 
+router.post('/delete-single-product-image', verifyAdminLogin, productController.deleteSingleProductImagePOST);
+
 
 // ====================Routes for PRODUCT CATEGORIES====================
 
