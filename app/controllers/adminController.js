@@ -22,11 +22,11 @@ const logInGET = (req,res)=>{
   
     }else{
   
-      res.render('admin/admin-login',{ layout: 'admin-layout', "loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", PLATFORM_NAME, admin:true});
+      res.render('admin/admin-login-page',{ layout: 'admin-login-layout', "loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", PLATFORM_NAME });
   
-      req.session.adminLogginErr = false; 
+      delete req.session.adminLogginErr; 
       /*
-      Resetting the flag for checking if the login page post request was due to invalid username or password.
+      Deleting the flag for checking if the login page post request was due to invalid username or password.
       This is done so that the login page will show the message only once if there was a redirect to this page due to invalid credentials.
       */
       
