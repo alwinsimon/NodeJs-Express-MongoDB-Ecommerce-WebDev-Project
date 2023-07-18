@@ -85,7 +85,7 @@ router.post('/add-new-product-category', verifyAdminLogin, multerUploadProductCa
 
 router.get('/edit-product-category/:categoryId', verifyAdminLogin, productController.editProductCategoryGET);
 
-router.post('/edit-product-category/:categoryId', verifyAdminLogin, productController.editProductCategoryPOST);
+router.post('/edit-product-category/:categoryId', verifyAdminLogin, multerUploadProductCategoryImage, productController.editProductCategoryPOST);
 
 router.post('/delete-product-category/:categoryId', verifyAdminLogin, productController.deleteProductCategoryPOST);
 
