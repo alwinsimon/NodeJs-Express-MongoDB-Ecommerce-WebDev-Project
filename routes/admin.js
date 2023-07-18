@@ -102,6 +102,9 @@ router.post('/set-category-offer', verifyAdminLogin, offerController.setCategory
 
 router.post('/remove-category-offer', verifyAdminLogin, offerController.removeCategoryOfferPOST);
 
+
+// ================================================ COUPON MANAGEMENT ================================================
+
 // ====================Routes for Coupon Management ====================
 
 router.get('/manage-coupons', verifyAdminLogin, couponController.manageCouponGET);
@@ -118,22 +121,6 @@ router.post('/change-coupon-status', verifyAdminLogin, couponController.changeCo
 
 router.get('/inactive-coupons', verifyAdminLogin, couponController.inactiveCouponsGET );
 
-
-// ====================Routes for Offer Management ====================
-
-router.get('/manage-offers', verifyAdminLogin, offerController.manageOfferGET);
-
-router.get('/add-offer', verifyAdminLogin, offerController.addNewOfferGET);
-
-router.post('/add-offer', verifyAdminLogin, offerController.addNewOfferPOST);
-
-router.get('/edit-offer/:offerName', verifyAdminLogin, offerController.editOfferGET);
-
-router.post('/update-offer', verifyAdminLogin, offerController.updateOfferPOST);
-
-router.post('/change-offer-status', verifyAdminLogin, offerController.changeOfferStatusPOST);
-
-router.get('/inactive-offers', verifyAdminLogin, offerController.inactiveOffersGET);
 
 
 // ====================Routes for Managing Orders====================
