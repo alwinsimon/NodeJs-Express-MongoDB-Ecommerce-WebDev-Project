@@ -117,27 +117,6 @@ const logOutPOST = (req,res)=>{
 }
 
 
-// ====================Controller for Admin Dashboard====================
-
-const adminDashboardGET =  (req, res)=>{
-
-  try{
-
-    const adminData = req.session.adminSession;
-
-    res.render('admin/admin-home',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, admin:true, adminData, PLATFORM_NAME });
-
-  }catch(error){
-
-    console.log("Error from adminDashboardGET adminController: ", error);
-
-    res.redirect('/admin/error-page');
-
-  }
-
-};
-
-
 // ====================Controller for Adding New Admin====================
 
 const addNewAdminGET = (req, res)=>{
@@ -600,7 +579,6 @@ module.exports = {
   logInGET,
   logInPOST,
   logOutPOST,
-  adminDashboardGET,
   addNewAdminGET,
   addNewAdminPOST,
   manageUsersGET,
