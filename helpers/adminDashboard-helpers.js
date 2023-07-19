@@ -331,7 +331,7 @@ const getTotalSalesCount = () => {
 
               { $match: { orderStatus: { $nin: ["Cancelled", "Returned"] } } },
 
-              { $count: "salesCount" }, // Used to get the count of matching documents
+              { $count: "salesCount" } // Used to get the count of matching documents
 
             ];
       
@@ -360,7 +360,90 @@ const getTotalSalesCount = () => {
 };
 
 
+const getPaymentMethodsWithVolumeAndUsageCount = () => {
 
+    return new Promise(async (resolve, reject) => {
+
+        try{
+
+            const pipeline = [
+
+              { $match: { orderStatus: { $nin: ["Cancelled", "Returned"] } } },
+
+              {
+                $group: {
+                  _id: "$paymentMethod",
+                  orderVolume: { $sum: "$orderValue" },
+                  usageCount: { $sum: 1 },
+                },
+              },
+
+              {
+                $project: {
+                    paymentMethod: "$_id",
+                    orderVolume: 1,
+                    usageCount: 1,
+                    _id: 0,
+                }
+              }
+
+            ];
+      
+            const paymentDataQueryResult = await db.get().collection(databaseCollections.ORDERS_COLLECTION).aggregate(pipeline).toArray();
+      
+            resolve(paymentDataQueryResult);
+
+        }catch(error){
+
+            console.error("Error from getPaymentMethodsWithVolumeAndUsageCount adminDashboard-helpers: ", error);
+
+            reject(error);
+
+        }
+
+    });
+
+};
+
+
+const getMonthlySalesData = () => {
+
+    return new Promise(async (resolve, reject) => {
+
+        try{
+
+            const pipeline = [
+
+              { $match: { orderStatus: { $nin: ["Cancelled", "Returned"] } } },
+
+              {
+                $group: {
+                    _id: { $month: "$date" },
+                    totalSales: { $sum: "$orderValue" }
+                }
+              },
+
+              {
+                $sort: {_id: 1}
+              }
+
+            ];
+      
+            const monthlySalesDataQueryResult = await db.get().collection(databaseCollections.ORDERS_COLLECTION).aggregate(pipeline).toArray();
+      
+            resolve(monthlySalesDataQueryResult);
+
+        }catch(error){
+
+            console.error("Error from getMonthlySalesData adminDashboard-helpers: ", error);
+
+            reject(error);
+
+        }
+
+    });
+
+};
 
 
 
@@ -403,5 +486,8 @@ module.exports = {
 
     getTotalSalesCount,
     getTodaysSalesCount,
+
+    getMonthlySalesData,
+    getPaymentMethodsWithVolumeAndUsageCount
 
 }

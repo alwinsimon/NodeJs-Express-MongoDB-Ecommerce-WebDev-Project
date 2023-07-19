@@ -36,6 +36,12 @@ const adminDashboardGET = async (req,res)=>{
         const todaysSalesCount = await adminDashboardHelpers.getTodaysSalesCount();
         const totalSalesCount = await adminDashboardHelpers.getTotalSalesCount();
 
+        let monthlySalesData = await adminDashboardHelpers.getMonthlySalesData();
+        monthlySalesData = encodeURIComponent(JSON.stringify(monthlySalesData)); // Encoding to display in chart/graph
+
+        let paymentAnalytics = await adminDashboardHelpers.getPaymentMethodsWithVolumeAndUsageCount();
+        paymentAnalytics = encodeURIComponent(JSON.stringify(paymentAnalytics)); // Encoding to display in chart/graph
+
         const dataToRender = {
 
             layout: 'admin-layout',
@@ -57,7 +63,10 @@ const adminDashboardGET = async (req,res)=>{
             todaysSales,
 
             totalSalesCount,
-            todaysSalesCount
+            todaysSalesCount,
+
+            monthlySalesData,
+            paymentAnalytics
 
         }
 
