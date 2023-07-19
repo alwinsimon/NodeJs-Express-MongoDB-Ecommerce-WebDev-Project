@@ -398,6 +398,190 @@ const verifyUserSignUpPOST = (req,res)=>{
 }
 
 
+/* ======================== FORGOT PASSWORD Controllers ======================== */
+
+const forgotPasswordGET = (req, res) => {
+
+  try {
+
+    const userPasswordResetError = req.session.userPasswordResetError;
+
+    res.render('user/forgot-password', { layout: 'user-layout', title: PLATFORM_NAME + " || Forgot password", userPasswordResetError });
+
+    delete req.session.userPasswordResetError;
+
+  } catch (error) {
+
+    console.log("Error from forgotPasswordGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
+}
+
+const verifyAccountForPasswordResetPOST = async (req, res) => {
+
+  try {
+
+    const requestedEmail = req.body.requestEmail;
+
+    const userData = await userHelpers.findUserwithEmail(requestedEmail);
+
+    req.session.userDataForPasswordReset = userData;
+
+    if(userData === null){
+
+      req.session.userPasswordResetError = "We coudn't find your details in our platform users data, please check ypur email or sign-up if not registered.";
+
+      res.redirect('/forgot-password');
+
+    }else{ // Proceed Sending an OTP as 2FA to the user mobile number
+
+      const userMobileNumber = userData.phone;
+
+      const sendOtpToUser = await userHelpers.createVerificationOTPWithTwilio(userMobileNumber);
+
+      if(sendOtpToUser.statusMessageSent){
+    
+        req.session.passwordResetOtpFromTwilioAwaited = true;
+        
+        res.redirect('/password-reset-otp');
+  
+      }else{
+  
+        req.session.userPasswordResetError = "We could't send OTP to your mobile, please retry!"
+  
+        res.redirect('/forgot-password');
+  
+      }
+
+    }
+
+  } catch (error) {
+
+    console.log("Error from verifyAccountForPasswordResetPOST userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
+}
+
+const verifyOTPForPasswordResetGET = async (req, res) => {
+
+  try {
+
+    if(req.session.passwordResetOtpFromTwilioAwaited){
+
+      const userPasswordResetError = req.session.userPasswordResetError;
+
+      res.render('user/password-reset-otp-submission', { layout: 'user-layout', title: PLATFORM_NAME + " || Password Reset OTP", userPasswordResetError });
+
+      delete req.session.userPasswordResetError;
+
+    }else{
+
+      res.redirect('/forgot-password');
+
+    }
+
+  } catch (error) {
+
+    console.log("Error from verifyOTPForPasswordResetGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
+}
+
+
+const verifyOTPForPasswordResetPOST = async (req, res) => {
+
+  try {
+
+    if(req.session.passwordResetOtpFromTwilioAwaited){
+
+      const requestedOTP = req.body.otpToVerify;
+
+      const userData = req.session.userDataForPasswordReset;
+
+      const userMobileNumber = userData.phone;
+
+      userHelpers.verifyOTPCreatedWithTwilio(requestedOTP, userMobileNumber).then((verificationData)=>{
+
+        if(verificationData.verified){
+
+          req.session.userPasswordResetAllowed = true;
+  
+          res.render('user/password-set-new', { layout: 'user-layout', title: PLATFORM_NAME + " || Reset password" });
+
+          delete req.session.passwordResetOtpFromTwilioAwaited;
+  
+        }else{
+  
+          req.session.userPasswordResetError = verificationData.otpErrorMessage;
+  
+          res.redirect('/password-reset-otp');
+  
+        }
+  
+      })
+
+    }else{
+
+      res.redirect('/forgot-password');
+
+    }
+
+  } catch (error) {
+
+    console.log("Error from verifyOTPForPasswordResetGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
+}
+
+
+const resetUserPasswordPOST = async (req, res) => {
+
+  try {
+
+    if(req.session.userPasswordResetAllowed){
+
+      delete req.session.userPasswordResetAllowed;
+
+      const userData = req.session.userDataForPasswordReset;
+
+      const userId = userData._id;
+
+      const requestedNewUserPassword = req.body.newPassword;
+
+      const updatePassword = await userHelpers.resetUserPassword(userId, requestedNewUserPassword);
+
+      res.redirect('/login');
+
+      delete req.session.userDataForPasswordReset;
+
+    }else{
+
+      res.redirect('/forgot-password');
+
+    }
+
+  } catch (error) {
+
+    console.log("Error from verifyOTPForPasswordResetGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+
+}
+
 /* ======================== USER PROFILE Controllers ======================== */
 
 const userProfileGET =  async (req, res) => {
@@ -1196,9 +1380,17 @@ const placeOrderPOST = async (req,res)=>{
 
       userHelpers.placeOrder(user,orderDetails,orderedProducts,totalOrderValue).then((orderId)=>{
 
-        if(req.body['payment-method']==='COD'){
+        if(req.body['payment-method']==='COD'){ // If the payment method is COD - send a status and directly place the order.
 
           res.json({COD_CHECKOUT:true});
+
+
+          // ========================================== Inventory Updation ==========================================
+          const updateInventory = userHelpers.updateInventoryOfOrder(user._id);
+
+          // ================================ Delete user cart after succesful order ================================
+          const deleteUserCart = userHelpers.deleteUserCart(user._id);
+
     
         }else if(req.body['payment-method']==='ONLINE'){
     
@@ -1253,7 +1445,7 @@ const orderSuccessGET = (req,res)=>{
 
     const user = req.session.userSession // Used for storing user details for further use in this route
 
-    res.render('user/order-success',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , admin:false, user});
+    res.render('user/order-success',{ layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME + " || Order Placed!!!" , user});
 
   }catch(error){
 
@@ -1287,6 +1479,8 @@ const verifyPaymentPOST = (req,res)=>{
 
   try{
 
+    const user = req.session.userSession;
+
     // The below verifyOnlinePayment function will match the signature returned by Razorpay with our server generated signature
     userHelpers.verifyOnlinePayment(req.body).then(()=>{
 
@@ -1307,6 +1501,13 @@ const verifyPaymentPOST = (req,res)=>{
         // console.log('Payment Succesful from Update online Orders');
 
       })
+
+
+      // ========================================== Inventory Updation ==========================================
+      const updateInventory = userHelpers.updateInventoryOfOrder(user._id);
+
+      // ================================ Delete user cart after succesful order ================================
+      const deleteUserCart = userHelpers.deleteUserCart(user._id);
       
 
     }).catch((error)=>{
@@ -1529,6 +1730,11 @@ module.exports = {
   requestToReSendUserSignUpOTPPOST,
   verifyUserSignUpGET,
   verifyUserSignUpPOST,
+  forgotPasswordGET,
+  verifyAccountForPasswordResetPOST,
+  verifyOTPForPasswordResetGET,
+  verifyOTPForPasswordResetPOST,
+  resetUserPasswordPOST,
   userProfileGET,
   userProfileUpdateRequestPOST,
   userWishlistGET,

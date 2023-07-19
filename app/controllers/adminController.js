@@ -22,11 +22,11 @@ const logInGET = (req,res)=>{
   
     }else{
   
-      res.render('admin/admin-login',{ layout: 'admin-layout', "loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", PLATFORM_NAME, admin:true});
+      res.render('admin/admin-login-page',{ layout: 'admin-login-layout', "loginError":req.session.adminLogginErr, title:PLATFORM_NAME + " || Admin Login", PLATFORM_NAME });
   
-      req.session.adminLogginErr = false; 
+      delete req.session.adminLogginErr; 
       /*
-      Resetting the flag for checking if the login page post request was due to invalid username or password.
+      Deleting the flag for checking if the login page post request was due to invalid username or password.
       This is done so that the login page will show the message only once if there was a redirect to this page due to invalid credentials.
       */
       
@@ -115,27 +115,6 @@ const logOutPOST = (req,res)=>{
   }
 
 }
-
-
-// ====================Controller for Admin Dashboard====================
-
-const adminDashboardGET =  (req, res)=>{
-
-  try{
-
-    const adminData = req.session.adminSession;
-
-    res.render('admin/admin-home',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, admin:true, adminData, PLATFORM_NAME });
-
-  }catch(error){
-
-    console.log("Error from adminDashboardGET adminController: ", error);
-
-    res.redirect('/admin/error-page');
-
-  }
-
-};
 
 
 // ====================Controller for Adding New Admin====================
@@ -343,21 +322,28 @@ const approveOrderCancellationPOST = async (req,res)=>{
     const adminData = req.session.adminSession;
 
     const orderId = req.body.orderId;
-  
-    await adminHelpers.manageOrderCancellation(orderId,true, false).then((response)=>{
+
+    await adminHelpers.manageOrderCancellation(orderId,true, false).then( async (response)=>{
   
       if(response.refundAvailable){
   
-        adminHelpers.addRefundToWalletBalance(orderId, true, false).then((response)=>{
+        const refundProcess = await adminHelpers.addRefundToWalletBalance(orderId, true, false);
   
-          res.redirect('/admin/order-summary');
-  
-        })
-  
-      }else{
-  
+      }
+
+      // ============================== Update Inventory ==============================
+      const inventoryUpdateStatus = await adminHelpers.updateInventoryForOrderCancellationAndReturn(orderId);
+
+      if(inventoryUpdateStatus.status){
+
         res.redirect('/admin/order-summary');
-  
+
+      }else{
+
+        console.error("Error-1 from updateInventoryForOrderCancellationAndReturn admin-helper at approveOrderCancellationPOST adminController: ", inventoryUpdateStatus);
+
+        res.redirect('/admin/error-page');
+
       }
   
     })
@@ -404,20 +390,27 @@ const adminSideOrderCancellationPOST = async (req,res)=>{
 
     const orderId = req.body.orderId;
   
-    await adminHelpers.manageOrderCancellation(orderId, true, true).then((response)=>{
+    await adminHelpers.manageOrderCancellation(orderId, true, true).then( async (response)=>{
   
       if(response.refundAvailable){
   
-        adminHelpers.addRefundToWalletBalance(orderId, true, false).then((response)=>{
+        const refundProcess = adminHelpers.addRefundToWalletBalance(orderId, true, false);
   
-          res.redirect('/admin/order-summary');
-  
-        })
-  
-      }else{
-  
+      }
+
+      // ============================== Update Inventory ==============================
+      const inventoryUpdateStatus = await adminHelpers.updateInventoryForOrderCancellationAndReturn(orderId);
+
+      if(inventoryUpdateStatus.status){
+
         res.redirect('/admin/order-summary');
-  
+
+      }else{
+
+        console.error("Error-1 from updateInventoryForOrderCancellation admin-helper at adminSideOrderCancellationPOST adminController: ", inventoryUpdateStatus);
+
+        res.redirect('/admin/error-page');
+
       }
   
     })
@@ -479,23 +472,21 @@ const changeOrderReturnStatusPOST = async (req,res)=>{
   
     }
   
-    await adminHelpers.manageOrderReturn(orderId,adminResponse).then((response)=>{
+    const processOrderReturn = await adminHelpers.manageOrderReturn(orderId,adminResponse);
+
+    if(adminResponse){
+      
+      // Processing refund to wallet and inventory updation , if the admin has approved order return.
   
-      if(response.refundAvailable){
-  
-        adminHelpers.addRefundToWalletBalance(orderId, false, true).then((response)=>{
-  
-          res.redirect('/admin/order-summary');
-  
-        })
-  
-      }else{
-  
-        res.redirect('/admin/order-summary');
-  
-      }
-  
-    })
+      // ============================== Process Wallet Refund  ==============================
+      const processWalletRefund = await adminHelpers.addRefundToWalletBalance(orderId, false, true);
+
+      // ============================== Update Inventory ==============================
+      const inventoryUpdateStatus = await adminHelpers.updateInventoryForOrderCancellationAndReturn(orderId);
+
+    }
+
+    res.redirect('/admin/order-summary');
 
   }catch(error){
 
@@ -588,7 +579,6 @@ module.exports = {
   logInGET,
   logInPOST,
   logOutPOST,
-  adminDashboardGET,
   addNewAdminGET,
   addNewAdminPOST,
   manageUsersGET,

@@ -5,6 +5,7 @@ const adminController = require('../app/controllers/adminController');
 const productController = require('../app/controllers/productController');
 const couponController = require('../app/controllers/couponController');
 const offerController = require('../app/controllers/offerController');
+const adminDashboardController = require('../app/controllers/adminDashboardController');
 const multer = require('../config/imageUploadConfig');
 
 
@@ -21,7 +22,7 @@ const multerUploadProductCategoryImage = multer.uploadProductCategoryImage.singl
 /*=================================================ADMIN ROUTES=================================================*/
 
 // ====================Route to Admin Dashboard====================
-router.get('/', verifyAdminLogin, adminController.adminDashboardGET);
+router.get('/', verifyAdminLogin, adminDashboardController.adminDashboardGET);
 
 
 /* ========================LOGIN & LOGOUT ROUTES======================== */
@@ -70,7 +71,9 @@ router.get('/delete-product/:id', verifyAdminLogin, productController.deleteProd
 
 router.get('/edit-product/:id', verifyAdminLogin, productController.editProductGET);
 
-router.post('/edit-product/:id', verifyAdminLogin, productController.editProductPOST);
+router.post('/edit-product/:id', verifyAdminLogin, multerUploadProductImage, productController.editProductPOST);
+
+router.post('/delete-single-product-image', verifyAdminLogin, productController.deleteSingleProductImagePOST);
 
 
 // ====================Routes for PRODUCT CATEGORIES====================
@@ -83,7 +86,7 @@ router.post('/add-new-product-category', verifyAdminLogin, multerUploadProductCa
 
 router.get('/edit-product-category/:categoryId', verifyAdminLogin, productController.editProductCategoryGET);
 
-router.post('/edit-product-category/:categoryId', verifyAdminLogin, productController.editProductCategoryPOST);
+router.post('/edit-product-category/:categoryId', verifyAdminLogin, multerUploadProductCategoryImage, productController.editProductCategoryPOST);
 
 router.post('/delete-product-category/:categoryId', verifyAdminLogin, productController.deleteProductCategoryPOST);
 
@@ -102,6 +105,9 @@ router.post('/set-category-offer', verifyAdminLogin, offerController.setCategory
 
 router.post('/remove-category-offer', verifyAdminLogin, offerController.removeCategoryOfferPOST);
 
+
+// ================================================ COUPON MANAGEMENT ================================================
+
 // ====================Routes for Coupon Management ====================
 
 router.get('/manage-coupons', verifyAdminLogin, couponController.manageCouponGET);
@@ -118,22 +124,6 @@ router.post('/change-coupon-status', verifyAdminLogin, couponController.changeCo
 
 router.get('/inactive-coupons', verifyAdminLogin, couponController.inactiveCouponsGET );
 
-
-// ====================Routes for Offer Management ====================
-
-router.get('/manage-offers', verifyAdminLogin, offerController.manageOfferGET);
-
-router.get('/add-offer', verifyAdminLogin, offerController.addNewOfferGET);
-
-router.post('/add-offer', verifyAdminLogin, offerController.addNewOfferPOST);
-
-router.get('/edit-offer/:offerName', verifyAdminLogin, offerController.editOfferGET);
-
-router.post('/update-offer', verifyAdminLogin, offerController.updateOfferPOST);
-
-router.post('/change-offer-status', verifyAdminLogin, offerController.changeOfferStatusPOST);
-
-router.get('/inactive-offers', verifyAdminLogin, offerController.inactiveOffersGET);
 
 
 // ====================Routes for Managing Orders====================

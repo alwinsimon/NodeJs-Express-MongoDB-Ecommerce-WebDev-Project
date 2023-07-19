@@ -48,6 +48,19 @@ router.get('/resend-otp', userController.reSendUserSignUpOTPGET);
 router.post('/resend-otp', userController.requestToReSendUserSignUpOTPPOST);
 
 
+/* ========================USER FORGOT PASSWORD ROUTES======================== */
+
+router.get('/forgot-password', userController.forgotPasswordGET);
+
+router.post('/forgot-password', userController.verifyAccountForPasswordResetPOST);
+
+router.get('/password-reset-otp', userController.verifyOTPForPasswordResetGET);
+
+router.post('/password-reset-otp', userController.verifyOTPForPasswordResetPOST);
+
+router.post('/set-new-password', userController.resetUserPasswordPOST);
+
+
 /* ========================USER PROFILE ROUTES======================== */
 
 router.get('/profile/:userName', verifyUserLogin, userController.userProfileGET);

@@ -45,7 +45,7 @@ const addProductGET = async (req,res)=>{
 
     const productCategories = await adminHelpers.getProductCategories();
   
-    res.render('admin/add-product',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Add Product",admin:true, adminData, PLATFORM_NAME, productCategories});
+    res.render('admin/add-product',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Add Product", PLATFORM_NAME, adminData, productCategories});
 
   }catch(error){
 
@@ -130,8 +130,12 @@ const editProductGET = async (req,res)=>{
     const productCategory = await productHelpers.getProductCategoryById(productID); // Product category of this product to display
   
     const allProductCategories = await adminHelpers.getProductCategories();
+
+    const singleProductImageDeletionerror = req.session.singleProductImageDeletionError;
   
-    res.render('admin/edit-product',{ layout: 'admin-layout', title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategory, allProductCategories});
+    res.render('admin/edit-product',{ layout: 'admin-layout', title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategory, allProductCategories, singleProductImageDeletionerror });
+
+    delete req.session.singleProductImageDeletionError;
 
   }catch(error){
 
@@ -149,38 +153,66 @@ const editProductPOST = (req,res)=>{
 
     const productId = req.params.id;
 
-    productHelpers.updateProduct(productId,req.body).then(()=>{
+    let updatedProductData = req.body;
+
+    let productImageArray = [];
+
+    updatedProductData.images = productImageArray;
+
+    if(req.files.length > 0){
+
+      for (let i = 0; i < req.files.length; i++) {
   
-      /*
-      Redirect the user to admin page first, if there is any new image uploaded, update that in server after redirecting user.
-      This will prevent user from keeping the user waiting in the edit page itself till the image gets uploaded.
-      */
-      res.redirect('/admin')
-  
-      // Fuction to update the image if new image is uploaded in the edit page
-      if(req.files){
-  
-        const id = req.params.id;
-  
-        let image = req.files.image
-  
-        image.mv('./public/product-images/' + id +'.jpg',(err,done)=>{
-  
-          if(err){
-    
-            console.log(err);
-    
-          }
-    
-        });
+        productImageArray[i] = req.files[i].filename;
   
       }
+  
+      updatedProductData.images = productImageArray;
+
+    }
+
+    productHelpers.updateProduct(productId,updatedProductData).then(()=>{
+  
+      res.redirect('/admin/manage-products');
   
     })
 
   }catch(error){
 
     console.log("Error from editProductPOST productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
+}
+
+
+const deleteSingleProductImagePOST = async (req,res)=>{
+
+  try{
+
+    const productId = req.body.productId;
+
+    const imageName = req.body.imageName;
+
+    const deleteSingleProductImage = await productHelpers.deleteSingleProductImage( productId, imageName );
+
+    if(deleteSingleProductImage.status){
+
+      res.json({status:true});
+
+    }else{
+
+      req.session.singleProductImageDeletionError = deleteSingleProductImage.errorStatus;
+
+      res.json({status:true});
+
+    }
+
+  }catch(error){
+
+    console.log("Error from deleteSingleProductImagePOST productController: ", error);
 
     res.redirect('/admin/error-page');
 
@@ -389,6 +421,7 @@ module.exports = {
   deleteProductGET,
   editProductGET,
   editProductPOST,
+  deleteSingleProductImagePOST,
   productCategoriesGET,
   addProductCategoryGET,
   addProductCategoryPOST,

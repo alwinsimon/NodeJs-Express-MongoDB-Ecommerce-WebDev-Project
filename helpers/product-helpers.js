@@ -9,13 +9,19 @@ const { error } = require("console");
 
 module.exports = {
 
-    addProduct: (product)=>{
+    addProduct: (productDetails)=>{
 
         return new Promise( (resolve,reject)=>{
 
             try{
 
-                db.get().collection(collections.PRODUCT_COLLECTION).insertOne(product).then((data)=>{
+                // Making numerical values to specific data types before storing
+
+                productDetails.price = parseFloat(productDetails.price);
+
+                productDetails.availableStock = parseInt(productDetails.availableStock);
+
+                db.get().collection(collections.PRODUCT_COLLECTION).insertOne(productDetails).then((data)=>{
 
                     resolve(data);
                     /*In the above line, we are passing the object named data.
@@ -78,7 +84,8 @@ module.exports = {
                         price: product.price,
                         category: category ? { _id: category._id.toString(), name: category.name } : null,
                         productOffer:product.productOffer,
-                        images:product.images
+                        images:product.images,
+                        availableStock:product.availableStock
                     };
 
                 });
@@ -90,6 +97,67 @@ module.exports = {
             } catch (error) {
 
                 console.error("Error from getAllProducts product-helpers: ", error);
+
+                reject(error);
+
+            }
+
+        });
+
+    },
+    deleteSingleProductImage: (productId, imageName) => {
+
+        return new Promise(async (resolve, reject) => {
+
+            try{
+
+                // Find the product document to delete from the MongoDB collection
+                const productToModify = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({ _id: ObjectId(productId) });
+
+                if(productToModify.images.length > 1){ // Delete the requested product image if there are more than 1 image available for the product.
+
+                    // Delete the image file from the server using fs.unlink
+                    productToModify.images.forEach((image) => {
+
+                        if(image === imageName){
+
+                            let imagePath = './public/product-images/' + image;
+
+                            fs.unlink(imagePath, (error) => {
+
+                                if (error) {
+
+                                    console.error("Error-1 from fs.unlink function at deleteSingleProductImage in product-helpers: ", error);
+                                    
+                                }
+
+                            });
+
+                        }
+
+                    });
+            
+                    // Remove the image name from the images array in the products collection
+                    const removeProductImage = await db.get().collection(collections.PRODUCT_COLLECTION).updateOne(
+                        
+                        { _id: ObjectId(productId) },
+
+                        { $pull: { images: imageName } }
+
+                    );
+            
+                    resolve({status: true, result:removeProductImage});
+
+                }else{
+
+                    resolve({status: false, errorStatus: "Only 1 product Image exist, Image Deletion request REJECTED."});
+
+                }
+        
+
+            }catch(error){
+
+                console.error("Error from deleteSingleProductImage in product-helpers: ", error);
 
                 reject(error);
 
@@ -163,27 +231,89 @@ module.exports = {
         })
 
     },
-    updateProduct:(productId,productDetails)=>{
+    updateProduct : (productId,productDetails)=>{
 
-        return new Promise((resolve,reject)=>{
+        return new Promise(async (resolve,reject)=>{
 
             try{
 
-                db.get().collection(collections.PRODUCT_COLLECTION)
-                .updateOne({_id:ObjectId(productId)},{
-                    $set:{
-                        id:productDetails.id,
-                        name:productDetails.name,
-                        category:productDetails.category,
-                        description:productDetails.description,
-                        price:productDetails.price
-                    }
-                }
-                ).then(()=>{
-    
+                // Making numerical values to specific data types before storing
+
+                productDetails.price = parseFloat(productDetails.price);
+
+                productDetails.availableStock = parseInt(productDetails.availableStock);
+
+                if(productDetails.images.length >0 ){ // If there are any new product Images added
+
+                    // Delete Old Images of Product before inserting new images
+
+                    const productData = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectId(productId)});
+
+                    const productImagesArray = productData.images;
+
+                    // Function to Delete the image file from the server using fs.unlink
+                    productImagesArray.forEach((image) => {
+
+                        let imagePath = './public/product-images/' + image;
+        
+                        fs.unlink(imagePath, (error) => {
+            
+                            if (error) {
+                
+                                console.error("Error-1 from fs.unlink fuction at updateProduct product-helpers: ", error);
+                
+                            }
+            
+                        })
+
+                    });
+
+                    const productUpdate = await db.get().collection(collections.PRODUCT_COLLECTION).updateOne(
+                        
+                        {_id:ObjectId(productId)},
+                        
+                        {$set:
+                            
+                            {
+                                
+                                id:productDetails.id,
+                                name:productDetails.name,
+                                category:productDetails.category,
+                                description:productDetails.description,
+                                availableStock:productDetails.availableStock,
+                                price:productDetails.price,
+                                images:productDetails.images
+
+                            }
+
+                        }
+
+                    )
+
                     resolve();
-    
-                })
+
+                }else{ // If there is no new product Images added
+
+                    db.get().collection(collections.PRODUCT_COLLECTION)
+                    .updateOne({_id:ObjectId(productId)},{
+                        $set:{
+
+                            id:productDetails.id,
+                            name:productDetails.name,
+                            category:productDetails.category,
+                            description:productDetails.description,
+                            availableStock:productDetails.availableStock,
+                            price:productDetails.price
+
+                        }
+
+                    }).then(()=>{
+        
+                        resolve();
+        
+                    })
+
+                }
 
             }catch(error){
             
