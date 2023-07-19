@@ -1,6 +1,6 @@
 
 
-const userHelpers = require('../../helpers/user-helpers');
+const adminHelpers = require('../../helpers/admin-helpers');
 const adminDashboardHelpers = require('../../helpers/adminDashboard-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
@@ -36,6 +36,14 @@ const adminDashboardGET = async (req,res)=>{
         const todaysSalesCount = await adminDashboardHelpers.getTodaysSalesCount();
         const totalSalesCount = await adminDashboardHelpers.getTotalSalesCount();
 
+        let monthlySalesData = await adminDashboardHelpers.getMonthlySalesData();
+        monthlySalesData = encodeURIComponent(JSON.stringify(monthlySalesData)); // Encoding to display in chart/graph
+
+        let paymentAnalytics = await adminDashboardHelpers.getPaymentMethodsWithVolumeAndUsageCount();
+        paymentAnalytics = encodeURIComponent(JSON.stringify(paymentAnalytics)); // Encoding to display in chart/graph
+
+        const platformOrdersData = await adminHelpers.getAllOrders();
+
         const dataToRender = {
 
             layout: 'admin-layout',
@@ -57,7 +65,12 @@ const adminDashboardGET = async (req,res)=>{
             todaysSales,
 
             totalSalesCount,
-            todaysSalesCount
+            todaysSalesCount,
+
+            monthlySalesData,
+            paymentAnalytics,
+
+            platformOrdersData
 
         }
 
