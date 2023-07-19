@@ -1,266 +1,408 @@
 /*======================================= PRODUCT CONTROLLERS =======================================*/
 
-const path = require('path');
-const productHelper = require(path.join(__dirname,'..','..','/helpers/product-helpers'));
-const adminHelper = require(path.join(__dirname,'..','..','/helpers/admin-helpers'));
+const productHelpers = require('../../helpers/product-helpers');
+const adminHelpers = require('../../helpers/admin-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
 
-let PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
+const PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
 
+
+
+// ====================Controller for Managing Products====================
+
+const manageProductsGET =  (req, res)=>{
+
+  try{
+
+    const adminData = req.session.adminSession;
+
+    productHelpers.getAllProducts().then((products)=>{
+      
+      res.render('admin/view-products',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Admin Panel", PLATFORM_NAME, admin:true, adminData, PLATFORM_NAME, products});
+      
+    })
+
+  }catch(error){
+
+    console.log("Error from manageProductsGET productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
+};
 
 
 // ====================Route to Add NEW Product Page====================
 
 const addProductGET = async (req,res)=>{
 
-  let adminData = req.session.adminSession;
+  try{
 
-  let productCategories = await adminHelper.getProductCategories();
+    const adminData = req.session.adminSession;
 
-  res.render('admin/add-product',{title: PLATFORM_NAME + " || Add Product",admin:true, adminData, PLATFORM_NAME, productCategories});
+    const productCategories = await adminHelpers.getProductCategories();
   
+    res.render('admin/add-product',{ layout: 'admin-layout', title: PLATFORM_NAME + " || Add Product", PLATFORM_NAME, adminData, productCategories});
+
+  }catch(error){
+
+    console.log("Error from addProductGET productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
 }
   
-const addProductPOST = (req,res)=>{
-  
-  productHelper.addProduct(req.body,(result)=>{
+const addProductPOST = async (req,res)=>{
 
-    let adminData = req.session.adminSession;
+  try{
 
-    let id = result.insertedId
+    const adminData = req.session.adminSession;
 
-    let image = req.files.image;
+    const productData = req.body;
 
-    image.mv('./public/product-images/' + id +'.jpg',(err,done)=>{
+    productData.productOffer = 0;
 
-      if(err){
+    let productImageArray = [];
 
-        console.log(err);
+    for (let i = 0; i < req.files.length; i++) {
 
-      }else{
+      productImageArray[i] = req.files[i].filename;
 
-        res.render('admin/add-product',{title:"Add product",admin:true, adminData, PLATFORM_NAME});
+    }
 
-      }
+    productData.images = productImageArray;
 
-    });
+    const addNewProduct = await productHelpers.addProduct(productData);
 
-  });
-  
+    res.render('admin/add-product',{ layout: 'admin-layout', title:"Add product", adminData, PLATFORM_NAME});
+
+  }catch(error){
+
+    console.log("Error from addProductPOST productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
 }
 
 
 // ====================Route to DELETE a PRODUCT====================
   
-const deleteProductGET = (req,res)=>{
+const deleteProductGET = async (req,res)=>{
+
+  try{
+
+    const productId = req.params.id;
   
-  let productId = req.params.id;
-
-  let productImageId = productId
-
-  productHelper.deleteProduct(productId,productImageId).then((response)=>{
-    // console.log(response);
-  })
-
-  res.redirect('/admin');
+    await productHelpers.deleteProduct(productId);
   
+    res.redirect('/admin/manage-products');
+
+  }catch(error){
+
+    console.log("Error from deleteProductGET productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
 }
   
   
 // ====================Routes to EDIT a PRODUCT====================
   
 const editProductGET = async (req,res)=>{
+
+  try{
+
+    const adminData = req.session.adminSession;
+
+    const productID = req.params.id;
   
-  let adminData = req.session.adminSession;
-
-  let productID = req.params.id;
-
-  let productDetails = await productHelper.getProductDetails(productID);
-
-  let productCategory = await productHelper.getProductCategoryById(productID); // Product category of this product to display
-
-  let allProductCategories = await adminHelper.getProductCategories();
-
-  res.render('admin/edit-product',{title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategory, allProductCategories});
+    const productDetails = await productHelpers.getProductDetails(productID);
   
+    const productCategory = await productHelpers.getProductCategoryById(productID); // Product category of this product to display
+  
+    const allProductCategories = await adminHelpers.getProductCategories();
+
+    const singleProductImageDeletionerror = req.session.singleProductImageDeletionError;
+  
+    res.render('admin/edit-product',{ layout: 'admin-layout', title:"Edit product", admin:true, adminData, PLATFORM_NAME, productDetails, productCategory, allProductCategories, singleProductImageDeletionerror });
+
+    delete req.session.singleProductImageDeletionError;
+
+  }catch(error){
+
+    console.log("Error from editProductGET productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
 }
   
 const editProductPOST = (req,res)=>{
+
+  try{
+
+    const productId = req.params.id;
+
+    let updatedProductData = req.body;
+
+    let productImageArray = [];
+
+    updatedProductData.images = productImageArray;
+
+    if(req.files.length > 0){
+
+      for (let i = 0; i < req.files.length; i++) {
   
-  let productId = req.params.id;
-
-  productHelper.updateProduct(productId,req.body).then(()=>{
-
-    /*
-    Redirect the user to admin page first, if there is any new image uploaded, update that in server after redirecting user.
-    This will prevent user from keeping the user waiting in the edit page itself till the image gets uploaded.
-    */
-    res.redirect('/admin')
-
-    // Fuction to update the image if new image is uploaded in the edit page
-    if(req.files){
-
-      let id = req.params.id;
-
-      let image = req.files.image
-
-      image.mv('./public/product-images/' + id +'.jpg',(err,done)=>{
-
-        if(err){
+        productImageArray[i] = req.files[i].filename;
   
-          console.log(err);
+      }
   
-        }
-  
-      });
+      updatedProductData.images = productImageArray;
 
     }
 
-  })
+    productHelpers.updateProduct(productId,updatedProductData).then(()=>{
   
+      res.redirect('/admin/manage-products');
+  
+    })
+
+  }catch(error){
+
+    console.log("Error from editProductPOST productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
+}
+
+
+const deleteSingleProductImagePOST = async (req,res)=>{
+
+  try{
+
+    const productId = req.body.productId;
+
+    const imageName = req.body.imageName;
+
+    const deleteSingleProductImage = await productHelpers.deleteSingleProductImage( productId, imageName );
+
+    if(deleteSingleProductImage.status){
+
+      res.json({status:true});
+
+    }else{
+
+      req.session.singleProductImageDeletionError = deleteSingleProductImage.errorStatus;
+
+      res.json({status:true});
+
+    }
+
+  }catch(error){
+
+    console.log("Error from deleteSingleProductImagePOST productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
 }
   
   
 // ====================Controllers for PRODUCT CATEGORIES====================
   
 const productCategoriesGET = async (req,res)=>{
-  
-  let adminData = req.session.adminSession;
 
-  let productCategories = await adminHelper.getProductCategories();
+  try{
 
-  res.render('admin/view-product-categories', {title: PLATFORM_NAME + " || Product Categories", admin:true, adminData, productCategories});
+    const adminData = req.session.adminSession;
+
+    const productCategories = await adminHelpers.getProductCategories();
   
+    res.render('admin/view-product-categories', { layout: 'admin-layout', title: PLATFORM_NAME + " || Product Categories", PLATFORM_NAME, admin:true, adminData, productCategories});
+
+  }catch(error){
+
+    console.log("Error from productCategoriesGET productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
 }
   
 const addProductCategoryGET = (req,res)=>{
+
+  try{
+
+    const adminData = req.session.adminSession;
+
+    if(req.session.adminSession.categoryExistsErr){
   
-  let adminData = req.session.adminSession;
+      const categoryExistsErr = req.session.adminSession.categoryExistsErr;
+  
+      res.render('admin/add-product-category', { layout: 'admin-layout', title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData, categoryExistsErr});
+  
+      delete req.session.adminSession.categoryExistsErr;
+  
+    }else{
+      
+      res.render('admin/add-product-category', { layout: 'admin-layout', title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData});
+  
+    }
 
-  if(req.session.adminSession.categoryExistsErr){
+  }catch(error){
 
-    let categoryExistsErr = req.session.adminSession.categoryExistsErr;
+    console.log("Error from addProductCategoryGET productController: ", error);
 
-    res.render('admin/add-product-category', {title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData, categoryExistsErr});
-
-    delete req.session.adminSession.categoryExistsErr;
-
-  }else{
-    
-    res.render('admin/add-product-category', {title: PLATFORM_NAME + " || Add Product Category", admin:true, adminData});
+    res.redirect('/admin/error-page');
 
   }
-  
+
 }
   
 const addProductCategoryPOST = async (req,res)=>{
+
+  try{
+
+    const adminData = req.session.adminSession;
+
+    let categoryDetails = req.body;
   
-  let adminData = req.session.adminSession;
-
-  let categoryDetails = req.body;
-
-  await adminHelper.checkProductCategoryExists(categoryDetails.name).then((response)=>{
-
-    if(response.status){ // The Product category Already Exist - Denying the addition of category to prevent Duplication
+    await adminHelpers.checkProductCategoryExists(categoryDetails.name).then( async (response)=>{
+  
+      if(response.status){ // The Product category Already Exist - Denying the addition of category to prevent Duplication
+        
+        req.session.adminSession.categoryExistsErr = response.message; // Storing the error message in Admin session for displaying to Admin
+  
+        res.redirect('/admin/add-new-product-category');
+  
+      }else{ // Product category Dosen't exist - Adding the Product Category
+  
+        categoryDetails.creatorDetails = {
+  
+          name:adminData.name,
       
-      req.session.adminSession.categoryExistsErr = response.message; // Storing the error message in Admin session for displaying to Admin
-
-      res.redirect('/admin/add-new-product-category')
-
-    }else{ // Product category Dosen't exist - Adding the Product Category
-
-      categoryDetails.creatorDetails = {
-
-        name:adminData.name,
-    
-        id: adminData._id
-    
-      }
-    
-      categoryDetails.createdOn = new Date();
-    
-      adminHelper.addProductCategory(categoryDetails).then((categoryId)=>{
-    
-        let id = categoryId;
-    
-        if(req.files){
-    
-          let image = req.files['category-image'];
-    
-          image.mv('./public/product-category-images/' + id +'.jpg',(err,done)=>{
-    
-            if(err){
-    
-              console.log(err);
-    
-            }else{
-    
-              res.redirect('/admin/add-new-product-category');
-    
-            }
-    
-          });
-    
+          id: adminData._id
+      
         }
-    
-      })
+      
+        categoryDetails.createdOn = new Date();
 
-    }
+        categoryDetails.categoryOffer = 0;
 
-  })
+        const categoryImage = req.file.filename;
+        
+        categoryDetails.categoryImage = categoryImage;
+      
+        const productCategoryAddition = await adminHelpers.addProductCategory(categoryDetails);
+
+        res.redirect('/admin/add-new-product-category');
   
-}
+      }
   
-const editProductCategoryGET = async (req,res)=>{
-  
-  let adminData = req.session.adminSession;
+    })
 
-  let categoryId = req.params.categoryId;
+  }catch(error){
 
-  adminHelper.getProductCategoryDetails(categoryId).then((productCategoryData)=>{
+    console.log("Error from addProductCategoryPOST productController: ", error);
 
-    res.render('admin/edit-product-category', {title: PLATFORM_NAME + " || Edit Product Category", admin:true, adminData, productCategoryData});
-
-  })
-  
-}
-  
-const editProductCategoryPOST = async (req,res)=>{
-  
-  let categoryId = req.params.categoryId;
-
-  let updatedData = {
-
-    categoryId : req.body.categoryId,
-
-    name : req.body.name,
-
-    description : req.body.description,
-
-    updatedOn: new Date()
+    res.redirect('/admin/error-page');
 
   }
 
-  adminHelper.updateProductCategory(categoryId, updatedData).then(()=>{
-
-    res.redirect('/admin/manage-product-categories');
-
-  })
+}
   
+const editProductCategoryGET = async (req,res)=>{
+
+  try{
+
+    const adminData = req.session.adminSession;
+
+    const categoryId = req.params.categoryId;
+  
+    adminHelpers.getProductCategoryDetails(categoryId).then((productCategoryData)=>{
+  
+      res.render('admin/edit-product-category', { layout: 'admin-layout', title: PLATFORM_NAME + " || Edit Product Category", admin:true, adminData, productCategoryData});
+  
+    })
+
+  }catch(error){
+
+    console.log("Error from editProductCategoryGET productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
+}
+  
+const editProductCategoryPOST = async (req,res)=>{
+
+  try{
+
+    const categoryId = req.params.categoryId;
+
+    const updatedData = {
+  
+      categoryId : req.body.categoryId,
+  
+      name : req.body.name,
+  
+      description : req.body.description,
+  
+      updatedOn: new Date()
+  
+    }
+  
+    adminHelpers.updateProductCategory(categoryId, updatedData).then(()=>{
+  
+      res.redirect('/admin/manage-product-categories');
+  
+    })
+
+  }catch(error){
+
+    console.log("Error from editProductCategoryPOST productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
 }
   
 const deleteProductCategoryPOST = async (req,res)=>{
+
+  try{
+
+    const categoryId = req.params.categoryId;
+
+    adminHelpers.deleteProductCategory(categoryId).then(()=>{
   
-  let categoryId = req.params.categoryId;
-
-  adminHelper.deleteProductCategory(categoryId).then(()=>{
-
-    res.redirect('/admin/manage-product-categories');
-
-  })
+      res.redirect('/admin/manage-product-categories');
   
+    })
+
+  }catch(error){
+
+    console.log("Error from deleteProductCategoryPOST productController: ", error);
+
+    res.redirect('/admin/error-page');
+
+  }
+
 }
 
 
@@ -273,16 +415,18 @@ const deleteProductCategoryPOST = async (req,res)=>{
 
 module.exports = {
 
-    addProductGET,
-    addProductPOST,
-    deleteProductGET,
-    editProductGET,
-    editProductPOST,
-    productCategoriesGET,
-    addProductCategoryGET,
-    addProductCategoryPOST,
-    editProductCategoryGET,
-    editProductCategoryPOST,
-    deleteProductCategoryPOST
+  manageProductsGET,
+  addProductGET,
+  addProductPOST,
+  deleteProductGET,
+  editProductGET,
+  editProductPOST,
+  deleteSingleProductImagePOST,
+  productCategoriesGET,
+  addProductCategoryGET,
+  addProductCategoryPOST,
+  editProductCategoryGET,
+  editProductCategoryPOST,
+  deleteProductCategoryPOST
 
 }

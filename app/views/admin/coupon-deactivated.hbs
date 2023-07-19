@@ -1,0 +1,78 @@
+<section style="margin-top: 20px; margin-bottom: 90px; padding-top: 5px; padding-bottom: 90px;">
+
+
+    {{!-- ============================== Deactivated Coupons ============================== --}}
+
+    <div class="container">
+
+        <h3 style="text-align: center; color:#0d6efd"><u>Deactivated Coupons</u></h3>
+
+        {{!-- ====================TABLE==================== --}}
+
+        <table id="deactivated-coupons-table" class="table mt-4">
+
+            {{!-- ==========Table Header========== --}}
+
+            <thead>
+                <tr>
+                    <th scope="col">Coupon Code</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Discount %</th>
+                    <th scope="col">Maximum Discount</th>
+                    <th scope="col">Minimum Order Value</th>
+                    <th scope="col">Validity</th>
+                    <th scope="col">Usage Count</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+
+            {{!-- ==========Table Body========== --}}
+
+            <tbody>
+
+                {{#each inActiveCoupons}}
+
+                    <tr>
+                        
+                        <th scope="row">{{this.couponCode}}</th>
+                        <td>
+                            {{#if this.activeCoupon}}
+                                <i class="fas fa-check-circle text-success"></i> Active
+                            {{else}}
+                                <i class="fas fa-lock text-danger"></i> In-active
+                            {{/if}}
+                        </td>
+                        <td>{{this.couponDescription}}</td>
+                        <td>{{this.discountPercentage}}</td>
+                        <td>{{this.maxDiscountAmount}}</td>
+                        <td>{{this.minOrderValue}}</td>
+                        <td>{{this.validFor}}</td>
+                        <td>{{this.usageCount}}</td>
+
+                        <td>
+                            
+                            <a href="/admin/edit-coupon/{{this._id}}" class="btn btn-success">EDIT</a>
+
+                            <form action="/admin/change-coupon-status" method="POST" class="col-md-2">
+                                
+                                <input type="hidden" name="couponId" value="{{this._id}}">
+                                
+                                <button class="btn btn-danger" onclick="return confirm('Are you sure that you want to activate {{this.couponCode}} coupon?')" type="submit">Activate</button>
+
+                            </form>
+
+
+                        </td>
+                        
+                    </tr>
+
+                {{/each}}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>

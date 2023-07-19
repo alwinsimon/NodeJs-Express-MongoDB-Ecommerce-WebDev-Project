@@ -17,11 +17,13 @@
       </div>
       <div class="form-group">
         <label for="description">Description:</label>
-        <textarea class="form-control" id="description" name="description" rows="5">{{productCategoryData.description}}</textarea>
+        <textarea class="form-control" id="description" name="description" rows="5" required>{{productCategoryData.description}}</textarea>
       </div>
       <div class="form-group">
         <label for="image">Image:</label>
-        <img src="/product-category-images/{{productCategoryData._id}}.jpg" alt="" style="width: 100px;height:auto" id="imageView" class="pt-3">
+
+        <img src="/product-category-images/{{productCategoryData.categoryImage}}" alt="{{productCategoryData.name}}" style="width: 100px;height:auto" id="imageView" class="pt-3">
+
         <div class="custom-file">
           <input type="file" class="custom-file-input" id="image" name="image" accept="image/*" onchange="displayImage(event)">
           <label class="custom-file-label" for="image">Choose file</label>

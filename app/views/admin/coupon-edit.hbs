@@ -1,0 +1,83 @@
+<section>
+    
+  <div class="container">
+
+    <h1>Edit Coupon</h1>
+
+
+    {{!-- ==================================================== Update Coupon Form ==================================================== --}}
+
+    <form id="edit-coupon-form" action="/admin/update-coupon" method="POST">
+
+      <div class="form-group">
+        <label for="category Id">Coupon Code</label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="couponCode" name="couponCode" value="{{couponData.couponCode}}" required>
+        </div>
+      </div>
+
+      {{#if couponExistError}}
+        <div>
+            <p style="color: red;">{{couponExistError}}</p>
+        </div>
+      {{/if}}
+
+      <div class="form-group">
+        <label for="Coupon description">Coupon Description:</label>
+        <textarea class="form-control" id="couponDescription" name="couponDescription" rows="5" required>{{couponData.couponDescription}}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="Discount percentage">Discount percentage:</label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="discountPercentage" name="discountPercentage" min="1" max="99" step="1" value="{{couponData.discountPercentage}}" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="Max discount">Max discount Amount: </label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="maxDiscountAmount" name="maxDiscountAmount" min="0" step="1" value="{{couponData.maxDiscountAmount}}" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="Min order value">Min order value: </label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="minOrderValue" name="minOrderValue" min="0" step="1" value="{{couponData.minOrderValue}}" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="Valid For">Valid For:</label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="validFor" name="validFor" min="1" max="180" step="1" value="{{couponData.validFor}}" placeholder="Number of days for which coupon is valid" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="Coupon Status">Activate Coupon:</label>
+        <select class="form-control" id="activeCoupon" name="activeCoupon" required>
+          <option value="true" {{#if couponData.activeCoupon}}selected{{/if}}>Yes</option>
+          <option value="false" {{#unless couponData.activeCoupon}}selected{{/unless}}>No</option>
+        </select>
+      </div>
+
+      <input type="hidden" class="form-control" id="couponId" name="couponId" value="{{couponData._id}}" required>
+
+      <br>
+
+      
+      {{!-- ========================== Form Submission Button ========================== --}}
+
+      <button type="submit" class="btn btn-primary">Update Coupon</button>
+      <button type="reset" class="btn btn-secondary ml-2">Reset</button>
+
+
+    </form>
+
+  </div>
+
+</section>
+
+

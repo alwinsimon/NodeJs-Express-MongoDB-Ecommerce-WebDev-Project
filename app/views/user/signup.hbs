@@ -101,9 +101,14 @@
 </style>
 
 
-<div class="container mt-5">
+<div class="container mt-5" style="padding-top: 100px ; padding-bottom: 50px ;">
+
     <h2 style="text-align: center;">Create an account</h2>
+
+    {{!-- ===================================== Sign-up Form ===================================== --}}
+
     <form id="signup-form" style="max-width: 500px; margin: 0 auto;" action="/signup" method="POST">
+
         <div class="mb-3">
             <label for="name" class="form-label">Name</label>
             <input type="text" class="form-control" id="name" name="name" required style="border-radius: 10px;">
@@ -111,6 +116,15 @@
                 Please enter your name.
             </div>
         </div>
+
+        <div class="mb-3">
+            <label for="userName" class="form-label">User Name</label>
+            <input type="text" class="form-control" id="userName" name="userName" required style="border-radius: 10px;" placeholder="@username">
+            <div class="invalid-feedback" style="color: red;">
+                Please enter a preferred username.
+            </div>
+        </div>
+
         <div class="mb-3">
             <label for="email" class="form-label">Email address</label>
             <input type="email" class="form-control" id="email" name="email" required style="border-radius: 10px;">
@@ -135,13 +149,30 @@
                 Please enter a valid 10-digit mobile number.
             </div>
         </div>
+        
         {{#if signUpErrMessage}}
-        <div>
-            <p style="color: red;">{{signUpErrMessage}}</p>
-        </div>
+
+            <div>
+                <p style="color: red;">{{signUpErrMessage}}</p>
+            </div>
+            <br>
+        
         {{/if}}
+
+        {{#if existingUserError}}
+            
+            <div>
+                <p style="color: red;">{{existingUserError}} !</p>
+                <p style="color: red;">Please Try again with a different one.</p>
+                <br>
+            </div>
+
+        {{/if}}
+
         <div class="d-flex justify-content-center">
             <button type="submit" class="btn btn-primary me-2" style="border-radius: 10px;">Sign up</button>
         </div>
+
     </form>
+
 </div>

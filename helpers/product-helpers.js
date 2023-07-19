@@ -3,24 +3,45 @@ const collections = require('../config/databaseCollectionsConfig');
 const ObjectId = require("mongodb").ObjectId;
 const path = require('path');
 const fs = require('fs');
+const { error } = require("console");
 
 
 
 module.exports = {
 
-    addProduct:(product,callback)=>{
+    addProduct: (productDetails)=>{
 
-        db.get().collection(collections.PRODUCT_COLLECTION).insertOne(product).then((data)=>{
+        return new Promise( (resolve,reject)=>{
 
-            callback(data);
-            /*In the above line, we are passing the object named data.
-            This object  is obtained as a result of calling .then in the promise returned by the insertOne function of MongoDb.
-            This object has a key namely insertedId this is the insert id of document created in the db.
-            We send it back as an argument of the callback in admin.js where this function was called.
-            There this id is utilised for setting the name of uploaded image so that,
-            we can establish a relation between each product document in db and its image in server
-            */
+            try{
+
+                // Making numerical values to specific data types before storing
+
+                productDetails.price = parseFloat(productDetails.price);
+
+                productDetails.availableStock = parseInt(productDetails.availableStock);
+
+                db.get().collection(collections.PRODUCT_COLLECTION).insertOne(productDetails).then((data)=>{
+
+                    resolve(data);
+                    /*In the above line, we are passing the object named data.
+                    This object  is obtained as a result of calling .then in the promise returned by the insertOne function of MongoDb.
+                    This object has a key namely insertedId this is the insert id of document created in the db.
+                    We send it back in promise resolve.
+                    There this id is utilised for setting the name of uploaded image so that,
+                    we can establish a relation between each product document in db and its image in server
+                    */
+                    
+                })
             
+            }catch(error){
+            
+                console.error("Error from addProduct product-helpers: ", error);
+            
+                reject(error);
+            
+            }
+
         })
 
     },
@@ -51,18 +72,21 @@ module.exports = {
         
                 const result = products.map((product) => {
 
-                const categoryId = product.category.toString();
+                    const categoryId = product.category.toString();
 
-                const category = categoryMap[categoryId];
+                    const category = categoryMap[categoryId];
 
-                return {
-                    _id: product._id.toString(),
-                    id: product.id,
-                    name: product.name,
-                    description: product.description,
-                    price: product.price,
-                    category: category ? { _id: category._id.toString(), name: category.name } : null,
-                };
+                    return {
+                        _id: product._id.toString(),
+                        id: product.id,
+                        name: product.name,
+                        description: product.description,
+                        price: product.price,
+                        category: category ? { _id: category._id.toString(), name: category.name } : null,
+                        productOffer:product.productOffer,
+                        images:product.images,
+                        availableStock:product.availableStock
+                    };
 
                 });
         
@@ -72,7 +96,7 @@ module.exports = {
 
             } catch (error) {
 
-                console.log(error);
+                console.error("Error from getAllProducts product-helpers: ", error);
 
                 reject(error);
 
@@ -81,31 +105,105 @@ module.exports = {
         });
 
     },
-    deleteProduct: (productId, image) => {
+    deleteSingleProductImage: (productId, imageName) => {
 
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
-            //Function to delete the document from MongoDb collection
-            db.get().collection(collections.PRODUCT_COLLECTION).deleteOne({ _id: ObjectId(productId) }).then((deleteResult) => {
+            try{
 
-                // Defining the path of the product image to be deleted
-                const imageName = image.concat('.jpg')
-                const imagePath = path.join(__dirname, '..', 'public', 'product-images', imageName);
+                // Find the product document to delete from the MongoDB collection
+                const productToModify = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({ _id: ObjectId(productId) });
 
-                // Function to Delete the image file from the server using the above defined path
-                fs.unlink(imagePath, (err) => {
+                if(productToModify.images.length > 1){ // Delete the requested product image if there are more than 1 image available for the product.
 
-                    if (err) {
-                        console.error(`Error deleting file ${imagePath}: ${err}`);
-                    }
-                    
+                    // Delete the image file from the server using fs.unlink
+                    productToModify.images.forEach((image) => {
+
+                        if(image === imageName){
+
+                            let imagePath = './public/product-images/' + image;
+
+                            fs.unlink(imagePath, (error) => {
+
+                                if (error) {
+
+                                    console.error("Error-1 from fs.unlink function at deleteSingleProductImage in product-helpers: ", error);
+                                    
+                                }
+
+                            });
+
+                        }
+
+                    });
+            
+                    // Remove the image name from the images array in the products collection
+                    const removeProductImage = await db.get().collection(collections.PRODUCT_COLLECTION).updateOne(
+                        
+                        { _id: ObjectId(productId) },
+
+                        { $pull: { images: imageName } }
+
+                    );
+            
+                    resolve({status: true, result:removeProductImage});
+
+                }else{
+
+                    resolve({status: false, errorStatus: "Only 1 product Image exist, Image Deletion request REJECTED."});
+
+                }
+        
+
+            }catch(error){
+
+                console.error("Error from deleteSingleProductImage in product-helpers: ", error);
+
+                reject(error);
+
+            }
+
+        });
+
+    },
+    deleteProduct: (productId) => {
+
+        return new Promise( async (resolve, reject) => {
+
+            try{
+
+                //Function find the product document to delete from MongoDb collection
+                const productToRemove = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({ _id: ObjectId(productId) });
+
+                // Function to Delete the image file from the server using fs.unlink
+                productToRemove.images.forEach((image) => {
+
+                    let imagePath = './public/product-images/' + image;
+    
+                    fs.unlink(imagePath, (error) => {
+        
+                        if (error) {
+            
+                            console.error("Error-1 from fs.unlink fuction at deleteProduct product-helpers: ", error);
+            
+                        }
+        
+                    })
+
                 });
 
-                // console.log(deleteResult);
+                //Function to delete the document from MongoDb collection
+                const removeProduct = await db.get().collection(collections.PRODUCT_COLLECTION).deleteOne({ _id: ObjectId(productId) });
 
-                resolve();
+                resolve(removeProduct);
 
-            });
+            }catch(error){
+            
+                console.error("Error from deleteProduct product-helpers: ", error);
+            
+                reject(error);
+            
+            }
 
         });
 
@@ -114,34 +212,116 @@ module.exports = {
 
         return new Promise((resolve,reject)=>{
 
-            db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectId(productId)}).then((product)=>{
+            try{
 
-                resolve(product);
+                db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectId(productId)}).then((product)=>{
 
-            })
+                    resolve(product);
+    
+                })
+            
+            }catch(error){
+            
+                console.error("Error from getProductDetails product-helpers: ", error);
+            
+                reject(error);
+            
+            }
 
         })
 
     },
-    updateProduct:(productId,productDetails)=>{
+    updateProduct : (productId,productDetails)=>{
 
-        return new Promise((resolve,reject)=>{
+        return new Promise(async (resolve,reject)=>{
 
-            db.get().collection(collections.PRODUCT_COLLECTION)
-            .updateOne({_id:ObjectId(productId)},{
-                $set:{
-                    id:productDetails.id,
-                    name:productDetails.name,
-                    category:productDetails.category,
-                    description:productDetails.description,
-                    price:productDetails.price
+            try{
+
+                // Making numerical values to specific data types before storing
+
+                productDetails.price = parseFloat(productDetails.price);
+
+                productDetails.availableStock = parseInt(productDetails.availableStock);
+
+                if(productDetails.images.length >0 ){ // If there are any new product Images added
+
+                    // Delete Old Images of Product before inserting new images
+
+                    const productData = await db.get().collection(collections.PRODUCT_COLLECTION).findOne({_id:ObjectId(productId)});
+
+                    const productImagesArray = productData.images;
+
+                    // Function to Delete the image file from the server using fs.unlink
+                    productImagesArray.forEach((image) => {
+
+                        let imagePath = './public/product-images/' + image;
+        
+                        fs.unlink(imagePath, (error) => {
+            
+                            if (error) {
+                
+                                console.error("Error-1 from fs.unlink fuction at updateProduct product-helpers: ", error);
+                
+                            }
+            
+                        })
+
+                    });
+
+                    const productUpdate = await db.get().collection(collections.PRODUCT_COLLECTION).updateOne(
+                        
+                        {_id:ObjectId(productId)},
+                        
+                        {$set:
+                            
+                            {
+                                
+                                id:productDetails.id,
+                                name:productDetails.name,
+                                category:productDetails.category,
+                                description:productDetails.description,
+                                availableStock:productDetails.availableStock,
+                                price:productDetails.price,
+                                images:productDetails.images
+
+                            }
+
+                        }
+
+                    )
+
+                    resolve();
+
+                }else{ // If there is no new product Images added
+
+                    db.get().collection(collections.PRODUCT_COLLECTION)
+                    .updateOne({_id:ObjectId(productId)},{
+                        $set:{
+
+                            id:productDetails.id,
+                            name:productDetails.name,
+                            category:productDetails.category,
+                            description:productDetails.description,
+                            availableStock:productDetails.availableStock,
+                            price:productDetails.price
+
+                        }
+
+                    }).then(()=>{
+        
+                        resolve();
+        
+                    })
+
                 }
+
+            }catch(error){
+            
+                console.error("Error from updateProduct product-helpers: ", error);
+            
+                reject(error);
+            
             }
-            ).then(()=>{
-
-                resolve();
-
-            })
 
         })
 
@@ -178,6 +358,8 @@ module.exports = {
                         })
                         .catch((error) => {
 
+                            console.error("Error-1 from db promise at getProductCategoryById product-helpers: ", error);
+
                             reject(error);
 
                         });
@@ -191,11 +373,15 @@ module.exports = {
                 })
                 .catch((error) => {
 
+                    console.error("Error-2 from db promise at getProductCategoryById product-helpers: ", error);
+
                     reject(error);
 
                 });
 
             } catch (error) {
+
+                console.error("Error from getProductCategoryById product-helpers: ", error);
 
                 reject(error);
 
@@ -204,9 +390,5 @@ module.exports = {
         });
 
     }
-      
-      
-      
-      
 
 }

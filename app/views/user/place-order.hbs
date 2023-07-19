@@ -1,79 +1,706 @@
-<div
-    style="width: 80%; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
-    <h1 style="font-size: 24px; text-align: center;">Place Order</h1>
+<section class="p-t-70 p-b-50">
 
-    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+    <style>
+        .shop {
+            font-size: 10px;
+        }
 
-        <form id="checkout-form">
+        .space {
+            letter-spacing: 0.8px !important;
+        }
 
-            <div style="flex: 1; padding-right: 20px;">
+        .second a:hover {
+            color: rgb(92, 92, 92);
+        }
+
+        .active-2 {
+            color: rgb(92, 92, 92)
+        }
 
 
-                <h4>Delivery Details</h4>
-                <hr>
+        .breadcrumb>li+li:before {
+            content: "" !important
+        }
 
-                <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;">Name:</label>
-                <input type="text" id="name" name="name" required
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+        .breadcrumb {
+            padding: 0px;
+            font-size: 10px;
+            color: #717fe0 !important;
+        }
 
-                <label for="address" style="font-weight: bold; display: block; margin-bottom: 5px;">Address:</label>
-                <input type="text" id="address" name="address" required
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+        .first {
+            background-color: white;
+        }
 
-                <label for="mobile" style="font-weight: bold; display: block; margin-bottom: 5px;">Mobile:</label>
-                <input type="tel" id="mobile" name="mobile" required
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+        a {
+            text-decoration: none !important;
+            color: #aaa;
+        }
 
-                <label for="email" style="font-weight: bold; display: block; margin-bottom: 5px;">Email:</label>
-                <input type="email" id="email" name="email" required
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+        .btn-lg,
+        .form-control-sm:focus,
+        .form-control-sm:active,
+        a:focus,
+        a:active {
+            outline: none !important;
+            box-shadow: none !important
+        }
 
-                <label for="pin" style="font-weight: bold; display: block; margin-bottom: 5px;">Pin:</label>
-                <input type="text" id="pin" name="pin" required
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; margin-bottom: 15px;">
+        .form-control-sm:focus {
+            border: 1.5px solid #4bb8a9;
+        }
 
+        .btn-group-lg>.btn,
+        .btn-lg {
+            padding: .5rem 0.1rem;
+            font-size: 1rem;
+            border-radius: 0;
+            color: white !important;
+            background-color: #717fe0;
+            height: 2.8rem !important;
+            border-radius: 0.2rem !important;
+        }
+
+        .btn-group-lg>.btn:hover,
+        .btn-lg:hover {
+            background-color: #717fe0;
+        }
+
+        .btn-outline-primary {
+            background-color: #717fe0 !important;
+            color: #ffffff !important;
+            border-radius: 0.2rem !important;
+            border: 1px solid #717fe0;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #21b503 !important;
+            color: #fff !important;
+            border: 1px solid #717fe0;
+        }
+
+        .card-2 {
+            margin-top: 40px !important;
+        }
+
+        .card-header {
+            background-color: #fff;
+            border-bottom: 0px solid #aaaa !important;
+        }
+
+        p {
+            font-size: 13px;
+        }
+
+        .small {
+            font-size: 9px !important;
+        }
+
+        .form-control-sm {
+            height: calc(2.2em + .5rem + 2px);
+            font-size: .875rem;
+            line-height: 1.5;
+            border-radius: 0;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .boxed {
+            padding: 0px 8px 0 8px;
+            background-color: #717fe0;
+            color: white;
+        }
+
+        .boxed-1 {
+            padding: 0px 8px 0 8px;
+            color: black !important;
+            border: 1px solid #aaaa;
+        }
+
+        .bell {
+            opacity: 0.5;
+            cursor: pointer;
+        }
+
+                .modal-confirm {		
+            color: #636363;
+            width: 325px;
+        }
+        .modal-confirm .modal-content {
+            padding: 20px;
+            border-radius: 5px;
+            border: none;
+        }
+        .modal-confirm .modal-header {
+            border-bottom: none;   
+            position: relative;
+        }
+        .modal-confirm h4 {
+            text-align: center;
+            font-size: 26px;
+            margin: 30px 0 -15px;
+        }
+        .modal-confirm .form-control, .modal-confirm .btn {
+            min-height: 40px;
+            border-radius: 3px; 
+        }
+        .modal-confirm .close {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }	
+        .modal-confirm .modal-footer {
+            border: none;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 13px;
+        }	
+        .modal-confirm .icon-box {
+            color: #fff;		
+            position: absolute;
+            margin: 0 auto;
+            left: 0;
+            right: 0;
+            top: -70px;
+            width: 95px;
+            height: 95px;
+            border-radius: 50%;
+            z-index: 9;
+            background: #ef513a;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
+        }
+        .modal-confirm .icon-box i {
+            font-size: 56px;
+            position: relative;
+            top: 4px;
+        }
+        .modal-confirm.modal-dialog {
+            margin-top: 80px;
+        }
+        .modal-confirm .btn {
+            color: #fff;
+            border-radius: 4px;
+            background: #ef513a;
+            text-decoration: none;
+            transition: all 0.4s;
+            line-height: normal;
+            border: none;
+        }
+        .modal-confirm .btn:hover, .modal-confirm .btn:focus {
+            background: #da2c12;
+            outline: none;
+        }
+        .trigger-btn {
+            display: inline-block;
+            margin: 100px auto;
+        }
+
+
+        @media (max-width: 767px) {
+            .breadcrumb-item+.breadcrumb-item {
+                padding-left: 0
+            }
+        }
+    </style>
+
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+
+
+    <div class=" container-fluid my-5 ">
+
+        <div class="row justify-content-center ">
+
+            <div class="col-xl-10">
+
+                <div class="card shadow-lg ">
+
+
+                    <div class="row p-2 mt-3 justify-content-between mx-sm-2">
+
+                        <div class="col">
+                            <div class="row justify-content-center text-center ">
+                                <div class="col">
+                                    <h3>Order Summary</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {{!-- ====================== Breadcrump ====================== --}}
+                    <div class="row  mx-auto justify-content-center text-center">
+
+                        <div class="col-12 mt-3 ">
+
+                            <nav aria-label="breadcrumb" class="second ">
+                                <ol class="breadcrumb indigo lighten-6 first ">
+                                    <li class="breadcrumb-item font-weight-bold "><a class="black-text text-uppercase "
+                                            href="/"><span class="mr-md-3 mr-1"
+                                                style="color: #717fe0;">Products</span></a><i
+                                            class="fa fa-angle-double-right " aria-hidden="true"></i></li>
+                                    <li class="breadcrumb-item font-weight-bold"><a class="black-text text-uppercase"
+                                            href="/cart"><span class="mr-md-3 mr-1" style="color: #717fe0;">My
+                                                Cart</span></a><i class="fa fa-angle-double-right text-uppercase "
+                                            aria-hidden="true"></i></li>
+                                    <li class="breadcrumb-item font-weight-bold"><a
+                                            class="black-text text-uppercase active-2" href="/place-order"><span
+                                                class="mr-md-3 mr-1" style="color: #717fe0;">CHECKOUT</span></a></li>
+                                </ol>
+                            </nav>
+
+                        </div>
+
+                    </div>
+
+
+                    {{!-- ====================================== Checkout Form ====================================== --}}
+                    <form id="checkout-form">
+
+                        <div class="row justify-content-around">
+
+                            <div class="col-md-5">
+
+                                <div class="card border-0">
+
+                                    <div class="card-header pb-0">
+                                        <h2 class="card-title space ">Checkout</h2>
+                                        <hr class="my-0">
+                                    </div>
+
+                                    <div class="card-body">
+
+                                        <div class="row mt-4">
+                                            <div class="col">
+                                                <p class="text-muted mb-2">Delivery Details</p>
+                                                <hr class="mt-0">
+                                            </div>
+                                        </div>
+
+                                        {{!-- ============================== Delivery Address Display ============================== --}}
+                                        {{#if primaryAddress}}
+
+                                            <label for="name" style=" display: block; margin-bottom: 5px;">Delivering to your:</label>
+                                            <input type="text" id="addressType" name="addressType" readonly value="{{primaryAddress.addressType}} Address" style="width: 100%; font-weight: bold; padding: 5px; border: 0px solid #ccc; border-radius: 3px; margin-bottom: 1px;">
+
+                                            <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;"></label>
+                                            <input type="text" id="addressLine1" name="addressLine1" readonly value="{{primaryAddress.addressLine1}}," style="width: 100%; padding: 5px; border: 0px solid #ccc; border-radius: 3px; margin-bottom: 1px;">
+
+                                            <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;"></label>
+                                            <input type="text" id="addressLine2" name="addressLine2" readonly value="{{primaryAddress.addressLine2}}," style="width: 100%; padding: 5px; border: 0px solid #ccc; border-radius: 3px; margin-bottom: 1px;">
+
+                                            <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;"></label>
+                                            <input type="text" id="addressStreet" name="addressStreet" readonly value="{{primaryAddress.street}}," style="width: 100%; padding: 5px; border: 0px solid #ccc; border-radius: 3px; margin-bottom: 1px;">
+
+                                            <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;"></label>
+                                            <input type="text" id="addressCity" name="addressCity" readonly value="{{primaryAddress.city}}," style="width: 100%; padding: 5px; border: 0px solid #ccc; border-radius: 3px; margin-bottom: 1px;">
+
+                                            <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;"></label>
+                                            <input type="text" id="addressState" name="addressState" readonly value="{{primaryAddress.state}}," style="width: 100%; padding: 5px; border: 0px solid #ccc; border-radius: 3px; margin-bottom: 1px;">
+
+                                            <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;"></label>
+                                            <input type="text" id="addressCountry" name="addressCountry" readonly value="{{primaryAddress.country}}" style="width: 100%; padding: 5px; border: 0px solid #ccc; border-radius: 3px; margin-bottom: 1px;">
+
+                                            <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;">PIN:</label>
+                                            <input type="text" id="addressPostalCode" name="addressPostalCode" readonly value="{{primaryAddress.postalCode}}" style="width: 100%; padding: 5px; border: 0px solid #ccc; border-radius: 3px; margin-bottom: 1px;">
+
+                                            <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;">Contact Number:</label>
+                                            <input type="text" id="addressContactNumber" name="addressContactNumber" readonly value="{{primaryAddress.contactNumber}}" style="width: 100%; padding: 5px; border: 0px solid #ccc; border-radius: 3px; margin-bottom: 1px;">
+
+                                            <label for="name" style="font-weight: bold; display: block; margin-bottom: 5px;"></label>
+                                            <input type="text" id="addressId" name="addressId" readonly hidden value="{{primaryAddress._id}}" style="width: 100%; padding: 5px; border: 0px solid #ccc; border-radius: 3px; margin-bottom: 1px;">
+
+
+                                            {{!-- =========================== CHANGE ADDRESS BUTTON =========================== --}}
+                                            <div class="row mb-md-5">
+                                                <div class="col">
+                                                    <div class="col-md-7 col-lg-6 mx-auto"><button type="button"
+                                                            class="btn btn-block btn-outline-primary btn-lg" data-toggle="modal"
+                                                            data-target="#change-address-modal">Change Address</button></div>
+                                                </div>
+                                            </div>
+
+                                        {{else}}
+
+                                            <p style="color: red;"><i>You have no address saved yet, please add a new address to
+                                                    proceed check-out</i></p>
+
+                                            <div class="row mb-md-5">
+                                                <div class="col">
+                                                    <div class="col-md-7 col-lg-6 mx-auto">
+                                                        <a href="/manage-my-address"
+                                                            class="btn btn-block btn-outline-primary btn-lg">Add Address</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        {{/if}}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-5">
+
+                                <div class="card border-0 ">
+
+                                    <div class="card-header card-2">
+                                        <p class="card-text text-muted mt-md-4  mb-2 space">YOUR ORDER <a href="/cart"><span
+                                                    class=" small text-muted ml-2 cursor-pointer"
+                                                    style="color: #717fe0;">MODIFY SHOPPING CART</span></a> </p>
+                                        <hr class="my-2">
+                                    </div>
+
+                                    <div class="card-body pt-0">
+
+                                        {{!-- ======================= Product Details Display ======================= --}}
+                                        {{#each cartProducts}}
+                                            <div class="row  justify-content-between">
+                                                <div class="col-auto col-md-7">
+                                                    <div class="media flex-column flex-sm-row">
+                                                        <img class=" img-fluid" src="/product-images/{{product.images.[0]}}"
+                                                            width="62" height="62">
+                                                        <div class="media-body  my-auto">
+                                                            <div class="row ">
+                                                                <div class="col-auto">
+                                                                    <p class="mb-0"><b>{{this.product.name}}</b></p><small
+                                                                        class="text-muted">{{this.product.description}}</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class=" pl-0 flex-sm-col col-auto  my-auto">
+                                                    <p class="boxed">{{this.quantity}}</p>
+                                                </div>
+                                                <div class=" pl-0 flex-sm-col col-auto  my-auto ">
+                                                    <p><b> x {{this.product.price}} = {{this.productTotal}}</b></p>
+                                                </div>
+                                            </div>
+                                            <hr class="my-2">
+                                        {{/each}}
+                                        
+                                        <hr>
+
+                                        {{!-- ================== Order Amount Details ================== --}}
+                                        <div class="row ">
+                                            <div class="col">
+                                                <div class="row justify-content-between">
+                                                    <div class="col-4">
+                                                        <p class="mb-1"><b>Original Order Value:</b></p>
+                                                    </div>
+                                                    <div class="flex-sm-col col-auto">
+                                                        <p class="mb-1"><b>₹ {{originalCartValue}}</b></p>
+                                                    </div>
+                                                </div>
+
+                                                {{#if (gt couponDiscount 0)}}
+                                                    <div class="row justify-content-between">
+                                                        <div class="col">
+                                                            <p class="mb-1"><b>Coupon Discounts:</b></p>
+                                                        </div>
+                                                        <div class="flex-sm-col col-auto">
+                                                            <p class="mb-1"><b>₹ {{couponDiscount}}</b></p>
+                                                        </div>
+                                                    </div>
+                                                {{/if}}
+
+                                                {{#if (gt productOfferDiscount 0)}}
+                                                    <div class="row justify-content-between">
+                                                        <div class="col">
+                                                            <p class="mb-1"><b>Product Offer Discounts:</b></p>
+                                                        </div>
+                                                        <div class="flex-sm-col col-auto">
+                                                            <p class="mb-1"><b>₹ {{productOfferDiscount}}</b></p>
+                                                        </div>
+                                                    </div>
+                                                {{/if}}
+
+                                                {{#if (gt categoryOfferDiscount 0)}}
+                                                    <div class="row justify-content-between">
+                                                        <div class="col">
+                                                            <p class="mb-1"><b>Category Offer Discounts:</b></p>
+                                                        </div>
+                                                        <div class="flex-sm-col col-auto">
+                                                            <p class="mb-1"><b>₹ {{categoryOfferDiscount}}</b></p>
+                                                        </div>
+                                                    </div>
+                                                {{/if}}
+
+                                                <hr>
+
+                                                <div class="row justify-content-between">
+                                                    <div class="col-4">
+                                                        <p style="color: #21b503;"><b>Total Amount:</b></p>
+                                                    </div>
+                                                    <div class="flex-sm-col col-auto">
+                                                        <p class="mb-1" style="color: #21b503;" ><b>₹ {{cartValue}}  </b></p>
+                                                    </div>
+                                                </div>
+
+                                                <hr class="my-0">
+                                                
+                                                <br>
+
+                                                {{!-- ================== Selecting Payment Method ================== --}}
+                                                <div class="row justify-content-between">
+
+                                                    <h6>Payment Methods:</h6>
+                                                
+                                                    <label>
+
+                                                        <input type="radio" name="payment-method" value="COD" required> Cash on Delivery
+
+                                                    </label>
+
+                                                    <label>
+
+                                                        <input type="radio" name="payment-method" value="ONLINE" required> Online Payment
+
+                                                    </label>
+
+                                                </div>
+
+                                                <hr>
+
+                                                <br>
+
+                                                {{!-- =========================== CHECKOUT BUTTON =========================== --}}
+
+                                                {{#if primaryAddress}}
+
+                                                    <div class="row mb-md-5">
+                                                        <div class="col">
+                                                            <div id="checkout-button" class="col-md-7 col-lg-6 mx-auto"><button type="button" class="btn btn-block btn-outline-primary btn-lg" >Checkout</button></div>
+                                                        </div>
+                                                    </div>
+
+                                                {{else}}
+                                                
+                                                    <p style="color: red;"><i>You have no address saved yet, please add a new address to
+                                                            proceed check-out</i></p>
+                                                    
+                                                    <div class="row mb-md-5">
+                                                        <div class="col">
+                                                            <div class="col-md-7 col-lg-6 mx-auto">
+                                                                <a href="/manage-my-address" class="btn btn-block btn-outline-primary btn-lg">Add Address</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                
+                                                {{/if}}
+
+                                            </div>
+                                            
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+
+
+                    {{!-- ================================ COUPON ================================ --}}
+
+                    <div id="coupon-submission-form" class="d-flex align-items-center justify-content-center" style="padding-bottom: 20px;">
+
+                        <div class="text-center">
+
+                            <div class="row mt-4">
+                                <div class="col">
+                                    <p class="text-muted mb-2">You have any Coupons? Apply it here..</p>
+                                    <hr class="mt-0">
+                                </div>
+                            </div>
+
+                            <form action="/apply-coupon-request" method="POST">
+
+                                <div class="form-group">
+
+                                    <input type="text" class="form-control form-control-sm"name="couponCodeFromUser" id="couponCodeFromUser" aria-describedby="helpId" placeholder="Enter the coupon code here.">
+
+                                    {{#if couponApplied}}
+
+                                        <p style="color: #21b503;"><b>{{couponApplied}}</b></p>
+
+                                    {{else if couponError}}
+
+                                        <p style="color: red;"><b>{{couponError}}</b></p>
+
+                                    {{/if}}
+
+                                </div>
+
+                                <div class="row mb-1 mt-1">
+
+                                    <div class="col-md-7 col-lg-6 mx-auto justify-content-between text-center">
+
+                                        <button type="submit" class="btn btn-outline-primary">Add Coupon</button>
+
+                                    </div>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
-
-            <div style="flex: 1; padding-left: 20px;">
-                <h2 style="margin-top: 0;">Order Summary</h2>
-
-                <hr>
-
-                {{#each cartProducts}}
-
-                <p>{{this.product.name}} - {{this.quantity}} item</p>
-
-                {{/each}}
-
-                <hr>
-
-                <p>Total Order Amount:</p>
-                <h6>{{cartValue}}</h6>
-
-                <hr>
-
-                <h4>Payment Methods</h4>
-
-                <label>
-                    <input type="radio" name="payment-method" value="COD" required> Cash on Delivery (COD)
-                </label>
-                <label>
-                    <input type="radio" name="payment-method" value="ONLINE" required> Online Payment
-                </label>
-
-                <button type="button" id="checkout-button"
-                    style="background-color: #4CAF50; color: #fff; border: none; padding: 10px 20px; border-radius: 3px; font-size: 16px; cursor: pointer; margin-top: 20px; width: 100%;">Checkout</button>
-
-            </div>
-
-        </form>
+        </div>
 
     </div>
-</div>
 
+
+</section>
+   
+
+
+<!-- ========================================= Modal for changing Delivery Address ========================================= -->
+
+<section>
+
+    <div class="modal fade p-t-60" id="change-address-modal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Hi {{user.name}}, please select a address for
+                        delivery.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="container">
+
+                        <div class="row">
+
+                            {{#each userAddress}}
+
+                                <div class="col-md-6 p-b-20">
+
+                                    <article class="information card ">
+
+                                        <h6 class="title">{{this.addressType}}</h6>
+                                        <p class="info">{{this.addressLine1}}, {{this.addressLine2}}</p>
+                                        <p class="info">{{this.street}}, {{this.city}}</p>
+                                        <p class="info">{{this.state}}, {{this.country}}, PIN: {{this.postalCode}}</p>
+                                        <p class="info">Phone: {{this.contactNumber}}</p>
+
+                                        <a onclick="makeThisAddressPrimary('{{this._id}}')" class="btn btn-success" type="submit" ><span>Deliver Here</span></a>
+
+                                    </article>
+                                    
+                                </div>
+
+                            {{/each}}
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- ======================== Payment Method not Selected Error Modal ======================== -->
+
+<div id="myModal" class="modal fade" style="padding-top: 130px;">
+    <div class="modal-dialog modal-confirm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons">&#xE5CD;</i>
+                </div>
+                <h4 class="modal-title w-100">Sorry, you have not selected any payment method!</h4>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">Please select a payment method and try again.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-block" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>  
+
+
+{{!-- ========================================= Scripts ========================================= --}}
+
+<script>
+
+
+    // This funtion here is used for changing the provided address to primary address and reload the page
+    // This will result it changing the delivery address as the primary address is always displayed as the delivery address
+    function makeThisAddressPrimary(addressId) {
+
+        fetch('/update-user-primary-address', {
+
+            method: 'POST',
+
+            headers: { 'Content-Type': 'application/json' },
+
+            body: JSON.stringify({
+
+                addressId: addressId
+
+            })
+
+        }).then(response => {
+
+            if (response.status) {
+
+                location.reload();
+
+            } else {
+
+                console.error('Error updating primary address');
+                /* This will be displayed on browser Console */
+
+                location.reload();
+
+            }
+
+        }).catch(error => {
+
+            console.error('Error IN DELETING address', error);
+            /* This will be displayed on browser Console */
+
+            location.reload();
+
+        });
+
+    }
+    
+
+</script>
 
 {{!-- Script for using Razorpay Payment gateway functions --}}
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
 {{!-- Script for Ajax call for making payments when check-out button is clicked is defined in the common script.js file and hence will be loaded from there --}}
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

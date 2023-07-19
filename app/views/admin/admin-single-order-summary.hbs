@@ -1,0 +1,90 @@
+{{!-- ============================== Admin Single Order Info Page============================== --}}
+
+<section>
+  <div class="container mt-5">
+    <h1 class="text-center">Product Details of Order</h1>
+
+    <hr>
+    <br>
+
+    {{#if orderDetails.cancelledOrder}}
+      <p class="text-center" style="color: red;">Cancelled Order</p>
+    {{/if}}
+
+    <br>
+    <br>
+
+    <div class="row justify-content-center">
+      {{#each productDetails}}
+        <div class="col-md-4" style="width: 15rem; height: 23rem;">
+          <div class="card mb-4">
+            <img src="/product-images/{{this.product.images.[0]}}" class="card-img-top" alt="{{this.product.name}}">
+            <div class="card-body">
+              <h5 class="card-title">{{this.product.name}}</h5>
+              <p class="card-text">{{this.product.description}}</p>
+              <p class="card-text">Price: ₹ {{this.product.price}}</p>
+              <p class="card-text">Quantity: {{this.quantity}}</p>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+    <br>
+    <br>
+
+    {{!-- ======================================== Order Detail Display ======================================== --}}
+    <div>
+      <div class="card text-center">
+        <div class="card-header" style="color: cornflowerblue;">
+          Order Details
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Order Status : {{orderData.[0].orderStatus}} </h5>
+
+          <hr>
+
+          <p class="card-text" style="color: red;">Actual Order Value : ₹{{orderData.[0].actualOrderValue}}</p>
+
+          {{#if (gt orderData.[0].couponDiscount 0)}}
+            <p class="card-text" style="color: chartreuse;"> Coupon Discount : ₹{{orderData.[0].couponDiscount}}</p>
+          {{/if}}
+
+          {{#if (gt orderData.[0].productOfferDiscount 0)}}
+            <p class="card-text" style="color: chartreuse;"> Product Offer Discount : ₹{{orderData.[0].productOfferDiscount}}</p>
+          {{/if}}
+
+          {{#if (gt orderData.[0].categoryOfferDiscount 0)}}
+            <p class="card-text" style="color: chartreuse;"> Category Offer Discount : ₹{{orderData.[0].categoryOfferDiscount}}</p>
+          {{/if}}
+
+          <br>
+
+          <p class="card-text" style="color: green;"> <b> Discounted Total : ₹ {{orderData.[0].orderValue}}</b></p>
+
+          <hr>
+
+          <p class="card-text"> Payment Method : {{orderData.[0].paymentMethod}}</p>
+
+          <hr>
+
+          <h5 class="card-text"> <u>Delivery Details</u> </h5>
+          <br>
+          <p class="card-text"> Address Type : {{orderData.[0].deliveryDetails.addressType}}</p>
+          <p class="card-text"> Address : {{orderData.[0].deliveryDetails.addressLine1}} {{orderData.[0].deliveryDetails.addressLine2}}</p>
+          <p class="card-text"> Street, City : {{orderData.[0].deliveryDetails.addressStreet}} {{orderData.[0].deliveryDetails.addressCity}}</p>
+          <p class="card-text"> State, Country : {{orderData.[0].deliveryDetails.addressState}} {{orderData.[0].deliveryDetails.addressCountry}}</p>
+          <p class="card-text"> PIN Code : {{orderData.[0].deliveryDetails.addressPostalCode}}</p>
+          <br>
+          <p class="card-text"> Contact Number : {{orderData.[0].deliveryDetails.addressContactNumber}}</p>
+        </div>
+        <div class="card-footer text-muted">
+          <p class="text-center"><span class="order-date" style="color: cadetblue;">Order Date & Time: {{orderDetails.date}}</span></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+

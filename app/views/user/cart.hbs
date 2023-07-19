@@ -1,85 +1,243 @@
-<div style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
-    <div style="width: 80%; background-color: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-        <h1 style="text-align: center;">Cart</h1>
-        <table id="cartTable" style="width: 100%; border-collapse: collapse;">
-            <thead style="background-color: #f2f2f2;">
-                <tr>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Item</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Title</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Description</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Price</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Quantity</th>
-                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;"></th>
-                </tr>
-            </thead>
-            <tbody>
+<style>
+.title{
+    margin-bottom: 5vh;
+}
+.card{
+    margin: auto;
+    max-width: 1450px;
+    width: 100%;
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 1rem;
+    border: transparent;
+}
+@media(max-width:767px){
+    .card{
+        margin: 3vh auto;
+    }
+}
+.cart{
+    background-color: #fff;
+    padding: 4vh 5vh;
+    border-bottom-left-radius: 1rem;
+    border-top-left-radius: 1rem;
+}
+@media(max-width:767px){
+    .cart{
+        padding: 4vh;
+        border-bottom-left-radius: unset;
+        border-top-right-radius: 1rem;
+    }
+}
+.summary{
+    background-color: #eff2ff;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    padding: 4vh;
+    color: rgb(65, 65, 65);
+}
+@media(max-width:767px){
+    .summary{
+    border-top-right-radius: unset;
+    border-bottom-left-radius: 1rem;
+    }
+}
+.summary .col-2{
+    padding: 0;
+}
+.summary .col-10
+{
+    padding: 0;
+}.row{
+    margin: 0;
+}
+.title b{
+    font-size: 1.5rem;
+}
+.main{
+    margin: 0;
+    padding: 2vh 0;
+    width: 100%;
+}
+.col-2, .col{
+    padding: 0 1vh;
+}
+a{
+    padding: 0 1vh;
+}
+.close{
+    margin-left: auto;
+    font-size: 0.7rem;
+}
+img{
+    width: 3.5rem;
+}
+.back-to-shop{
+    margin-top: 4.5rem;
+}
+h5{
+    margin-top: 4vh;
+}
+hr{
+    margin-top: 1.25rem;
+}
+form{
+    padding: 2vh 0;
+}
+select{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1.5vh 1vh;
+    margin-bottom: 4vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+input{
+    border: 1px solid rgba(0, 0, 0, 0.137);
+    padding: 1vh;
+    margin-bottom: 4vh;
+    outline: none;
+    width: 100%;
+    background-color: rgb(247, 247, 247);
+}
+input:focus::-webkit-input-placeholder
+{
+      color:transparent;
+}
+.btn{
+    background-color: #000;
+    border-color: #000;
+    color: white;
+    width: 100%;
+    font-size: 0.7rem;
+    margin-top: 4vh;
+    padding: 1vh;
+    border-radius: 0;
+}
+.btn:focus{
+    box-shadow: none;
+    outline: none;
+    box-shadow: none;
+    color: white;
+    -webkit-box-shadow: none;
+    -webkit-user-select: none;
+    transition: none; 
+}
+.btn:hover{
+    color: white;
+}
+a{
+    color: black; 
+}
+a:hover{
+    color: black;
+    text-decoration: none;
+}
+ #code{
+    background-image: linear-gradient(to left, #717fe0 , #717fe0), url("https://img.icons8.com/small/16/000000/long-arrow-right.png");
+    background-repeat: no-repeat;
+    background-position-x: 95%;
+    background-position-y: center;
+}
+</style>
 
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+<section class="p-t-100 p-b-50">
+
+    <div class="card">
+        <div class="row">
+            <div class="col-md-9 cart">
+
+                <div class="title">
+                    <div class="row">
+                        <div class="col"><h4><b>{{user.name}}'s Shopping Cart</b></h4></div>
+                        <div class="col align-self-center text-right text-muted">{{cartCount}} items</div>
+                    </div>
+                </div>    
+
+                {{!-- ================================== CART ITEM ================================== --}}
                 {{#each cartItems}}
 
-                    <tr class="cart-row">
+                    <div class="row border-top border-bottom">
 
-                        <td><img style="width: 70px; height: 70px;" src="/product-images/{{this.product._id}}.jpg" alt=""></td>
-                        <td>{{this.product.name}}</td>
-                        <td>{{this.product.description}}</td>
-                        <td>{{this.product.price}}</td>
+                        <div class="row main align-items-center">
 
-                        <td>
-                            <button class="quantity-btn minus" onclick="changeQuantity('{{this._id}}','{{this.product._id}}', '{{../user._id}}', -1)">-</button>
+                            <div class="col-2"><img class="img-fluid" style="height: 100px; width:100px " src="/product-images/{{images.[0]}}"></div>
 
-                            <span class="quantity" id="{{this.product._id}}">{{this.quantity}}</span>
+                            <div class="col">
 
-                            <button class="quantity-btn plus" onclick="changeQuantity('{{this._id}}','{{this.product._id}}', '{{../user._id}}', 1)">+</button>
+                                <div class="row text-muted"><i>{{this.productDescription}}</i></div>
 
-                        </td>
-                        
-                        <td><button class="quantity-btn btn-danger" onclick="removeProductFromCart('{{this._id}}','{{this.product._id}}')">Remove</button></td>
+                                <div class="row"><b>{{this.productName}}</b></div>
+                                
+                            </div>
 
-                    </tr>
+                            <div class="col">
+
+                                <a class="quantity-btn minus" onclick="changeQuantity('{{this.cartId}}','{{this.productId}}', '{{this.userId}}', -1)"> - </a>
+
+                                <a id="{{this.productId}}" class="border quantity">{{this.quantity}}</a> 
+
+                                <a class="quantity-btn plus" onclick="changeQuantity('{{this.cartId}}','{{this.productId}}', '{{this.userId}}', 1)">+</a>
+
+                            </div>
+
+                            <div class="col"> <b>Price:</b><br>₹ {{this.price}}</div>
+                            <div class="col"> <b>Actual Total:</b><br>₹ {{this.totalAmount}}</div>
+
+                            {{#if (gt this.productOfferPercentage 0)}}
+                                <div class="col"> <b>Product Discount:</b><br><span style="color: chartreuse;"><b>{{this.productOfferPercentage}}%</b></span></div>
+                            {{/if}}
+
+                            {{#if (gt this.categoryOfferPercentage 0)}}
+                                <div class="col"> <b>Category Discount:</b><br><span style="color: chartreuse;"><b>{{this.categoryOfferPercentage}}%</b></span></div>
+                            {{/if}}
+
+                            <div class="col"> <b>Discounted Total:</b><br>₹ {{this.finalAmount}} </div>
+                            <div class="col"><span class="close" onclick="removeProductFromCart('{{this.cartId}}','{{this.productId}}')" >&#10005;</span></div>
+
+                        </div>
+
+                    </div>
 
                 {{/each}}
 
-            </tbody>
-        </table>
 
-        <hr>
+                <div class="back-to-shop"><a href="/">&leftarrow;</a><span class="text-muted">Back to shop</span></div>
 
-        <div class="float-right pr-5">
+            </div>
 
-            <h5 class="float-center mr-5">Total Cart amount: ₹ <span id="cart-total">{{cartValue}}</span> </h5>
 
-            <a href="/place-order" class="btn btn-success mt-3" style="width:100%;"><b>Place Order</b></a>
+            <div class="col-md-3 summary">
+
+                <div ><h5><b>Cart Summary</b></h5></div>
+
+                <hr>
+
+                <div class="row">
+                    <div class="col" style="padding-left:5;">Cart Items: <b>{{cartCount}}</b></div>
+                </div>
+
+                <br>
+            
+                <div class="row" style="border-top: 1px solid rgba(0,0,0,.1); padding: 2vh 0;">
+                    <div class="col">Total Cart amount:</div>
+                    <div class="col text-right"> ₹ <span id="cart-total">{{cartValue}}</span></div>
+                </div>
+
+                <a class="btn btn-primary" href="/place-order">CHECKOUT</a>
+
+
+            </div>
+
 
         </div>
-
+            
     </div>
-</div>
 
-<style>
-    /* Hover animation */
-    .cart-row:hover {
-        animation: row-hover 0.3s forwards;
-    }
+</section>
 
-    @keyframes row-hover {
-        from {
-            transform: scale(1);
-            box-shadow: none;
-        }
-        to {
-            transform: scale(1.05);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-        }
-    }
 
-    /* Remove item button style */
-    .remove-item {
-        background-color: #dc3545;
-        color: #fff;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 4px;
-        text-decoration: none;
-        transition: background-color 0.3s;
-    }
-
-</style>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

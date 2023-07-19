@@ -1,17 +1,26 @@
+{{!-- ============================================== Edit-Product Page ============================================== --}}
+
+
 <section>
+
   <div class="container">
+
     <h1>Edit Product</h1>
+
     <form id="add-product-form" action="/admin/edit-product/{{productDetails._id}}" method="post" enctype="multipart/form-data">
+
       <div class="form-group">
         <label for="price">Product Id:</label>
         <div class="input-group">
           <input type="number" class="form-control" id="id" name="id" min="0" step="1" value="{{productDetails.id}}">
         </div>
       </div>
+
       <div class="form-group">
         <label for="name">Name:</label>
         <input type="text" class="form-control" id="name" name="name" value="{{productDetails.name}}">
       </div>
+
       <div class="form-group">
         <label for="category">Category:</label>
         <select class="form-control" id="category" name="category" required>
@@ -21,10 +30,22 @@
           {{/each}}
         </select>
       </div>
+
       <div class="form-group">
         <label for="description">Description:</label>
         <textarea class="form-control" id="description" name="description" rows="5">{{productDetails.description}}</textarea>
       </div>
+
+      <div class="form-group">
+        <label for="availableStock">Available Stock:</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Stock</span>
+          </div>
+          <input type="number" class="form-control" id="availableStock" name="availableStock" min="1" step="1" value="{{productDetails.availableStock}}" required>
+        </div>
+      </div>
+
       <div class="form-group">
         <label for="price">Price:</label>
         <div class="input-group">
@@ -34,29 +55,85 @@
           <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" value="{{productDetails.price}}">
         </div>
       </div>
+
       <div class="form-group">
-        <label for="image">Image:</label>
-        <img src="/product-images/{{productDetails._id}}.jpg" alt="" style="width: 100px;height:auto" id="imageView" class="pt-3">
+        
+        <label for="image">Product Images:</label>
+        {{#each productDetails.images}}
+
+          <img src="/product-images/{{this}}" alt="" style="width: 100px;height:auto" id="imageView" class="pt-3">
+
+          <a href="#" class="bi bi-trash" onclick="deleteImage('{{this}}', '{{../productDetails._id}}')"></a>
+
+        {{/each}}
+
+        {{#if singleProductImageDeletionerror}}
+
+          <p style="color: red;">{{singleProductImageDeletionerror}}</p>
+        
+        {{/if}}
+
         <div class="custom-file">
-          <input type="file" class="custom-file-input" id="image" name="image" accept="image/*" onchange="displayImage(event)">
+          <input type="file" class="custom-file-input" id="image" name="image" accept="image/*" multiple onchange="displayImage(event)">
           <label class="custom-file-label" for="image">Choose file</label>
         </div>
+
         <div id="image-preview" class="mt-2"></div>
+
       </div>
+
+
       <button type="submit" class="btn btn-primary">Edit Product</button>
       <button type="reset" class="btn btn-secondary ml-2">Reset</button>
-      <button type="button" class="btn btn-info ml-2" data-toggle="modal" data-target="#preview-modal">Preview</button>
+
+
     </form>
+
   </div>
+
 </section>
 
 
-{{!-- Javascript Function to Display new image selected in the page instead of Existing Image --}}
+
+
 <script>
 
+  // Javascript Function to Display new image selected in the page instead of Existing Image
   function displayImage(event){
 
     document.getElementById('imageView').src = URL.createObjectURL(event.target.files[0])
+
+  }
+
+
+  // Javascript Function to delete single image of a product
+  function deleteImage(imageName, productId) {
+
+    event.preventDefault();
+
+    fetch('/admin/delete-single-product-image', {
+
+      method: 'POST',
+
+      body: JSON.stringify({ imageName: imageName, productId: productId }),
+
+      headers: {
+
+        'Content-Type': 'application/json'
+
+      }
+
+    })
+    .then(response => {
+
+      location.reload();
+
+    })
+    .catch(error => {
+
+      window.location.href = '/admin/error-page';
+      
+    });
 
   }
 

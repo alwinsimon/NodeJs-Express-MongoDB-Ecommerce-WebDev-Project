@@ -17,44 +17,54 @@ module.exports = {
 
   doAdminLogin:(loginFormData)=>{
 
-    let adminAuthenticationResponse = {};
-
     return new Promise( async (resolve,reject)=>{
 
-      let admin = await db.get().collection(collections.ADMIN_COLLECTION).findOne({email:loginFormData.email});
+      try{
 
-      if(admin){
+        let adminAuthenticationResponse = {};
 
-        bcrypt.compare(loginFormData.password, admin.password).then((verificationData)=>{
+        const admin = await db.get().collection(collections.ADMIN_COLLECTION).findOne({email:loginFormData.email});
+  
+        if(admin){
+  
+          bcrypt.compare(loginFormData.password, admin.password).then((verificationData)=>{
+  
+            if(verificationData){
+  
+              adminAuthenticationResponse.status = true;
+  
+              adminAuthenticationResponse.adminData = admin;
+  
+              resolve(adminAuthenticationResponse);
+  
+            }else{
+  
+              adminAuthenticationResponse.status = false;
+  
+              adminAuthenticationResponse.passwordError = true;
+  
+              resolve(adminAuthenticationResponse);
+  
+            }
+  
+          })
+  
+        }else{
+  
+          adminAuthenticationResponse.status = false;
+  
+          adminAuthenticationResponse.emailError = true;
+  
+          resolve(adminAuthenticationResponse);
+  
+        }
 
-          if(verificationData){
-
-            adminAuthenticationResponse.status = true;
-
-            adminAuthenticationResponse.adminData = admin;
-
-            resolve(adminAuthenticationResponse);
-
-          }else{
-
-            adminAuthenticationResponse.status = false;
-
-            adminAuthenticationResponse.passwordError = true;
-
-            resolve(adminAuthenticationResponse);
-
-          }
-
-        })
-
-      }else{
-
-        adminAuthenticationResponse.status = false;
-
-        adminAuthenticationResponse.emailError = true;
-
-        resolve(adminAuthenticationResponse);
-
+      }catch(error){
+    
+        console.error("Error from doAdminLogin admin-helper: ", error);
+    
+        reject(error);
+    
       }
 
     })
@@ -64,13 +74,23 @@ module.exports = {
 
     return new Promise( async (resolve,reject)=>{
 
-      newAdminDetails.password = await bcrypt.hash(newAdminDetails.password, 10);
+      try{
 
-      db.get().collection(collections.ADMIN_COLLECTION).insertOne(newAdminDetails).then((result)=>{
+        newAdminDetails.password = await bcrypt.hash(newAdminDetails.password, 10);
 
-        resolve(result._insertedId);
+        db.get().collection(collections.ADMIN_COLLECTION).insertOne(newAdminDetails).then((result)=>{
+  
+          resolve(result._insertedId);
+  
+        })
 
-      })
+      }catch(error){
+    
+        console.error("Error from addNewAdmin admin-helper: ", error);
+    
+        reject(error);
+    
+      }
 
     });
 
@@ -79,23 +99,27 @@ module.exports = {
 
     return new Promise((resolve,reject)=>{
 
-      db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION)
-      .insertOne(categoryDetails).then((response)=>{
+      try{
 
-        resolve(response.insertedId);
+        db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).insertOne(categoryDetails).then((response)=>{
+  
+          resolve(response.insertedId);
+  
+        }).catch((error)=>{
+    
+          console.log("Error from db operation in addProductCategory admin helper:", error);
 
-      })
-      .catch((err)=>{
+          reject(error);
+                
+        });
 
-        if(err){
-
-          console.log(err);
-
-          reject(err);
-            
-        }
-              
-      });
+      }catch(error){
+    
+        console.error("Error from addProductCategory admin-helper: ", error);
+    
+        reject(error);
+    
+      }
 
     })
 
@@ -104,26 +128,40 @@ module.exports = {
 
     return new Promise( async (resolve,reject)=>{
 
-      let productCategory = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).find({name:categoryName}).toArray();
+      try{
 
-      if(productCategory[0]){  // Product category already exist in DB
+        let categoryNameToMatch = categoryName;
 
-        let response = {
-          status:true,
-          message: "Product Category Already Exists - New category Addition FAILED"
+        categoryNameToMatch = new RegExp(`^${categoryNameToMatch}$`, 'i'); // Used for making an case insensitive search in DB
+
+        const productCategory = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).find({name:categoryNameToMatch}).toArray();
+
+        if(productCategory[0]){  // Product category already exist in DB
+  
+          let response = {
+            status:true,
+            message: "Product Category Already Exists - New category Addition FAILED"
+          }
+  
+          resolve(response);
+  
+        }else{ // Product category DOSEN'T exist in DB
+  
+          let response = {
+            status:false,
+            message: "Product Category Dosen't Exist"
+          }
+  
+          resolve(response);
+  
         }
 
-        resolve(response);
-
-      }else{ // Product category DOSEN'T exist in DB
-
-        let response = {
-          status:false,
-          message: "Product Category Dosen't Exist"
-        }
-
-        resolve(response);
-
+      }catch(error){
+    
+        console.error("Error from checkProductCategoryExists admin-helper: ", error);
+    
+        reject(error);
+    
       }
 
     })
@@ -151,6 +189,8 @@ module.exports = {
 
       } catch (error) {
 
+        console.error("Error from getProductCategories admin-helper: ", error);
+
         reject(error);
 
       }
@@ -164,11 +204,13 @@ module.exports = {
 
       try {
 
-        let categoryDetails = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).findOne({_id:ObjectId(categoryId)});
+        const categoryDetails = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).findOne({_id:ObjectId(categoryId)});
 
         resolve(categoryDetails);
 
       } catch (error) {
+
+        console.error("Error from getProductCategoryDetails admin-helper: ", error);
 
         reject(error);
 
@@ -192,6 +234,8 @@ module.exports = {
 
       } catch (error) {
 
+        console.error("Error from updateProductCategory admin-helper: ", error);
+
         reject(error);
 
       }
@@ -205,35 +249,31 @@ module.exports = {
 
       try {
 
-        await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).deleteOne({_id:ObjectId(categoryId)}).then((result)=>{
+        //Function find the product category document to delete from MongoDb collection
+        const productCategoryToRemove = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).findOne({ _id: ObjectId(categoryId) });
 
-          let imageId = categoryId;
+        // Function to Delete the image file from the server using fs.unlink
+        const image = productCategoryToRemove.categoryImage;
+        const imagePath = './public/product-category-images/' + image;
 
-          // Defining the path of the product image to be deleted
-          const imageName = imageId.concat('.jpg')
-          const imagePath = path.join(__dirname, '..', 'public', 'product-category-images', imageName);
+        fs.unlink(imagePath, (error) => {
 
-          // Function to Delete the image file from the server using the above defined path
-          fs.unlink(imagePath, (err) => {
+          if (error) {
 
-            if (err) {
+            console.error("Error-1 from fs.unlink function at deleteProductCategory admin-helpers: ", error);
 
-              reject(err);
-
-              console.error(`Error deleting file ${imagePath}: ${err}`);
-
-            }else{
-
-              resolve(result);
-
-            }
-              
-          });
+          }
 
         })
-  
+
+        //Function to delete the document from MongoDb collection
+        const removeProductCategory = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).deleteOne({ _id: ObjectId(categoryId) });
+
+        resolve(removeProductCategory);
 
       } catch (error) {
+
+        console.error("Error from deleteProductCategory admin-helper: ", error);
 
         reject(error);
 
@@ -263,6 +303,8 @@ module.exports = {
 
       } catch (error) {
 
+        console.error("Error from getAllUsers admin-helper: ", error);
+
         reject(error);
 
       }
@@ -276,7 +318,7 @@ module.exports = {
 
       try {
 
-        let user = await db.get().collection(collections.USER_COLLECTION).findOne({_id:ObjectId(userId)});
+        const user = await db.get().collection(collections.USER_COLLECTION).findOne({_id:ObjectId(userId)});
 
         if(user.blocked){ // If the user is already blocked => UN-BLOCK
 
@@ -298,11 +340,412 @@ module.exports = {
 
       } catch (error) {
 
+        console.error("Error from changeUserBlockStatus admin-helper: ", error);
+
         reject(error);
 
       }
 
     });
+
+  },
+  getAllOrders : ()=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        let platformOrders = await db.get().collection(collections.ORDERS_COLLECTION).find({}).sort({ date: -1 }).toArray();
+
+        platformOrders = platformOrders.map(order => {
+
+          const { date, ...rest } = order;
+
+          const orderedAtIST = moment(date).tz('Asia/Kolkata').format('DD-MMM-YYYY h:mm A');
+
+          return { ...rest, date: orderedAtIST + ' IST' };
+          
+        });
+        
+        resolve(platformOrders);
+
+      } catch (error) {
+
+        console.error("Error from getAllOrders admin-helper: ", error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  getSingleOrderData : (orderId)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        const singleOrderData = await db.get().collection(collections.ORDERS_COLLECTION).findOne({_id:ObjectId(orderId)});
+        
+        resolve(singleOrderData);
+  
+      } catch (error) {
+
+        console.error("Error from getSingleOrderData admin-helper: ", error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  getSingleOrderDataForOrdersDisplay : (orderId)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        const orderData = await db.get().collection(collections.ORDERS_COLLECTION).aggregate([
+                
+          { $match:{_id:ObjectId(orderId)} },
+
+          { $unwind:'$products' },
+          
+          { $project:{ item:'$products.item', quantity:'$products.quantity'} },
+
+          { $lookup:
+            
+            {
+              from:collections.PRODUCT_COLLECTION,
+
+              localField:'item',
+
+              foreignField:'_id',
+
+              as:'product'
+            }
+
+          },
+
+          { $project:{item:1, quantity:1, product:{$arrayElemAt:['$product',0]}} }
+
+        ]).toArray();
+        
+        resolve(orderData);
+
+      } catch (error) {
+
+        console.error("Error from getSingleOrderDataForOrdersDisplay admin-helper: ", error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  updateOrderStatus: (orderId,status)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        if(status === "shipped"){
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {orderStatus: "Order Shipped"}}
+            
+          );
+          
+        }else if (status === "delivered"){
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {orderStatus: "Delivered"}}
+            
+          );
+
+        }
+        
+        resolve();
+
+      } catch (error) {
+
+        console.error("Error from updateOrderStatus admin-helper: ", error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  manageOrderCancellation : (orderId, approve, adminRequest)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        if(approve){
+
+          if(adminRequest){
+
+            try {
+
+              await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+                {_id : ObjectId(orderId)},
+                {$set: {cancelledOrder: true, cancellationStatus: "Cancelled by Platform", orderStatus: "Cancelled"}}
+              
+              );
+
+              resolve({refundAvailable : true});
+
+            } catch(error) {
+
+              console.error("Error-4 from manageOrderCancellation admin-helper:", error);
+
+              reject(error);
+
+            }
+
+          }else{
+
+            try {
+              
+              await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+                {_id : ObjectId(orderId)},
+                {$set: {cancelledOrder: true, cancellationStatus: "Cancellation Request Approved", orderStatus: "Cancelled"}}
+              
+              );
+
+              resolve({refundAvailable : true});
+              
+            } catch(error) {
+
+              console.error("Error-3 from manageOrderCancellation admin-helper:", error);
+
+              reject(error);
+
+            }
+
+          }
+          
+        }else{
+
+          try{
+
+            await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+              {_id : ObjectId(orderId)},
+              {$set: {cancelledOrder: false, cancellationStatus: "Cancellation Request Rejected"}}
+              
+            );
+  
+            resolve({refundAvailable : false});
+
+          } catch(error) {
+
+            console.error("Error-2 from manageOrderCancellation admin-helper:", error);
+
+            reject(error);
+
+          }
+
+        }
+
+      } catch (error) {
+
+        console.error("Error from manageOrderCancellation admin-helper: ", error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  updateInventoryForOrderCancellationAndReturn : (orderId)=>{
+
+    return new Promise( async(resolve,reject)=>{
+
+      try{
+
+        const orderToCancell = await db.get().collection(collections.ORDERS_COLLECTION).findOne({_id:ObjectId(orderId)});
+
+        if( orderToCancell && orderToCancell != null ){
+          
+          // if order exist in db orders collection
+          const orderProductsWithQuantity = orderToCancell.products;
+
+          // Iterate over each product in the order
+          for (const product of orderProductsWithQuantity) {
+
+            const productId = product.item;
+
+            const quantity = product.quantity;
+
+            // Add to the available stock of the product in the product collection
+            const updateInventory = await db.get().collection(collections.PRODUCT_COLLECTION)
+            .updateOne(
+                
+              { _id: ObjectId(productId) },
+
+              { $inc: { availableStock: quantity } }
+
+            )
+
+          }
+
+          resolve({ status: true });
+
+        }else{ 
+            
+          // Send a error message if order dosen't exist in db orders collection
+
+          resolve({status: false, result: orderToCancell, error: "Order Dosent Exist or No products in the Order"});
+
+        }
+      
+      }catch(error){
+      
+        console.error("Error from updateInventoryForOrderCancellationAndReturn admin-helpers: ", error);
+    
+        reject(error);
+      
+      }
+
+    })
+
+  },
+  manageOrderReturn : (orderId, approve)=>{
+
+    return new Promise( async (resolve, reject) => {
+
+      try {
+
+        if(approve){
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {returnedOrder: true, returnStatus: "Return Request Approved", orderStatus: "Returned"}}
+            
+          );
+
+          resolve( {refundAvailable: true} );
+          
+        }else{
+
+          await db.get().collection(collections.ORDERS_COLLECTION).updateOne(
+            
+            {_id : ObjectId(orderId)},
+            {$set: {returnedOrder: false, returnStatus: "Return Request Rejected"}}
+            
+          );
+
+          resolve( {refundAvailable: false} );
+
+        }
+
+      } catch (error) {
+
+        console.error("Error from manageOrderReturn admin-helper: ", error);
+
+        reject(error);
+
+      }
+
+    });
+
+  },
+  // ====================== Function to Add balence to user wallet in-case of ORDER CANCELLATION OR RETURN ======================
+  addRefundToWalletBalance : (orderId, orderCancellationRequest, orderReturnRequest) => {
+
+    return new Promise( async (resolve, reject) =>{
+
+      try{
+
+        const orderData = await db.get().collection(collections.ORDERS_COLLECTION).findOne({_id: ObjectId(orderId)});
+
+        const userId = orderData.userId.toString();
+
+        const userWallet = await db.get().collection(collections.WALLET_COLLECTION).findOne({userId: ObjectId(userId)});
+
+        const refundAmount = orderData.orderValue;
+
+        if(userWallet === null){ // If there is no existing wallet for user, create one
+
+          db.get().collection(collections.WALLET_COLLECTION).insertOne({userId: ObjectId(userId), walletBalance: 0});
+
+        }
+
+        if(orderCancellationRequest){
+
+          if(orderData.paymentMethod === "ONLINE"){ // If the payment was ONLINE resolve with required data to do wallet refund
+
+            try {
+
+              await db.get().collection(collections.WALLET_COLLECTION).updateOne(
+
+                { userId: ObjectId(userId) },
+
+                { $inc: { walletBalance: refundAmount } }
+                
+              );
+    
+              resolve({refundSuccess : true});
+        
+            } catch (error) {
+        
+              console.error("Error in addRefundToWalletBalance admin-helpers while adding order CANCELLATION refund to wallet balance:", error);
+    
+              reject(error);
+        
+            }
+            
+          }else{
+
+            resolve();
+
+          }
+
+        }else if(orderReturnRequest){ 
+
+          try {
+
+            await db.get().collection(collections.WALLET_COLLECTION).updateOne(
+              { userId: ObjectId(userId) },
+              { $inc: { walletBalance: refundAmount } }
+            );
+  
+            resolve({refundSuccess : true});
+      
+          } catch (error) {
+      
+            console.error("Error in addRefundToWalletBalance admin-helpers while adding order RETURN refund to wallet balance:", error);
+  
+            reject(error);
+      
+          }
+
+        }
+
+      } catch (error) {
+
+        console.error("Error from addRefundToWalletBalance admin-helper: ", error);
+
+        reject(error);
+
+      }
+
+    })
 
   }
       

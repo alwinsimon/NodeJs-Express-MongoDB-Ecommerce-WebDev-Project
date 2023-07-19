@@ -1,6 +1,21 @@
+/* 
+======================================= COMMON JAVASCRIPT FUNCTIONS =======================================
+*/
+
+
+// JavaScript to make load single product page
+
+function viewProduct(id) {
+
+  window.location.href = '/product-details/' + id;
+
+}
+
+
+
 // JavaScript to make Ajax call for refreshing cart count - called from cart page
 
-function addToCart(productId) {
+function addToCart(productId, productName) {
 
   // console.log(productId);
 
@@ -13,12 +28,14 @@ function addToCart(productId) {
     success: (response) => {
 
       if(response.status){
-
-        let cartCount = $('#cart-count').html();
+        
+        let cartCount = $('#cart-count').attr('data-notify');
 
         cartCount = parseInt(cartCount) + 1;
 
-        $('#cart-count').html(cartCount);
+        $('#cart-count').attr('data-notify', cartCount);
+
+        swal( productName, "Successfully added to your cart!", "success");
 
       }
 
@@ -33,7 +50,6 @@ function addToCart(productId) {
 
 function changeQuantity(cartId, productId, userId, count){
 
-  // console.log(userId);
   // console.log('Change Quantity Function Called');
   // The above message will be consoled in the browser console as it is happening at client side
 
@@ -141,6 +157,17 @@ $(document).ready(function() {
 
     // console.log("Checkout Button Ajax call");
 
+    // Check if a payment option is selected
+    const paymentOptionSelected = $('input[name="payment-method"]:checked').val();
+
+    if (!paymentOptionSelected) {
+
+      $('#myModal').modal('show'); // Trigger the modal
+      
+      return;
+
+    }
+
     $.ajax({
       
       url:'/place-order',
@@ -173,10 +200,6 @@ $(document).ready(function() {
   })
 
   function makeRazorpayPayment(serverOrderData){
-
-    // console.log("makeRazorpayPayment Function Called");
-
-    // console.log(serverOrderData);
 
     let razorpayKeyId = serverOrderData.razorpayKeyId;
 
@@ -286,3 +309,130 @@ $(document).ready(function() {
   }
 
 });
+
+function modifyWishListStatus(productId){
+
+  fetch(
+    
+    '/modify-wishlist', 
+    
+    {
+      
+      method : "POST",
+
+      headers : {'Content-Type': 'application/json'},
+
+      body : JSON.stringify({
+
+        productId : productId
+
+      })
+
+    }
+
+  )
+  .then((response)=>{
+
+    if (response.status === 200) {
+
+      response.json().then((data) => {
+
+        if (data.status === "removed") {
+
+          swal("Product removed from your wishlist!", "success");
+
+        } else if (data.status === "added") {
+
+          swal("Product successfully added to your wishlist!", "success");
+
+        } else {
+
+          console.error('Error in modifyWishListStatus Function');
+
+        }
+
+      });
+
+    } else {
+
+      console.error('Error in modifyWishListStatus Function');
+
+    }
+
+  })
+  .catch((error) => {
+
+    console.error('Error in modifyWishListStatus Function:', error);
+    /* This will be displayed on browser Console */
+
+  }); 
+
+}
+
+ 
+function modifyWishListFromWishlistPage(productId){
+  
+  /* Using a seperate function for the same purpose of modifying wishlist exactly same as the modifyWishListStatus because, 
+   in wishlist page the page has to be reloded after making the change 
+  */
+ 
+  fetch(
+    
+    '/modify-wishlist', 
+    
+    {
+      
+      method : "POST",
+
+      headers : {'Content-Type': 'application/json'},
+
+      body : JSON.stringify({
+
+        productId : productId
+
+      })
+
+    }
+
+  )
+  .then((response)=>{
+
+    if (response.status === 200) {
+
+      response.json().then((data) => {
+
+        if (data.status === "removed") {
+
+          swal("Product removed from your wishlist!", "success");
+
+          location.reload();
+
+        } else if (data.status === "added") {
+
+          swal("Product successfully added to your wishlist!", "success");
+
+          location.reload();
+
+        } else {
+
+          console.error('Error in modifyWishListStatus Function');
+
+        }
+
+      });
+
+    } else {
+
+      console.error('Error in modifyWishListStatus Function');
+
+    }
+
+  })
+  .catch((error) => {
+
+    console.error('Error in modifyWishListStatus Function:', error);
+    /* This will be displayed on browser Console */
+
+  }); 
+
+}

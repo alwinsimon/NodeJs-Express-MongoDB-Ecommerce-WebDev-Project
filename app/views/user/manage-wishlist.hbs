@@ -1,0 +1,236 @@
+
+{{!-- ============================================== User Wishlist Page ============================================== --}}
+
+
+<section style="padding-top: 80px; padding-bottom: 50px">
+
+    <div>
+
+
+        <style>
+
+            .btn:not(:disabled):not(.disabled) {
+                cursor: pointer;
+            }
+        
+            .btn-a-brc-tp:not(.disabled):not(:disabled).active,
+            .btn-brc-tp,
+            .btn-brc-tp:focus:not(:hover):not(:active):not(.active):not(.dropdown-toggle),
+            .btn-h-brc-tp:hover,
+            .btn.btn-f-brc-tp:focus,
+            .btn.btn-h-brc-tp:hover {
+                border-color: transparent;
+            }
+        
+            .btn-outline-blue {
+                color: #0d6ce1;
+                border-color: #5a9beb;
+                background-color: transparent;
+            }
+        
+            .btn {
+                cursor: pointer;
+                position: relative;
+                z-index: auto;
+                border-radius: .175rem;
+                transition: color .15s, background-color .15s, border-color .15s, box-shadow .15s, opacity .15s;
+            }
+        
+            .border-2 {
+                border-width: 2px !important;
+                border-style: solid !important;
+                border-color: transparent;
+            }
+        
+            .bgc-white {
+                background-color: #fff !important;
+            }
+        
+        
+            .text-green-d1 {
+                color: #277b5d !important;
+            }
+        
+            .letter-spacing {
+                letter-spacing: .5px !important;
+            }
+        
+            .font-bolder,
+            .text-600 {
+                font-weight: 600 !important;
+            }
+        
+            .text-170 {
+                font-size: 1.7em !important;
+            }
+        
+            .text-purple-d1 {
+                color: #6d62b5 !important;
+            }
+        
+            .text-primary-d1 {
+                color: #276ab4 !important;
+            }
+        
+            .text-secondary-d1 {
+                color: #5f718b !important;
+            }
+        
+            .text-180 {
+                font-size: 1.8em !important;
+            }
+        
+            .text-150 {
+                font-size: 1.5em !important;
+            }
+        
+            .text-danger-m3 {
+                color: #e05858 !important;
+            }
+        
+            .rotate-45 {
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);
+            }
+        
+            .position-l {
+                left: 0;
+            }
+        
+            .position-b,
+            .position-bc,
+            .position-bl,
+            .position-br,
+            .position-center,
+            .position-l,
+            .position-lc,
+            .position-r,
+            .position-rc,
+            .position-t,
+            .position-tc,
+            .position-tl,
+            .position-tr {
+                position: absolute !important;
+                display: block;
+            }
+        
+            .mt-n475,
+            .my-n475 {
+                margin-top: -2.5rem !important;
+            }
+        
+            .ml-35,
+            .mx-35 {
+                margin-left: 1.25rem !important;
+            }
+        
+            .text-dark-l1 {
+                color: #56585e !important;
+            }
+        
+            .text-90 {
+                font-size: .9em !important;
+            }
+        
+            .text-left {
+                text-align: left !important;
+            }
+        
+            .mt-25,
+            .my-25 {
+                margin-top: .75rem !important;
+            }
+        
+            .text-110 {
+                font-size: 1.1em !important;
+            }
+        
+            .deleted-text {
+                text-decoration: line-through;
+                ;
+            }
+        </style>
+
+        <div class="bg-img1 txt-center p-t-50">
+            <h2 class="ltext-108 cl2 txt-center">
+                {{user.name}}'s Wishlist
+            </h2>
+        </div>
+
+        {{!-- =========================================== Wishlist Items =========================================== --}}
+
+        <div>
+        
+            <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+        
+            <div class="container">
+
+                <div class="mt-5">
+
+
+                    <div class="d-style btn btn-brc-tp border-2 bgc-white btn-outline-blue btn-h-outline-blue btn-a-outline-blue w-100 my-2 py-3 shadow-sm">
+
+                        {{#if userWishlistData}}
+
+                            <!-- ================================= Single Item ================================= -->
+                            {{#each userWishlistData}}
+
+                                <div class="row align-items-center p-b-15">
+
+
+                                    <div class="col-12 col-md-4">
+
+                                        <img src="/product-images/{{this.images.[0]}}" style="height:15rem; width:15rem;" alt="IMG-PRODUCT">
+                
+                                        <div class="text-secondary-d1 text-120">
+                                            {{this.name}}
+                                        </div>
+
+                                    </div>
+                
+                                    <ul class="list-unstyled mb-0 col-12 col-md-4 text-dark-l1 text-90 text-left my-4 my-md-0">
+
+                                        <li>
+                                            <i class="fa fa-check text-success-m2 text-110 mr-2 mt-1"></i>
+                                            <span>
+                                                <span class="text-110">{{this.description}}</span>
+                                                {{this.price}}
+                                            </span>
+                                        </li>
+                
+                                    </ul>
+
+                                    {{!-- =========== Buttons=========== --}}
+                                    <div class="col-12 col-md-4 text-center">
+                                        <a href="#" class="f-n-hover btn btn-success btn-raised px-4 py-25 w-20 text-600" onclick="addToCart('{{this._id}}', '{{this.name}}'); return false;" >Add to cart</a>
+                                        <a href="#" class="f-n-hover btn btn-danger btn-raised px-4 py-25 w-20 text-600" onclick="modifyWishListFromWishlistPage('{{this._id}}'); return false;" >Remove</a>
+                                    </div>
+
+
+                                </div>
+
+                                <hr>
+
+                            {{/each}}
+
+                        {{else}}
+
+                            <div style="padding-top: 100px; padding-bottom: 100px;">
+
+                                <h2 style="color: #6d62b5;">Your wishlist is Empty!</h2>
+
+                            </div>
+
+                        {{/if}}
+        
+                    </div>
+           
+                </div>
+            </div>
+        
+        </div>
+
+
+    </div>
+
+</section>

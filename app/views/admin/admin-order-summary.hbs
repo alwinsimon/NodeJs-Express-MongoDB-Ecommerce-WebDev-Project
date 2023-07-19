@@ -1,0 +1,222 @@
+{{!-- ==============================Order Summary Page============================== --}}
+
+<div style="display: flex; justify-content: center; padding-top: 40px ; padding-bottom: 40px ; margin: 0; font-family: Arial, sans-serif; background-color: #f5f5f5; margin-bottom: 40px;">
+
+    <div style="width: 95%; background-color: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+
+        <h1 style="text-align: center;">Orders</h1>
+
+        <table id="admin-order-summary-table" style="width: 100%; border-collapse: collapse;">
+
+            <thead style="background-color: #f2f2f2;">
+                <tr>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Date & Time</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">User</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Order Id</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Payment</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Amount</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Status</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Details</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Delivery</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Cancellation</th>
+                    <th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Return</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {{#each platformOrderData}}
+
+                    <tr class="cart-row">
+
+                        <td>{{this.date}}</td>
+                        <td>{{this.userName}}</td>
+                        <td>{{this._id}}</td>
+                        <td>{{this.paymentMethod}}</td>
+                        <td>{{this.orderValue}}</td>
+                        <td>{{this.orderStatus}}</td>
+
+                        {{!-- ======================== Details ======================== --}}
+                        <td>
+
+                            <form method="POST" action="/admin/single-order-details">
+                                <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">View</button>
+                            </form>
+
+                        </td>
+
+                        {{!-- ======================== Delivery ======================== --}}
+                        <td>
+
+                            {{!-- ======================== Order Status Management For Placed Orders ======================== --}}
+
+                            {{#if (eq this.orderStatus 'Order Placed') }}
+                            
+                                <button class="btn btn-info animate__animated animate__fadeInLeft" onclick="confirmAndChangeOrderStatus('{{this._id}}', 'shipped')">Ship Order</button>
+                            
+                            {{else if (eq this.orderStatus 'Order Shipped') }}
+                            
+                                <button class="btn btn-warning animate__animated animate__fadeInLeft" onclick="confirmAndChangeOrderStatus('{{this._id}}', 'delivered')">Mark Delivered</button>
+                            
+                            {{else if (eq this.orderStatus 'Delivered') }}
+                            
+                                <button class="btn btn-outline-success animate__animated animate__fadeInLeft">Completed</button>
+                            
+                            {{else if (eq this.orderStatus 'Cancelled') }}
+                            
+                                <button class="btn btn-outline-danger animate__animated animate__fadeInLeft">Cancelled</button>
+                            
+                            {{else if (eq this.orderStatus 'Returned') }}
+                            
+                                <button class="btn btn-outline-danger animate__animated animate__fadeInLeft">Returned</button>
+                            
+                            {{/if}}
+
+
+                        </td>
+
+                        {{!-- ======================== Cancel ======================== --}}
+                        <td>
+
+                            {{!-- ======================== Order Cancellation Management For Placed & Shipped Orders ======================== --}}
+
+                            {{#if (eq this.cancellationStatus 'Pending Admin Approval') }}
+
+                                <form method="POST" action="/admin/review-order-cancellation-request">
+                                    <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-warning animate__animated animate__fadeInLeft">Review</button>
+                                </form>
+
+                            {{else if (eq this.cancellationStatus 'Cancellation Request Approved')}}
+                            
+                                <button class="btn btn-outline-danger animate__animated animate__fadeInLeft" >Cancelled</button>
+
+                            {{else if (eq this.cancellationStatus 'Cancellation Request Rejected')}}
+                            
+                                <button class="btn btn-outline-danger animate__animated animate__fadeInLeft" >Rejected</button>
+
+                            {{else if (eq this.cancellationStatus 'Cancelled by Platform')}}
+                            
+                                <button class="btn btn-outline-danger animate__animated animate__fadeInLeft" >Platform Cancelled</button>
+                                    
+                            {{else if (or (eq this.orderStatus 'Order Placed') (eq this.orderStatus 'Order Shipped') )}}
+
+                                <form method="POST" action="/admin/admin-side-order-cancellation">
+                                    <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft" onclick="return confirm('Are you sure that you want to cancel this order ?')">Cancel</button>
+                                </form>
+
+                            {{/if}}
+
+                        </td>
+
+                        {{!-- ======================== Return ======================== --}}
+                        <td>
+
+                            {{!-- ======================== Order Return Management For Delivered Orders ======================== --}}
+
+                            {{#if (eq this.returnStatus 'Pending Admin Approval') }}
+
+                                <form method="POST" action="/admin/review-order-return-request">
+                                    <button name="orderId" value="{{this._id}}" type="submit" class="btn btn-primary animate__animated animate__fadeInLeft">Review Return Request</button>
+                                </form>
+
+                            {{else if (eq this.returnStatus 'Return Request Approved')}}
+                            
+                                <button class="btn btn-outline-danger animate__animated animate__fadeInLeft" >Returned Order</button>
+
+                            {{else if (eq this.returnStatus 'Return Request Declined')}}
+                            
+                                <button class="btn btn-outline-danger animate__animated animate__fadeInLeft" >Return Declined</button>
+    
+                            {{/if}}
+
+                        </td>
+
+                    </tr>
+
+                {{/each}}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<style>
+    /* Hover animation */
+    .cart-row:hover {
+        animation: row-hover 0.3s forwards;
+    }
+
+    @keyframes row-hover {
+        from {
+            transform: scale(1);
+            box-shadow: none;
+        }
+        to {
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+    }
+
+    /* Remove item button style */
+    .remove-item {
+        background-color: #dc3545;
+        color: #fff;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+</style>
+
+<script>
+
+    function confirmAndChangeOrderStatus(orderId, status) {
+
+      if (confirm(`Are you sure that you want to mark this order as ${status}?`)) {
+
+        fetch('/admin/change-order-status', {
+
+          method: 'POST',
+
+          headers: {'Content-Type': 'application/json'},
+
+          body: JSON.stringify({
+
+            orderId: orderId,
+            
+            status: status
+
+          })
+
+        })
+        .then(response => {
+
+          if (response.status) {
+
+            location.reload();
+
+          } else {
+
+            console.error('Error updating order status');
+            /* This will be displayed on browser Console */
+
+          }
+
+        })
+        .catch(error => {
+
+          console.error('Error updating order status:', error);
+          /* This will be displayed on browser Console */
+
+        }); 
+
+      }
+
+    }
+
+</script>

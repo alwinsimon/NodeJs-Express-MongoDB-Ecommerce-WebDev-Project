@@ -1,0 +1,166 @@
+{{!-- ============================== Admin Single Order Info Page============================== --}}
+
+<section>
+  <div class="container mt-5">
+    <h1 class="text-center">Product Details of Order</h1>
+    
+    <hr>
+    <br>
+
+    {{#if cancelledOrderDetails.cancelledOrder}}
+      <p class="text-center" style="color: red;">Cancelled Order</p>
+    {{/if}}
+
+    <br>
+
+    <p class="text-center">Order Date & Time:</p>
+
+    {{#if orderDetails}}
+    <p class="text-center"><span class="order-date">{{orderDetails.date}}</span></p>
+    {{/if}}
+
+    {{#if cancelledOrderDetails}}
+    <p class="text-center"><span class="order-date">{{cancelledOrderDetails.orderDate}}</span></p>
+    {{/if}}
+
+    {{#if orderDate}}
+    <p class="text-center"><span class="order-date">{{orderDate}}</span></p>
+    {{/if}}
+
+    <br>
+    <br>
+
+    <div class="row justify-content-center">
+      {{#each productDetails}}
+        <div class="col-md-4" style="width: 15rem; height: 23rem;">
+          <div class="card mb-4">
+            <img src="/product-images/{{this.product.images.[0]}}" class="card-img-top" alt="{{this.product.name}}">
+            <div class="card-body">
+              <h5 class="card-title">{{this.product.name}}</h5>
+              <p class="card-text">{{this.product.description}}</p>
+              <p class="card-text">Price: ₹ {{this.product.price}}</p>
+              <p class="card-text">Quantity: {{this.quantity}}</p>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+    {{!-- Code for Admin side Order Cancellation request approval or rejection - Only displayed if there is cancellation request pending for this order --}}
+    
+    {{#if (eq orderDetails.cancellationStatus 'Pending Admin Approval')}}
+
+      <div class="row justify-content-center">
+
+        <div class="col-md-4">
+
+          <form method="post" action="/admin/approve-order-cancellation-request">
+            <div class="text-center">
+              <button name="orderId" value="{{orderDetails._id}}" type="submit" class="btn btn-success btn-lg" onclick="return confirm('Are you sure you want to accept the cancellation request?')">Accept Cancellation Request</button>
+            </div>
+          </form>
+
+        </div>
+
+        <div class="col-md-4">
+
+          <form method="post" action="/admin/reject-order-cancellation-request">
+            <div class="text-center">
+              <button name="orderId" value="{{orderDetails._id}}" type="submit" class="btn btn-danger btn-lg" onclick="return confirm('Are you sure you want to reject the cancellation request?')">Reject Cancellation Request</button>
+            </div>
+          </form>
+
+        </div>
+
+      </div>
+
+      <br>
+      <br>
+      <br>
+
+    {{else if (eq orderDetails.returnStatus 'Pending Admin Approval')}}
+                            
+      <div class="row justify-content-center">
+
+        <div class="col-md-4">
+
+          <button class="btn btn-success btn-lg" onclick="changeReturnStatus('{{orderDetails._id}}', 'Approve Return')">Approve Order Return</button>
+
+        </div>
+
+        <div class="col-md-4">
+
+          <button class="btn btn-danger btn-lg" onclick="changeReturnStatus('{{orderDetails._id}}', 'Reject Return')">Reject Order Return</button>
+
+        </div>
+
+      </div>
+                               
+
+      <br>
+      <br>
+      <br>
+      
+    {{/if}}
+
+  </div>
+
+</section>
+
+
+
+
+<script>
+
+  function changeReturnStatus(orderId, status) {
+
+    if (confirm(`Are you sure that you want to ${status} Request?`)) {
+
+      fetch('/admin/change-order-return-status', {
+
+        method: 'POST',
+
+        headers: {'Content-Type': 'application/json'},
+
+        body: JSON.stringify({
+
+          orderId: orderId,
+          
+          status: status
+
+        })
+
+      })
+      .then(response => {
+
+        if (response.status) {
+
+          window.location.href = '/admin/order-summary';
+
+        } else {
+
+          console.error('Failed updating return status');
+          /* This will be displayed on browser Console */
+
+        }
+
+      })
+      .catch(error => {
+
+        console.error('Error updating return status:', error);
+        /* This will be displayed on browser Console */
+
+      }); 
+
+    }
+
+  }
+
+</script>
+
+

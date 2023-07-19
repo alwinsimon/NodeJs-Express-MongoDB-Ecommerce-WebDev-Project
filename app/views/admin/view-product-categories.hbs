@@ -18,33 +18,47 @@
 
             <thead>
                 <tr>
-                    <th scope="col">Category Id</th>
+                    <td scope="col">Category Id</td>
                     <th scope="col">Category</th>
-                    <th scope="col">Description</th>
                     <th scope="col">Created By</th>
                     <th scope="col">Created On</th>
+                    <th scope="col">Description</th>
                     <th scope="col">Image</th>
+                    <th scope="col">Offers</th>
+                    <th scope="col">Manage Offer</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
 
             {{!-- ==========Table Body========== --}}
-
             <tbody>
 
                 {{#each productCategories}}
 
                 <tr>
-                    <th scope="row">{{this.categoryId}}</th>
+                    <td scope="row">{{this.categoryId}}</td>
                     <td>{{this.name}}</td>
-                    <td>{{this.description}}</td>
-                    <th scope="row">{{this.creatorDetails.name}}</th>
-                    <th scope="row">{{this.createdOn}}</th>
-                    <td><img style="width: 50px; height: 50px" src="/product-category-images/{{this._id}}.jpg" alt="{{this.name}}"></td>
+                    <td scope="row">{{this.creatorDetails.name}}</td>
+                    <td scope="row">{{this.createdOn}}</td>
+                    <td scope="row">{{this.description}}</td>
+                    <td><img style="width: 50px; height: 50px" src="/product-category-images/{{this.categoryImage}}" alt="{{this.name}}"></td>
+                    <th style="color: coral;">{{this.categoryOffer}} %</th>
+                    <td>
+                    
+                        <button class="btn btn btn-primary mb-1" data-bs-toggle="modal"
+                            data-bs-target="#set-category-offer-{{this._id}}">Add</button>
+                    
+                        <form action="/admin/remove-category-offer" method="post">
+                            <input type="hidden" name="productId" value="{{this._id}}">
+                            <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('Are you sure that you want to remove category offer ?')">Remove</button>
+                        </form>
+                    
+                    </td>
                     <td>
                         
                         <form action="/admin/edit-product-category/{{this._id}}" method="GET" class="col-md-2">
-                            <button class="btn btn-success" type="submit">EDIT</button>
+                            <button class="btn btn-success mb-1" type="submit">EDIT</button>
                         </form>
                         <form action="/admin/delete-product-category/{{this._id}}" method="POST" class="col-md-2">
                             <button class="btn btn-danger" onclick="return confirm('Are you sure that you want to delete {{this.name}} category?')" type="submit">DELETE</button>
@@ -52,6 +66,43 @@
 
                     </td>
                 </tr>
+
+                {{!-- ========================== Modal for Adding category offer ========================== --}}
+
+                <div class="modal fade" id="set-category-offer-{{this._id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+
+                                <h5 class="modal-title" id="exampleModalCenterTitle">Set Category Offer for {{this.name}}</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+
+                            </div>
+
+                            <form action="/admin/set-category-offer" method="POST">
+
+                                <div class="modal-body">
+                                    <label for="offer">Offer Percentage:</label>
+                                    <input type="number" id="categoryOfferPercentage" name="categoryOfferPercentage" required min="1" max="99">
+
+                                    <input type="hidden" class="form-control" id="categoryId" name="categoryId" value="{{this._id}}" required>
+
+                                    <br><br>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
 
                 {{/each}}
 

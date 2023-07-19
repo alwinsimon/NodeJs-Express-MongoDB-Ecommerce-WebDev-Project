@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <title>{{title}}</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
+
+        {{!-- Favicon --}}
+        <link rel="icon" type="image/png" href="/admin-resources/img/favicon.png"/>
+
+        {{!-- Google Web Fonts --}}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+        
+        {{!-- Icon Font Stylesheet --}}
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        {{!-- Libraries Stylesheet --}}
+        <link href="/admin-resources/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+        <link href="/admin-resources/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+        {{!-- Customized Bootstrap Stylesheet --}}
+        <link href="/admin-resources/css/bootstrap.min.css" rel="stylesheet">
+
+        {{!-- Template Stylesheet --}}
+        <link href="/admin-resources/css/style.css" rel="stylesheet">
+
+        {{!-- CSS for Data-Table --}}
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+
+    </head>
+
+    {{!-- ============================================================ BODY ============================================================ --}}
+
+    <body>
+
+        <div class="container-xxl position-relative bg-white d-flex p-0">
+
+            {{!-- ============================== Spinner Start ============================== --}}
+            <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+
+                    <span class="sr-only">Loading...</span>
+
+                </div>
+
+            </div>
+            {{!-- ============================== Spinner End ============================== --}}
+
+
+            {{!-- ============================== Sidebar Start ============================== --}}
+            <div class="sidebar pe-4 pb-3">
+
+                <nav class="navbar bg-light navbar-light">
+                    
+                    <a href="/admin" class="navbar-brand mx-4 mb-3">
+
+                        <h5 class="text-primary"><i class="fas fa-user-shield me-2"></i>{{PLATFORM_NAME}}'s Admin</h5>
+
+                    </a>
+
+                    <div class="d-flex align-items-center ms-4 mb-4">
+                        <div class="position-relative">
+                            <i class="fas fa-user-shield me-2"></i>
+                            <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-0"> {{adminData.name}} </h6>
+                            <span> {{PLATFORM_NAME}} Admin</span>
+                        </div>
+                    </div>
+
+                    <div class="navbar-nav w-100">
+
+                        <a href="/admin" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+
+                        <div class="nav-item dropdown">
+                            <a href="/admin" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-cart-plus me-2"></i>Products</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="/admin/manage-products" class="dropdown-item">Manage Product</a>
+                                <a href="/admin/add-product" class="dropdown-item">Add Product</a>
+                            </div>
+                        </div>
+                        
+
+                        <div class="nav-item dropdown">
+                            <a href="/admin" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-table me-2"></i>Categories</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="/admin/manage-product-categories" class="dropdown-item">Manage Category</a>
+                                <a href="/admin/add-new-product-category" class="dropdown-item">Add Category</a>
+                            </div>
+                        </div>
+
+
+                        <div class="nav-item dropdown">
+                            <a href="/admin" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-chart-line me-2"></i>Orders</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="/admin/order-summary" class="dropdown-item">Manage Orders</a>
+                            </div>
+                        </div>
+
+
+                        <div class="nav-item dropdown">
+                            <a href="/admin" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-users me-2"></i>Users</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="/admin/manage-users" class="dropdown-item">Manage Users</a>
+                            </div>
+                        </div>
+
+
+                        <div class="nav-item dropdown">
+                            <a href="/admin" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-money-check-alt me-2"></i>Coupons</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="/admin/manage-coupons" class="dropdown-item">Manage Coupons</a>
+                                <a href="/admin/add-coupon" class="dropdown-item">Add Coupon</a>
+                                <a href="/admin/inactive-coupons" class="dropdown-item">Deactivated Coupons</a>
+                            </div>
+                        </div>
+
+
+                        <div class="nav-item dropdown">
+                            <a href="/admin" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-address-card me-2"></i>Vendors</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="/admin" class="dropdown-item">Manage Vendors</a>
+                            </div>
+                        </div>
+
+
+                        <div class="nav-item dropdown">
+                            <a href="/admin" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-user-shield me-2"></i>Admins</a>
+                            <div class="dropdown-menu bg-transparent border-0">
+                                <a href="/admin/add-admin" class="dropdown-item">Add Admin</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </nav>
+
+            </div>
+            {{!-- ============================== Sidebar End ============================== --}}
+
+
+            {{!-- ============================== Content Start ============================== --}}
+
+            <div class="content">
+
+                {{!-- ============================== Navbar Start ============================== --}}
+
+                <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
+                    
+                    <a href="#" class="navbar-brand d-flex d-lg-none me-4">
+                        <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
+                    </a>
+                    
+                    <a href="#" class="sidebar-toggler flex-shrink-0">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                    
+                    <div class="navbar-nav align-items-center ms-auto">
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fa fa-envelope me-lg-2"></i>
+                                <span class="d-none d-lg-inline-flex">Message</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                                <a href="#" class="dropdown-item">
+                                    <div class="d-flex align-items-center">
+                                        <img class="rounded-circle" src="/admin-resources/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                                        <div class="ms-2">
+                                            <h6 class="fw-normal mb-0">Jhon send you a message</h6>
+                                            <small>15 minutes ago</small>
+                                        </div>
+                                    </div>
+                                </a>
+                                <hr class="dropdown-divider">
+                                <a href="#" class="dropdown-item text-center">See all message</a>
+                            </div>
+                        </div>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fa fa-bell me-lg-2"></i>
+                                <span class="d-none d-lg-inline-flex">Notifications</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                                <a href="#" class="dropdown-item">
+                                    <h6 class="fw-normal mb-0">Profile updated</h6>
+                                    <small>15 minutes ago</small>
+                                </a>
+                                <hr class="dropdown-divider">
+                                <a href="#" class="dropdown-item">
+                                    <h6 class="fw-normal mb-0">New user added</h6>
+                                    <small>15 minutes ago</small>
+                                </a>
+                                <hr class="dropdown-divider">
+                                <a href="#" class="dropdown-item">
+                                    <h6 class="fw-normal mb-0">Password changed</h6>
+                                    <small>15 minutes ago</small>
+                                </a>
+                                <hr class="dropdown-divider">
+                                <a href="#" class="dropdown-item text-center">See all notifications</a>
+                            </div>
+                        </div>
+
+                        <div class="nav-item dropdown">
+
+                            {{#if adminData}}
+
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                    <img class="rounded-circle me-lg-2" src="/admin-resources/img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                                    <span class="d-none d-lg-inline-flex">{{adminData.name}}</span>
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+
+                                    <a href="/admin/" class="dropdown-item">My Profile</a>
+
+                                    <form action="/admin/logout" method="POST" class="dropdown-item">
+
+                                        <input type="hidden" name="_method" value="POST">
+
+                                        <button type="submit" class="btn btn-link">Log Out</button>
+
+                                    </form>
+
+                                </div>
+
+                            {{else}}
+
+                                <a href="/admin/login" class="dropdown-item">Login</a>
+
+                            {{/if}}
+
+
+                        </div>
+                    </div>
+                </nav>
+                {{!-- ============================== Navbar End ============================== --}}
+
+
+                
+                {{{body}}}
+
+
+
+
+                {{!-- ============================== Footer Start ============================== --}}
+
+                <div class="container-fluid pt-4 px-4">
+                    <div class="bg-light rounded-top p-4">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 text-center text-sm-start">
+                                &copy; <a href="/admin">{{PLATFORM_NAME}}</a>, All Right Reserved. 
+                            </div>
+                            <div class="col-12 col-sm-6 text-center text-sm-end">
+                                {{!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/--}}
+                                Designed By <a href="https://htmlcodex.com">HTML Codex</a>
+                            </br>
+                            Distributed By <a class="border-bottom" href="https://themewagon.com" target="_blank">ThemeWagon</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{!-- ============================== Footer End ============================== --}}
+
+            </div>
+
+            {{!-- ============================== Content End ============================== --}}
+
+
+            {{!-- ============================== Back to Top ============================== --}}
+            <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+        </div>
+
+        {{!-- ============================== JavaScript Libraries ============================== --}}
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/admin-resources/lib/chart/chart.min.js"></script>
+        <script src="/admin-resources/lib/easing/easing.min.js"></script>
+        <script src="/admin-resources/lib/waypoints/waypoints.min.js"></script>
+        <script src="/admin-resources/lib/owlcarousel/owl.carousel.min.js"></script>
+        <script src="/admin-resources/lib/tempusdominus/js/moment.min.js"></script>
+        <script src="/admin-resources/lib/tempusdominus/js/moment-timezone.min.js"></script>
+        <script src="/admin-resources/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+        {{!-- ============================== Template Javascript ============================== --}}
+        <script src="/admin-resources/js/main.js"></script>
+
+        {{!-- ============================== Javascript for Data Table ============================== --}}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+        <script src="/admin-resources/js/dataTable-script.js"></script> {{!-- Placed this link here so that it'll be loaded after loading all jquery files required for Data tables--}}
+
+    </body>
+
+</html>
