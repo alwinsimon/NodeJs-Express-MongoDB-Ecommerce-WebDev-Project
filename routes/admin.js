@@ -5,6 +5,7 @@ const adminController = require('../app/controllers/adminController');
 const productController = require('../app/controllers/productController');
 const couponController = require('../app/controllers/couponController');
 const offerController = require('../app/controllers/offerController');
+const adminDashboardController = require('../app/controllers/adminDashboardController');
 const multer = require('../config/imageUploadConfig');
 
 
@@ -21,7 +22,7 @@ const multerUploadProductCategoryImage = multer.uploadProductCategoryImage.singl
 /*=================================================ADMIN ROUTES=================================================*/
 
 // ====================Route to Admin Dashboard====================
-router.get('/', verifyAdminLogin, adminController.adminDashboardGET);
+router.get('/', verifyAdminLogin, adminDashboardController.adminDashboardGET);
 
 
 /* ========================LOGIN & LOGOUT ROUTES======================== */
