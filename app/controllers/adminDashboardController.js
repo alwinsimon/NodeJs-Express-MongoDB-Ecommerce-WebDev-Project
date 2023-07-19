@@ -30,6 +30,12 @@ const adminDashboardGET = async (req,res)=>{
         const deliveredOrdersCount = await adminDashboardHelpers.getDeliveredOrdersCount();
         const cancelledOrdersCount = await adminDashboardHelpers.getCancelledOrdersCount();
 
+        const totalSales = await adminDashboardHelpers.getTotalSales();
+        const todaysSales = await adminDashboardHelpers.getTodaysSales();
+
+        const todaysSalesCount = await adminDashboardHelpers.getTodaysSalesCount();
+        const totalSalesCount = await adminDashboardHelpers.getTotalSalesCount();
+
         const dataToRender = {
 
             layout: 'admin-layout',
@@ -45,7 +51,13 @@ const adminDashboardGET = async (req,res)=>{
             placedOrdersCount,
             shippedOrdersCount,
             deliveredOrdersCount,
-            cancelledOrdersCount
+            cancelledOrdersCount,
+
+            totalSales,
+            todaysSales,
+
+            totalSalesCount,
+            todaysSalesCount
 
         }
 

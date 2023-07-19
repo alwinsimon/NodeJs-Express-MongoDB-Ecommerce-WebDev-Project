@@ -193,7 +193,171 @@ const getCancelledOrdersCount = ()=>{
 }
 
 
+const getTotalSales = () => {
 
+    return new Promise(async (resolve, reject) => {
+
+        try{
+
+            const pipeline = [
+
+                { $match: { orderStatus: { $nin: ["Cancelled", "Returned"] } } },
+      
+                { $group: { _id: null, totalOrderValue: { $sum: "$orderValue" } }}
+              
+            ];
+        
+            const salesQueryResult = await db.get().collection(databaseCollections.ORDERS_COLLECTION).aggregate(pipeline).toArray();
+    
+            let sumOfOrderValues = 0;
+
+            if(salesQueryResult.length > 0){
+
+                sumOfOrderValues = salesQueryResult[0].totalOrderValue;
+        
+                resolve(sumOfOrderValues);
+
+            }else{
+            
+                resolve(sumOfOrderValues);
+
+            }
+        
+
+        }catch(error){
+
+            console.error("Error from getTotalSales adminDashboard-helpers: ", error);
+
+            reject(error);
+
+        }
+
+    });
+
+};
+
+
+const getTodaysSales = () => {
+
+    return new Promise(async (resolve, reject) => {
+
+        try{
+
+            const todaysDate = new Date();
+            todaysDate.setHours(0, 0, 0, 0); // Setting the time to start of the day.
+
+            const pipeline = [
+
+              { $match: { orderStatus: { $nin: ["Cancelled", "Returned"] }, date: { $gte: todaysDate } } },
+
+              { $group: { _id: null, totalOrderValue: { $sum: "$orderValue" } } }
+
+            ];
+      
+            const salesQueryResult = await db.get().collection(databaseCollections.ORDERS_COLLECTION).aggregate(pipeline).toArray();
+      
+            let sumOfOrderValues = 0;
+      
+            if (salesQueryResult.length > 0) {
+
+              sumOfOrderValues = salesQueryResult[0].totalOrderValue;
+            
+            }
+      
+            resolve(sumOfOrderValues);
+
+        }catch(error){
+
+            console.error("Error from getTodaysSales adminDashboard-helpers: ", error);
+
+            reject(error);
+
+        }
+
+    });
+
+};
+
+
+const getTodaysSalesCount = () => {
+
+    return new Promise(async (resolve, reject) => {
+
+        try{
+
+            const todaysDate = new Date();
+            todaysDate.setHours(0, 0, 0, 0); // Setting the time to start of the day.
+
+            const pipeline = [
+
+              { $match: { orderStatus: { $nin: ["Cancelled", "Returned"] }, date: { $gte: todaysDate } } },
+
+              { $count: "salesCount" }, // Used to get the count of matching documents
+
+            ];
+      
+            const salesQueryResult = await db.get().collection(databaseCollections.ORDERS_COLLECTION).aggregate(pipeline).toArray();
+      
+            let todaysSalesCount = 0;
+      
+            if (salesQueryResult.length > 0) {
+
+              todaysSalesCount = salesQueryResult[0].salesCount;
+            
+            }
+      
+            resolve(todaysSalesCount);
+
+        }catch(error){
+
+            console.error("Error from getTodaysSalesCount adminDashboard-helpers: ", error);
+
+            reject(error);
+
+        }
+
+    });
+
+};
+
+
+const getTotalSalesCount = () => {
+
+    return new Promise(async (resolve, reject) => {
+
+        try{
+
+            const pipeline = [
+
+              { $match: { orderStatus: { $nin: ["Cancelled", "Returned"] } } },
+
+              { $count: "salesCount" }, // Used to get the count of matching documents
+
+            ];
+      
+            const salesQueryResult = await db.get().collection(databaseCollections.ORDERS_COLLECTION).aggregate(pipeline).toArray();
+      
+            let totalSalesCount = 0;
+      
+            if (salesQueryResult.length > 0) {
+
+                totalSalesCount = salesQueryResult[0].salesCount;
+            
+            }
+      
+            resolve(totalSalesCount);
+
+        }catch(error){
+
+            console.error("Error from getTotalSalesCount adminDashboard-helpers: ", error);
+
+            reject(error);
+
+        }
+
+    });
+
+};
 
 
 
@@ -232,6 +396,12 @@ module.exports = {
     getPlacedOrdersCount,
     getShippedOrdersCount,
     getDeliveredOrdersCount,
-    getCancelledOrdersCount
+    getCancelledOrdersCount,
+
+    getTotalSales,
+    getTodaysSales,
+
+    getTotalSalesCount,
+    getTodaysSalesCount,
 
 }
