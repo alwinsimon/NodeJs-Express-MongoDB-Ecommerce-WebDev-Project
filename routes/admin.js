@@ -6,6 +6,7 @@ const productController = require('../app/controllers/productController');
 const couponController = require('../app/controllers/couponController');
 const offerController = require('../app/controllers/offerController');
 const adminDashboardController = require('../app/controllers/adminDashboardController');
+const salesReportController = require('../app/controllers/salesReportController');
 const multer = require('../config/imageUploadConfig');
 
 
@@ -21,9 +22,6 @@ const multerUploadProductCategoryImage = multer.uploadProductCategoryImage.singl
 
 /*=================================================ADMIN ROUTES=================================================*/
 
-// ====================Route to Admin Dashboard====================
-router.get('/', verifyAdminLogin, adminDashboardController.adminDashboardGET);
-
 
 /* ========================LOGIN & LOGOUT ROUTES======================== */
 
@@ -32,6 +30,24 @@ router.get('/login', adminController.logInGET);
 router.post('/login', adminController.logInPOST);
 
 router.post('/logout', adminController.logOutPOST);
+
+
+// ====================Route to Admin Dashboard====================
+router.get('/', verifyAdminLogin, adminDashboardController.adminDashboardGET);
+
+
+// ====================Route to Admin Sales Report====================
+router.get('/sales', verifyAdminLogin, salesReportController.salesPageGET);
+router.get('/sales/weekly', verifyAdminLogin, salesReportController.weeklySalesPageGET);
+router.get('/sales/monthly', verifyAdminLogin, salesReportController.monthlySalesPageGET);
+router.get('/sales/yearly', verifyAdminLogin, salesReportController.yearlySalesPageGET);
+router.get('/sales/total', verifyAdminLogin, salesReportController.totalSalesPageGET);
+
+router.post('/sales/custom-duration', verifyAdminLogin, salesReportController.getCustomDurationSalesDataPOST);
+
+
+// ==================== Route to Download Sales Report ====================
+router.post('/sales/download-report', verifyAdminLogin, salesReportController.downloadSalesReportPOST);
 
 
 /* ====================Routes to Add New Admin==================== */

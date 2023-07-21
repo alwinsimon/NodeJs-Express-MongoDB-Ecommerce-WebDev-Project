@@ -1,0 +1,262 @@
+<style>
+    .date-form {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+
+    .date-input {
+        margin-left: 5px;
+        padding: 5px;
+
+        border-radius: 5px;
+    }
+
+    label {
+        margin-right: 5px;
+        color: white;
+    }
+
+    .d-flex.justify-content-center {
+        display: flex;
+        justify-content: center;
+    }
+
+    .form-select {
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        background-color: #fff;
+        color: #000000;
+        width: 200px;
+        font-size: 14px;
+        line-height: 1.5;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+
+    #productsTable tbody tr:hover {
+        background-color: #00000038;
+        cursor: pointer;
+    }
+
+    #productsTable tbody tr:hover td {
+        color: #ffd900;
+        ;
+    }
+
+    body,
+    th,
+    td,
+    a,
+
+
+    a {
+        text-decoration: none;
+
+    }
+
+    table.table {
+        border-color: rgba(0, 0, 0, 0.2);
+        /* Adjust the opacity value (0.5 in this case) to your preference */
+    }
+
+
+    .align-middle {
+        vertical-align: middle;
+    }
+
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding: 0;
+        }
+
+        .date-form {
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        .date-form .date-input {
+            margin: 5px 0;
+        }
+
+        .mt-2,
+        .mt-5 {
+            margin-top: 10px;
+        }
+
+        .ms-2 {
+            margin-left: 5px;
+        }
+    }
+
+    .sales-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .no-sales-text {
+        margin-top: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .sales-page-title-text {
+        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .sales-page-custom-date {
+        margin-top: 5px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        height: 100%;
+    }
+
+</style>
+
+
+
+
+<div class="container-fluid row d-flex col-md-12 sales-container">
+
+    <div class="col-12 ">
+
+        <div class="d-flex">
+
+            <a href="/admin/sales" class="btn btn-primary mx-2 my-3" style="font-size: small">Todays sales</a>
+
+            <a href="/admin/sales/weekly" class="btn btn-primary mx-2 my-3" style="font-size: small">Weekly sales</a>
+
+            <a href="/admin/sales/monthly" class="btn btn-primary mx-2 my-3" style="font-size: small">Monthly sales</a>
+
+            <a href="/admin/sales/yearly" class="btn btn-primary mx-2 my-3" style="font-size: small">Yearly sales</a>
+
+            <a href="/admin/sales/total" class="btn btn-primary mx-2 my-3" style="font-size: small">Total sales</a>
+
+            <form id="downloadForm" action="/admin/sales/download-report" method="POST">
+                <button type="submit" class="btn btn-primary mx-2 my-3" style="background-color: #ffd900;color: #000000; font-size: x-small;">Download Sales Report</button>
+            </form>
+
+            <div style="margin-left: auto;" class="mt-3">
+
+                <form class="date-form" action="/admin/sales/custom-duration" method="post">
+
+                    <label for="from-date">From</label>
+
+                    <input id="from-date" class="date-input" name="fromDate" style="font-size: x-small;" type="date">
+
+                    <label for="to-date" class="ms-2">To</label>
+
+                    <input id="till-date" class="date-input" name="tillDate" style="font-size: x-small;" type="date">
+
+                    <button type="submit" class="btn btn ms-2" style="font-size:small;background-color: #000000;color:white">Get</button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <h4 class="sales-page-title-text"><span style="color: #009cff;"><u>{{reportTitle}}</u></span></h4>
+
+        {{#if fromDate}}
+
+            <br>
+            <div class="sales-page-custom-date">
+                
+                <p>From: <b>{{fromDate}}</b> </p>
+                <p>Till: <b>{{tillDate}}</b> </p>
+
+            </div>
+
+        {{/if}}
+
+        <br>
+        <h6 class="mt-2 ms-2 sales-page-title-text"><span style="color: #009cff;">Total Sales Amount: ₹ {{salesAmount}}</span></h6>
+
+
+        {{#if salesDataToTable}}
+
+            <div class="sales-form mt-5">
+
+                <table class="table w-100" id="sales-page-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th scope="col">Date</th>
+                            <th scope="col">User</th>
+                            <th scope="col">Actual Price</th>
+                            <th scope="col">Coupon Discounts</th>
+                            <th scope="col">Product Discounts</th>
+                            <th scope="col">Category Discounts</th>
+                            <th scope="col">Final Price</th>
+                            <th scope="col">Payment Method</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Amount</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {{#each salesDataToTable}}
+
+                            <tr>
+
+                                <td class="align-middle">{{this.date}}</td>
+                                <td class="align-middle">{{this.userName}}</td>
+                                <td class="align-middle">{{this.actualOrderValue}}</td>
+                                <td class="align-middle">{{this.couponDiscount}}</td>
+                                <td class="align-middle">{{this.productOfferDiscount}}</td>
+                                <td class="align-middle">{{this.categoryOfferDiscount}}</td>
+                                <td class="align-middle">{{this.orderValue}}</td>
+                                <td class="align-middle">{{this.paymentMethod}}</td>
+                                <td class="align-middle">{{this.orderStatus}}</td>
+                                <td class="align-middle">{{this.orderValue}}</td>
+
+                            </tr>
+
+                        {{/each}}
+
+                    </tbody>
+
+                </table>
+
+                <div style="height: 25vh;"></div>
+
+            </div>
+
+        {{else}}
+
+            <div class="no-sales-text">
+
+                <h5 class="mb-4" style="color: #000000;">Hey, {{adminData.name}},</h5>
+                <h4 class="mb-4" style="color: #000000;">No sales data available !!</h4>
+                <h6 class="mb-4" style="color: #000000;">Kindly check back later.</h6>
+
+                <div style="height: 50vh;"></div>
+
+            </div>
+
+        {{/if}}
+
+    </div>
+
+</div>
