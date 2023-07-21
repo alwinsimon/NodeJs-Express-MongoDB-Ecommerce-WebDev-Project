@@ -26,6 +26,15 @@ const multerUploadProductCategoryImage = multer.uploadProductCategoryImage.singl
 router.get('/', verifyAdminLogin, adminDashboardController.adminDashboardGET);
 
 
+/* ========================LOGIN & LOGOUT ROUTES======================== */
+
+router.get('/login', adminController.logInGET);
+
+router.post('/login', adminController.logInPOST);
+
+router.post('/logout', adminController.logOutPOST);
+
+
 // ====================Route to Admin Sales Report====================
 router.get('/sales', verifyAdminLogin, salesReportController.salesPageGET);
 router.get('/sales/weekly', verifyAdminLogin, salesReportController.weeklySalesPageGET);
@@ -36,15 +45,6 @@ router.get('/sales/total', verifyAdminLogin, salesReportController.totalSalesPag
 
 // ==================== Route to Download Sales Report ====================
 router.get('/', verifyAdminLogin, adminDashboardController.adminDashboardGET);
-
-
-/* ========================LOGIN & LOGOUT ROUTES======================== */
-
-router.get('/login', adminController.logInGET);
-
-router.post('/login', adminController.logInPOST);
-
-router.post('/logout', adminController.logOutPOST);
 
 
 /* ====================Routes to Add New Admin==================== */
