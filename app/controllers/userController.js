@@ -640,6 +640,8 @@ const userProfileUpdateRequestPOST =  async (req, res) => {
 
     const user = req.session.userSession;
 
+    const userId = user._id;
+
     const userName = user.userName;
 
     const formData = {
