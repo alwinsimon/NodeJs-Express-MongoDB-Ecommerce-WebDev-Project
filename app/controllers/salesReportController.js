@@ -137,7 +137,7 @@ const monthlySalesPageGET = async (req,res)=>{
 
         const salesAmount = await salesReportHelpers.getRecentMonthSales();
 
-        let salesData = await salesReportHelpers.getRecentWeekSalesData();
+        let salesData = await salesReportHelpers.getRecentMonthSalesData();
 
         let salesDataToTable = false;
 
