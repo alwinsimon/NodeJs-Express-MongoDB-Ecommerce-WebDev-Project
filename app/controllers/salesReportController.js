@@ -293,6 +293,80 @@ const totalSalesPageGET = async (req,res)=>{
 }
 
 
+const getCustomDurationSalesDataPOST = async (req,res)=>{
+
+    try{
+
+        const adminData = req.session.adminSession;
+
+        const reportTitle = "Custom Duration Sales Report";
+
+        let fromDate = req.body.fromDate;
+        let tillDate = req.body.tillDate;
+
+        if( fromDate > tillDate ){ // Correct the dates by swapping, if user has provided a wrong input
+            
+            // Swap fromDate and tillDate using destructuring assignment
+            [fromDate, tillDate] = [tillDate, fromDate];
+
+        }
+
+        const salesAmount = await salesReportHelpers.getCustomDurationSalesAmount(fromDate, tillDate);
+
+        let salesData = await salesReportHelpers.getCustomDurationSalesData(fromDate, tillDate);
+
+        let salesDataToTable = false;
+
+        if(salesData.length >0){
+
+            salesData = salesData.map(data => { // For Converting the time from DB to IST
+    
+                const createdOnIST = moment(data.date)
+                .tz('Asia/Kolkata')
+                .format('DD-MMM-YYYY hh:mm:ss A');
+        
+                return { ...data, date: createdOnIST };
+  
+            });
+
+            salesDataToTable = salesData;
+
+        }
+
+        // Formatting the date in "DD-MM-YYYY" format to display in user-side
+        fromDate = moment(fromDate).format('DD-MM-YYYY');
+        tillDate = moment(tillDate).format('DD-MM-YYYY');
+
+        const dataToRender = {
+
+            layout: 'admin-layout',
+            PLATFORM_NAME,
+            title: PLATFORM_NAME + " || Custom Duration Sales Report",
+            adminData,
+
+            reportTitle,
+
+            fromDate,
+            tillDate,
+
+            salesAmount,
+            salesDataToTable
+
+        }
+
+        res.render('admin/sales-report', dataToRender);
+
+    }catch(error){
+  
+        console.log("Error from getCustomDurationSalesDataPOST salesReportController: ", error);
+  
+        res.redirect('/admin/error-page');
+  
+    }
+
+}
+
+
 
 
 
@@ -309,6 +383,8 @@ module.exports = {
     weeklySalesPageGET,
     monthlySalesPageGET,
     yearlySalesPageGET,
-    totalSalesPageGET
+    totalSalesPageGET,
+
+    getCustomDurationSalesDataPOST
 
 }

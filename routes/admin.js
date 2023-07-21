@@ -43,6 +43,8 @@ router.get('/sales/monthly', verifyAdminLogin, salesReportController.monthlySale
 router.get('/sales/yearly', verifyAdminLogin, salesReportController.yearlySalesPageGET);
 router.get('/sales/total', verifyAdminLogin, salesReportController.totalSalesPageGET);
 
+router.post('/sales/custom-duration', verifyAdminLogin, salesReportController.getCustomDurationSalesDataPOST);
+
 
 // ==================== Route to Download Sales Report ====================
 router.get('/', verifyAdminLogin, adminDashboardController.adminDashboardGET);

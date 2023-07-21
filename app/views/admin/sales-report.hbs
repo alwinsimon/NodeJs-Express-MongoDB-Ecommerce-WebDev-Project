@@ -117,6 +117,15 @@
         height: 100%;
     }
 
+    .sales-page-custom-date {
+        margin-top: 5px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        height: 100%;
+    }
+
 </style>
 
 
@@ -150,7 +159,7 @@
 
                     <label for="to-date" class="ms-2">To</label>
 
-                    <input id="to-date" class="date-input" name="toDate" style="font-size: x-small;" type="date">
+                    <input id="till-date" class="date-input" name="tillDate" style="font-size: x-small;" type="date">
 
                     <button type="submit" class="btn btn ms-2" style="font-size:small;background-color: #000000;color:white">Get</button>
 
@@ -162,8 +171,20 @@
 
         <h4 class="sales-page-title-text"><span style="color: #009cff;"><u>{{reportTitle}}</u></span></h4>
 
+        {{#if fromDate}}
+
+            <br>
+            <div class="sales-page-custom-date">
+                
+                <p>From: <b>{{fromDate}}</b> </p>
+                <p>Till: <b>{{tillDate}}</b> </p>
+
+            </div>
+
+        {{/if}}
+
         <br>
-        <h6 class="mt-2 ms-2 sales-page-title-text"><span style="color: #009cff;">Total: ₹ {{salesAmount}}</span></h6>
+        <h6 class="mt-2 ms-2 sales-page-title-text"><span style="color: #009cff;">Total Sales Amount: ₹ {{salesAmount}}</span></h6>
 
 
         {{#if salesDataToTable}}

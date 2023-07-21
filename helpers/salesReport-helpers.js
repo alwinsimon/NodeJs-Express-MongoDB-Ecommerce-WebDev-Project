@@ -447,6 +447,98 @@ const getTotalSalesData = () => {
 };
 
 
+// ======================================================= Custom Duration Sales Data Helpers =======================================================
+
+const getCustomDurationSalesAmount = ( requestedFromDate, requestedTillDate ) => {
+
+    return new Promise(async (resolve, reject) => {
+
+        try{
+
+            const fromDate = new Date(requestedFromDate);
+            fromDate.setHours(0, 0, 0, 0); // Setting the time to start of the day.
+
+            const tillDate = new Date(requestedTillDate);
+            tillDate.setHours(23, 59, 59, 999); // Setting the time to end of the day.
+
+            const pipeline = [
+                {
+                    $match: {
+                        orderStatus: { $nin: ["Cancelled", "Returned", "Payment Pending"] },
+                        date: { $gte: fromDate, $lte: tillDate }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalOrderValue: { $sum: "$orderValue" }
+                    }
+                }
+            ];
+      
+            const salesQueryResult = await db.get().collection(databaseCollections.ORDERS_COLLECTION).aggregate(pipeline).toArray();
+      
+            let sumOfOrderValues = 0;
+      
+            if (salesQueryResult.length > 0) {
+
+              sumOfOrderValues = salesQueryResult[0].totalOrderValue;
+            
+            }
+      
+            resolve(sumOfOrderValues);
+
+        }catch(error){
+
+            console.error("Error from getCustomDurationSalesAmount salesReport-helpers: ", error);
+
+            reject(error);
+
+        }
+
+    });
+
+};
+
+
+const getCustomDurationSalesData = (requestedFromDate, requestedTillDate) => {
+
+    return new Promise(async (resolve, reject) => {
+
+        try{
+
+            const fromDate = new Date(requestedFromDate);
+            fromDate.setHours(0, 0, 0, 0); // Setting the time to start of the day.
+
+            const tillDate = new Date(requestedTillDate);
+            tillDate.setHours(23, 59, 59, 999); // Setting the time to end of the day.
+
+            const pipeline = [
+                {
+                    $match: {
+                        orderStatus: { $nin: ["Cancelled", "Returned", "Payment Pending"] },
+                        date: { $gte: fromDate, $lte: tillDate }
+                    }
+                }
+            ];
+      
+            const salesQueryResult = await db.get().collection(databaseCollections.ORDERS_COLLECTION).aggregate(pipeline).toArray();
+      
+            resolve(salesQueryResult);
+
+        }catch(error){
+
+            console.error("Error from getCustomDurationSalesData salesReport-helpers: ", error);
+
+            reject(error);
+
+        }
+
+    });
+
+};
+
+
 
 
 
@@ -482,6 +574,9 @@ module.exports = {
     getRecentYearSalesData,
 
     getTotalSales,
-    getTotalSalesData
+    getTotalSalesData,
+
+    getCustomDurationSalesAmount,
+    getCustomDurationSalesData
 
 }
