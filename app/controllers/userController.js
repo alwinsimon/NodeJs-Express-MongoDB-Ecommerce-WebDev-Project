@@ -640,7 +640,7 @@ const userProfileUpdateRequestPOST =  async (req, res) => {
 
     const user = req.session.userSession;
 
-    const userId = user._id;
+    const userName = user.userName;
 
     const formData = {
 
@@ -660,7 +660,7 @@ const userProfileUpdateRequestPOST =  async (req, res) => {
 
       if(response.success){
 
-        res.redirect("/profile/" + userId);
+        res.redirect("/profile/" + userName);
 
       }else{
 
