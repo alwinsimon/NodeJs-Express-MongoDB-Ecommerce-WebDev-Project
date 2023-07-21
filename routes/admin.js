@@ -22,9 +22,6 @@ const multerUploadProductCategoryImage = multer.uploadProductCategoryImage.singl
 
 /*=================================================ADMIN ROUTES=================================================*/
 
-// ====================Route to Admin Dashboard====================
-router.get('/', verifyAdminLogin, adminDashboardController.adminDashboardGET);
-
 
 /* ========================LOGIN & LOGOUT ROUTES======================== */
 
@@ -33,6 +30,10 @@ router.get('/login', adminController.logInGET);
 router.post('/login', adminController.logInPOST);
 
 router.post('/logout', adminController.logOutPOST);
+
+
+// ====================Route to Admin Dashboard====================
+router.get('/', verifyAdminLogin, adminDashboardController.adminDashboardGET);
 
 
 // ====================Route to Admin Sales Report====================
