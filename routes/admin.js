@@ -47,7 +47,7 @@ router.post('/sales/custom-duration', verifyAdminLogin, salesReportController.ge
 
 
 // ==================== Route to Download Sales Report ====================
-router.get('/', verifyAdminLogin, adminDashboardController.adminDashboardGET);
+router.post('/sales/download-report', verifyAdminLogin, salesReportController.downloadSalesReportPOST);
 
 
 /* ====================Routes to Add New Admin==================== */
