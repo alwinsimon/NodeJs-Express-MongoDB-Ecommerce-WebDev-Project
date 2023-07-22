@@ -5,6 +5,7 @@ const adminController = require('../app/controllers/adminController');
 const productController = require('../app/controllers/productController');
 const couponController = require('../app/controllers/couponController');
 const offerController = require('../app/controllers/offerController');
+const bannerImageController = require('../app/controllers/adminBannerImageController');
 const adminDashboardController = require('../app/controllers/adminDashboardController');
 const salesReportController = require('../app/controllers/salesReportController');
 const multer = require('../config/imageUploadConfig');
@@ -18,6 +19,7 @@ const verifyAdminLogin = adminMiddlewares.verifyAdminLogin;
 // Multer Middlewares to upload images
 const multerUploadProductImage = multer.uploadProductImage.array('image');
 const multerUploadProductCategoryImage = multer.uploadProductCategoryImage.single('category-image');
+const multerUploadBannerImage = multer.uploadBannerImage.single('banner-image');
 
 
 /*=================================================ADMIN ROUTES=================================================*/
@@ -62,6 +64,17 @@ router.post('/add-admin', verifyAdminLogin, adminController.addNewAdminPOST);
 router.get('/manage-users', verifyAdminLogin, adminController.manageUsersGET);
 
 router.post('/change-user-status', verifyAdminLogin, adminController.changeUserStatusPOST);
+
+
+/* ========================================================BANNER IMAGE ROUTES======================================================== */
+
+router.get('/banner-image/view', verifyAdminLogin, bannerImageController.viewBannerImagesGET);
+
+router.get('/banner-image/add', verifyAdminLogin, bannerImageController.addBannerImageGET);
+
+router.post('/banner-image/add', verifyAdminLogin, multerUploadBannerImage, bannerImageController.addBannerImagePOST);
+
+router.post('/banner-image/remove', verifyAdminLogin, bannerImageController.removeBannerImagePOST);
 
 
 /* ========================================================PRODUCT ROUTES======================================================== */
