@@ -1,0 +1,42 @@
+<section>
+    
+    <div class="container">
+
+        <h1>Add Banner Image</h1>
+
+        <form id="add-banner-image-form" action="/admin/banner-image/add" method="POST" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label for="name">Heading:</label>
+                <input type="text" class="form-control" id="heading" name="heading" required>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Sub-Heading:</label>
+                <input type="text" class="form-control" id="subHeading" name="subHeading" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="name">Link to re-direct</label>
+                <input type="text" class="form-control" id="redirectLink" name="redirectLink" required>
+            </div>
+
+            <div class="form-group">
+                <label for="image">Banner Image:</label>
+                <div class="custom-file">
+                <input type="file" class="custom-file-input" id="banner-image" name="banner-image" accept="image/*" required>
+                <label class="custom-file-label" for="image">Choose file</label>
+                </div>
+                <div id="image-preview" class="mt-2"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Banner Image</button>
+            <button type="reset" class="btn btn-secondary ml-2">Reset</button>
+
+        </form>
+
+    </div>
+
+</section>
+
+

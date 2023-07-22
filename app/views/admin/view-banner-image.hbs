@@ -1,0 +1,63 @@
+<section>
+
+    <div class="container">
+
+        <div class="row mt-4 justify-content-end">
+
+            <form action="/admin/banner-image/add" method="GET" class="col-md-2">
+                <button class="btn btn-success" type="submit">Add New Banner Image</button>
+            </form>
+
+        </div>
+
+        {{!-- ====================TABLE==================== --}}
+
+        <table class="table mt-4">
+
+            {{!-- ==========Table Header========== --}}
+
+            <thead>
+
+                <tr>
+                    <td scope="col">Heading</td>
+                    <td scope="col">Sub-Heading</td>
+                    <td scope="col">Re-direct Link</td>
+                    <th scope="col">Image</th>
+                    <th scope="col">Actions</th>
+                </tr>
+
+            </thead>
+
+            {{!-- ==========Table Body========== --}}
+            <tbody>
+
+                {{#each bannerImages}}
+
+                    <tr>
+
+                        <td scope="row">{{this.heading}}</td>
+                        <td scope="row">{{this.subHeading}}</td>
+                        <td scope="row">{{this.redirectLink}}</td>
+
+                        <td><img style="width: 50px; height: 50px" src="/banner-images/{{this.bannerImage}}" alt="{{this.heading}}"></td>
+
+                        <td>
+                        
+                            <form action="/admin/banner-image/remove" method="POST">
+                                <input type="hidden" name="bannerImageId" value="{{this._id}}">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure that you want to remove this Banner Image ?')">Remove</button>
+                            </form>
+                        
+                        </td>
+
+                    </tr>
+
+                {{/each}}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
