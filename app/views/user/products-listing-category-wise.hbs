@@ -1,0 +1,78 @@
+{{!-- ================================ CATEGORY PRODUCT LISTING ================================ --}}
+
+<section class="bg0 p-t-23 p-b-140" style="margin-top: 120px;">
+
+    <div class="container">
+
+        <div class="p-b-20">
+            <h3 class="ltext-103 cl5">
+                <u>{{categoryName}}</u>
+            </h3>
+        </div>
+
+        <div class="row isotope-grid">
+
+            {{#each products}}
+
+                <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
+
+                    <!-- Block2 -->
+                    <div class="block2">
+
+                        <div class="block2-pic hov-img0">
+
+                            <img src="/product-images/{{this.images.[0]}}" style="height:15rem; width:15rem;" alt="IMG-PRODUCT">
+                            <button class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04" onclick="addToCart('{{this._id}}', '{{this.name}}'); return false;"> Add to Cart</button>
+
+                        </div>
+
+                        <div class="block2-txt flex-w flex-t p-t-14">
+
+                            {{!-- ================ Product Details ================ --}}
+                            <div class="block2-txt-child1 flex-col-l">
+
+                                <a href="#" class="stext-103 cl2 hov-cl1 trans-04 js-name-b2 p-b-6" onclick="viewProduct('{{this._id}}'); return false;">
+                                    {{this.name}}
+                                </a>
+
+                                <span class="stext-107 cl4" style="color: #00ad5f;">
+                                    {{#if (gt productOffer 0)}}
+                                    Purchase NOW with {{productOffer}} % Discount.
+                                    {{/if}}
+                                </span>
+
+                                <span class="stext-107 cl4">
+                                    {{this.description}}
+                                </span>
+
+                                <span class="stext-109 cl7">
+                                    ₹ {{this.price}}
+                                </span>
+
+                            </div>
+
+                            {{!-- ================ Wishlist Icon ================ --}}
+                            <div class="block2-txt-child2 flex-r p-t-3">
+
+                                <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" onclick="modifyWishListStatus('{{this._id}}'); return false;">
+
+                                    <img class="icon-heart1 dis-block trans-04" src="/platform-images/icons/icon-heart-01.png" alt="ICON">
+                                    <img class="icon-heart2 dis-block trans-04 ab-t-l" src="/platform-images/icons/icon-heart-02.png" alt="ICON">
+
+                                </a>
+                            
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {{/each}}
+
+        </div>
+
+    </div>
+
+</section>
