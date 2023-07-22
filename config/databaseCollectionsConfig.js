@@ -3,6 +3,7 @@ module.exports = {
     ADMIN_COLLECTION: 'platform admins',
     VENDOR_COLLECTION: 'vendors',
     USER_COLLECTION: 'users',
+    BANNER_IMAGE_COLLECTION: 'banner-images',
     PRODUCT_COLLECTION : 'products',
     PRODUCT_CATEGORY_COLLECTION : 'product categories',
     WISH_LIST_COLLECTION : 'wishlist',
