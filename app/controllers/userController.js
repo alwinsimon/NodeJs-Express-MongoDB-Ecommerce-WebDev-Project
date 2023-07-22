@@ -685,6 +685,97 @@ const userProfileUpdateRequestPOST =  async (req, res) => {
 }
 
 
+/* ======================== Single Product Page Controller ======================== */
+
+const singleProductPageGET =  (req, res) => {
+
+  try{
+
+    let user = req.session.userSession;
+    let productId = req.params.id;
+
+    productHelpers.getProductDetails(productId).then(async (productDetails) => {
+
+      if (user) {
+
+        cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+
+        const wishlistCount = await userHelpers.getWishlistCount(user._id);
+
+        res.render('user/single-product-page', { layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || " + productDetails.name, admin: false, user: true, user, cartCount, productDetails, wishlistCount });
+
+      } else {
+
+        res.render('user/single-product-page', { layout: 'user-layout', title: PLATFORM_NAME + " || " + productDetails.name, admin:false, productDetails });
+        
+      }
+
+    }).catch((error) => {
+
+      console.log("Error from getProductDetails userHelper at singleProductPageGET userController : " , error);
+
+    });
+
+  }catch(error){
+
+    console.log("Error from singleProductPageGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+    
+}
+
+
+/* ======================== Category Page Controller ======================== */
+
+const categoryWiseProductsGET =  async (req, res) => {
+
+  try{
+
+    const user = req.session.userSession;
+
+    const categoryName = req.params.categoryName;
+
+    let cartCount = 0;
+
+    let wishlistCount = 0;
+
+    if(user){
+
+      cartCount = await userHelpers.getCartCount(req.session.userSession._id);
+
+      wishlistCount = await userHelpers.getWishlistCount(user._id);
+
+    }
+
+    const products = await productHelpers.getProductsWithCategoryName(categoryName);
+
+    const dataToRender = {
+
+      layout: 'user-layout',
+      title: PLATFORM_NAME + " || " + categoryName,
+      user,
+      categoryName,
+      products,
+      cartCount,
+      wishlistCount
+
+    }
+
+    res.render('user/products-listing-category-wise', dataToRender );
+
+  }catch(error){
+
+    console.log("Error from categoryWiseProductsGET userController: ", error);
+
+    res.redirect('/error-page');
+
+  }
+    
+}
+
+
 /* ======================== USER WISHLIST Controllers ======================== */
 
 const userWishlistGET =  async (req, res) => {
@@ -916,47 +1007,6 @@ const changePrimaryAddressPOST =  async (req, res) => {
 
   }
 
-}
-
-/* ======================== Single Product Page Controller ======================== */
-
-const singleProductPageGET =  (req, res) => {
-
-  try{
-
-    let user = req.session.userSession;
-    let productId = req.params.id;
-
-    productHelpers.getProductDetails(productId).then(async (productDetails) => {
-
-      if (user) {
-
-        cartCount = await userHelpers.getCartCount(req.session.userSession._id);
-
-        const wishlistCount = await userHelpers.getWishlistCount(user._id);
-
-        res.render('user/single-product-page', { layout: 'user-layout', title: user.name + "'s " + PLATFORM_NAME + " || " + productDetails.name, admin: false, user: true, user, cartCount, productDetails, wishlistCount });
-
-      } else {
-
-        res.render('user/single-product-page', { layout: 'user-layout', title: PLATFORM_NAME + " || " + productDetails.name, admin:false, productDetails });
-        
-      }
-
-    }).catch((error) => {
-
-      console.log("Error from getProductDetails userHelper at singleProductPageGET userController : " , error);
-
-    });
-
-  }catch(error){
-
-    console.log("Error from singleProductPageGET userController: ", error);
-
-    res.redirect('/error-page');
-
-  }
-    
 }
 
 
@@ -1735,6 +1785,7 @@ module.exports = {
   verifyOTPForPasswordResetGET,
   verifyOTPForPasswordResetPOST,
   resetUserPasswordPOST,
+  categoryWiseProductsGET,
   userProfileGET,
   userProfileUpdateRequestPOST,
   userWishlistGET,
