@@ -5,6 +5,7 @@ const userHelpers = require('../../helpers/user-helpers');
 const adminHelpers = require('../../helpers/admin-helpers');
 const couponHelpers = require('../../helpers/coupon-helpers');
 const offerHelpers = require('../../helpers/offer-helpers');
+const bannerImageHelpers = require('../../helpers/bannerImage-helpers');
 
 require('dotenv').config(); // Module to Load environment variables from .env file
 
@@ -26,6 +27,8 @@ const homePageGET = async (req, res, next)=>{
 
     let wishlistCount = 0;
 
+    const bannerImages = await bannerImageHelpers.getAllBannerImages();
+
     if(user){
 
       cartCount = await userHelpers.getCartCount(req.session.userSession._id);
@@ -38,11 +41,11 @@ const homePageGET = async (req, res, next)=>{
 
       if(user){
 
-        res.render('user/user-home', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, admin:false, user, products, productCategories, cartCount, wishlistCount });
+        res.render('user/user-home', { layout: 'user-layout', title: user.name +"'s " + PLATFORM_NAME, admin:false, user, bannerImages, products, productCategories, cartCount, wishlistCount });
 
       }else{
 
-        res.render('user/user-home', { layout: 'user-layout', title:PLATFORM_NAME, admin:false, products, productCategories });
+        res.render('user/user-home', { layout: 'user-layout', title:PLATFORM_NAME, admin:false, bannerImages, products, productCategories });
 
       }
 
