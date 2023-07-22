@@ -24,6 +24,16 @@ const verifyUserLogin = userMiddlewares.verifyUserLogin;
 router.get('/', userController.homePageGET);
 
 
+/* ========================Category Product Page Route======================== */
+
+router.get('/category/:categoryName', userController.categoryWiseProductsGET);
+
+
+/* ========================Single Product Page Route======================== */
+
+router.get('/product-details/:id', userController.singleProductPageGET);
+
+
 /* ========================USER LOGIN / LOGOUT ROUTES======================== */
 
 router.get('/login', userController.userLogInGET);
@@ -79,11 +89,6 @@ router.post('/update-user-primary-address', verifyUserLogin, userController.chan
 router.post('/edit-user-address', verifyUserLogin, userController.editUserAddressPOST);
 
 router.post('/delete-user-address', verifyUserLogin, userController.deleteUserAddressPOST);
-
-
-/* ========================Single Product Page Route======================== */
-
-router.get('/product-details/:id', userController.singleProductPageGET);
 
 
 /* ========================Wishlist Route======================== */

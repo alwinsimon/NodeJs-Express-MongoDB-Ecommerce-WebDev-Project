@@ -389,6 +389,44 @@ module.exports = {
 
         });
 
+    },
+    getProductsWithCategoryName: (categoryName) => {
+
+        return new Promise( async (resolve, reject) => {
+
+            try{
+
+                // Find Category Details
+                const categoryNameRegex = { $regex: new RegExp('^' + categoryName + '$', 'i') };
+                const categoryQuery = { name: categoryNameRegex };
+                const category = await db.get().collection(collections.PRODUCT_CATEGORY_COLLECTION).findOne(categoryQuery);
+
+                if (category) {
+
+                    // If the category is found, query db to find products in that category
+                    const categoryId = category._id.toString();
+                    const productsQuery = { category: categoryId };
+                    const productsInGivenCategory = await db.get().collection(collections.PRODUCT_COLLECTION).find(productsQuery).toArray();
+        
+                    resolve(productsInGivenCategory);
+
+                } else {
+
+                    // Category not found
+                    resolve({ status: false });
+
+                }
+
+            }catch(error){
+                
+                console.error("Error from getProductsWithCategoryName product-helpers: ", error);
+
+                reject(error);
+
+            }
+
+        });
+
     }
 
 }
