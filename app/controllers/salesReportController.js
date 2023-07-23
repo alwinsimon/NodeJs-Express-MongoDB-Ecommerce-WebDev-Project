@@ -375,7 +375,7 @@ const downloadSalesReportPOST = async (req,res)=>{
 
         const adminData = req.session.adminSession;
 
-        const writeStream = fs.createWriteStream( PLATFORM_NAME + "'s sales report.pdf" );
+        const writeStream = fs.createWriteStream("Sales report.pdf" );
 
         const printer = new pdfMaker({
 
