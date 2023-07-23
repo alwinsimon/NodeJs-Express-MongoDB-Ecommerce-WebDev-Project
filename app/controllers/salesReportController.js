@@ -489,7 +489,7 @@ const downloadSalesReportPOST = async (req,res)=>{
 
         writeStream.on("finish", () => {
 
-            res.download( PLATFORM_NAME + "'s sales report.pdf", PLATFORM_NAME + "'s sales report.pdf" );
+            res.download("Sales report.pdf" );
 
         });
 
