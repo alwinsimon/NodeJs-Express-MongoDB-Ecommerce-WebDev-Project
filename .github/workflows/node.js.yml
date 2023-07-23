@@ -7,7 +7,7 @@ on:
     branches: [ "production-branch" ]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     strategy:
@@ -29,7 +29,12 @@ jobs:
         echo .env
         cat .env
     - run: npm install
-    
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
     # Deployment step
     - name: Deploy to AWS EC2
       uses: appleboy/ssh-action@master
