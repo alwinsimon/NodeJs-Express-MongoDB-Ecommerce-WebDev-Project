@@ -31,4 +31,6 @@ jobs:
     - name: Set up environment variables
       run: |
         echo "MY_ENV_VARIABLE=${{ secrets.ENV_FILE }}" >> .env
+        echo .env
+        cat .env
     - run: npm install
