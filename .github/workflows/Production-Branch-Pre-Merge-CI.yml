@@ -62,7 +62,7 @@ jobs:
 
     # Start the application with Process Manager 2 (PM2)
     - name: Initiating the application with Process Manager 2 (PM2)
-      run: pm2 start ./bin/www --name "${{ secrets.ENV_FILE.PLATFORM_NAME }}"
+      run: pm2 start ./bin/www --name "production-server"
 
     # Log the status of application with Process Manager 2 (PM2)
     - name: Logging the status of application with Process Manager 2 (PM2)
