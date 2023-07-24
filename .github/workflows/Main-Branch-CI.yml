@@ -34,7 +34,6 @@ jobs:
       - name: Setting up environment variables
         run: |
           echo "MY_ENV_VARIABLE=${{ secrets.ENV_FILE }}" >> .env
-          echo .env
 
     # Verify if .env file was created from action secrets
     - name: Verifying if .env file was created from action secrets
