@@ -94,5 +94,5 @@ jobs:
           # Commands for deploying changes to server
           
           cd ExpressJs-Ecommerce-webdev-project-1
-          git pull
+          sudo git pull
           sudo pm2 reload all
