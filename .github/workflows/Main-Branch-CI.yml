@@ -30,7 +30,7 @@ jobs:
       - name: Installing Node packaging Manager (npm)
         run: npm ci
 
-      # Setting up the environment variable from using credentials stored in GitHub actions secret
+      # Setting up the environment variable using credentials stored in GitHub actions secret
       - name: Setting up environment variables
         run: |
           echo "MY_ENV_VARIABLE=${{ secrets.ENV_FILE }}" >> .env
