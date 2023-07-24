@@ -71,7 +71,7 @@ jobs:
     # Deployment steps
     steps:
 
-    - name: Deploying To Production Server
+    - name: Deploying changes to Production Server
 
       uses: appleboy/ssh-action@master
 
