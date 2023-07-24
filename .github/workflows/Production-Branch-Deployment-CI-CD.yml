@@ -9,12 +9,6 @@ on:
   push:
     branches:
       - production-branch
-  pull_request:
-    types:
-      - closed
-    branches:
-      - production-branch
-    if: github.event.pull_request.merged
 
 jobs:
 
