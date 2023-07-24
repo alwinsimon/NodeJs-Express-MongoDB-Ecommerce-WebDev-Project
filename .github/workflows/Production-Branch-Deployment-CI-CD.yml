@@ -2,7 +2,7 @@
 
 name: Production-Branch-Deployment-CI-CD
 
-# Trigger the action if and only if a pull request was PUSHED or MERGED into production branch
+# Trigger the action if and only if a pull request was PUSHED or MERGED into the production branch
 # This workflow will do a final CI before deploying changes to the Production server with CD
 
 on:
@@ -42,7 +42,7 @@ jobs:
 
     # Printing the node version in the terminal
     - name: Checking Node Version
-    - run: node --version
+      run: node --version
 
     # Installation of Node packaging Manager (npm)
     - name: Installing Node packaging Manager (npm)
@@ -58,4 +58,10 @@ jobs:
     - name: Installing project dependencies
       run: npm install
 
-    # Checking if node modules were installed (Done by simply checking
+    # Checking if node modules were installed (Done by simply checking if the node_modules directory exists or not)
+    - name: Checking if node_modules directory was created after installing NPM
+      run: |
+        if [ ! -d "node_modules" ]; then
+          echo "Error: node_modules directory does not exist."
+          exit 1
+        fi
