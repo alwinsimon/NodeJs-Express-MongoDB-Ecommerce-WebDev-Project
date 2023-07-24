@@ -35,15 +35,6 @@ jobs:
         run: |
           echo "MY_ENV_VARIABLE=${{ secrets.ENV_FILE }}" >> .env
 
-          # Verify if .env file was created from action secrets
-          test -f .env
-
-          # Exit the pipeline with an error if .env file doesn't exist
-          if [ $? -ne 0 ]; then
-            echo "Error: .env file does not exist."
-            exit 1
-          fi
-
       # Installation of Node packaging Manager (npm)
       - name: Installing project dependencies
         run: npm install
