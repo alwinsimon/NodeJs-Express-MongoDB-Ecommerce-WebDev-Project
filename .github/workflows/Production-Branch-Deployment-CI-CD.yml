@@ -41,6 +41,7 @@ jobs:
         cache: 'npm'
 
     # Printing the node version in the terminal
+    - name: Checking Node Version
     - run: node --version
 
     # Installation of Node packaging Manager (npm)
