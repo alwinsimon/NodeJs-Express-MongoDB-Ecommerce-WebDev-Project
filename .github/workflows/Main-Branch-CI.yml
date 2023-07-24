@@ -1,5 +1,3 @@
-# ===================================================== Main Branch CI Configuration =====================================================
-
 name: Main-Branch-CI
 
 on:
@@ -17,8 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # ========================== Runs the following commands on the newly created Linux instance for integration testing ==========================
-
       # Installing Node.js at the test instance
       - name: Setting up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
@@ -35,7 +31,7 @@ jobs:
         run: npm ci
 
       # Setting up the environment variable from using credentials stored in GitHub actions secret
-      - name: Seting-up environment variables
+      - name: Setting up environment variables
         run: |
           echo "MY_ENV_VARIABLE=${{ secrets.ENV_FILE }}" >> .env
           cat .env
@@ -51,3 +47,15 @@ jobs:
             echo "Error: node_modules directory does not exist."
             exit 1
           fi
+
+      # Installation of Process Manager 2 (PM2)
+      - name: Installing Process Manager 2 (PM2)
+        run: npm i pm2 -g
+
+      # Start the application with Process Manager 2 (PM2)
+      - name: Initiating the application with Process Manager 2 (PM2)
+        run: pm2 start ./bin/www --name "production-server"
+
+      # Log the status of application with Process Manager 2 (PM2)
+      - name: Logging the status of application with Process Manager 2 (PM2)
+        run: pm2 status all

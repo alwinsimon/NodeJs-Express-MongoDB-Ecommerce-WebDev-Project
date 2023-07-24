@@ -9,12 +9,6 @@ on:
   push:
     branches:
       - production-branch
-  pull_request:
-    types:
-      - closed
-    branches:
-      - production-branch
-    if: github.event.pull_request.merged
 
 jobs:
 
@@ -66,6 +60,18 @@ jobs:
           exit 1
         fi
 
+    # Installation of Process Manager 2 (PM2)
+    - name: Installing Process Manager 2 (PM2)
+      run: npm i pm2 -g
+
+    # Start the application with Process Manager 2 (PM2)
+    - name: Initiating the application with Process Manager 2 (PM2)
+      run: pm2 start ./bin/www --name "production-server"
+
+    # Log the status of application with Process Manager 2 (PM2)
+    - name: Logging the status of application with Process Manager 2 (PM2)
+      run: pm2 status all
+
   # ========================== Production-Branch-Deployment ==========================
 
   Production-Branch-Deployment:
@@ -77,7 +83,7 @@ jobs:
     # Deployment steps
     steps:
 
-    - name: Deploying To Production Server
+    - name: Deploying changes to Production Server
 
       uses: appleboy/ssh-action@master
 
