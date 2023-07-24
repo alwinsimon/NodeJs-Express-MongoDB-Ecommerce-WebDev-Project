@@ -21,8 +21,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # ========================== Runs the following commands on the newly created Linux instance for integration testing ==========================
-
     # Installing Node.js at the test instance
     - name: Setting up Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
@@ -42,7 +40,6 @@ jobs:
     - name: Setting up environment variables
       run: |
         echo "MY_ENV_VARIABLE=${{ secrets.ENV_FILE }}" >> .env
-        cat .env
 
     # Installation of Node packaging Manager (npm)
     - name: Installing project dependencies
