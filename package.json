@@ -7,11 +7,11 @@
     "dev": "nodemon ./bin/www"
   },
   "dependencies": {
-    "bcrypt": "^250005asas.1.0",
-    "cookie-parser": "~25saa341.4.4",
+    "bcrypt": "^5.1.0",
+    "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
-    "dotenv": "^16sdsd.0.3",
-    "express": ",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "express-handlebars": "^5.3.0",
     "express-session": "^1.17.3",
     "handlebars-helpers": "^0.10.0",
