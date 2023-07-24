@@ -1,0 +1,66 @@
+# ===================================================== Production Branch CI Configuration =====================================================
+
+
+name: Production-Branch-Pre-Merge-CI
+
+on:
+  push:
+    branches: [ "production-branch" ]
+  pull_request:
+    branches: [ "production-branch" ]
+
+jobs:
+
+  Production-Branch-Pre-Integration-Tests:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # ========================== Runs the following commands on the newely created linux instance for integration testing ==========================
+
+
+    # Installing Node.js at the test instance
+    - name: Setting up Node.js ${{ matrix.node-version }}
+    
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+
+    # Printing the node version in the terminal
+    - run: node --version
+
+    # Installation of Node packaging Manager (npm)
+    - name: Installing Node packaging Manager (npm)
+    - run: npm ci
+
+
+    # Setting up the environment variable from using credentials stored in Github actions secret
+    - name: Seting-up environment variables
+      run: |
+        echo "MY_ENV_VARIABLE=${{ secrets.ENV_FILE }}" >> .env
+        cat .env
+
+
+    # Installation of Node packaging Manager (npm)
+    - name: Installing project dependencies
+    - run: npm install
+
+    
+    # Checking if node modules was installed (Done by simply checking if node modules library exists or not)
+    - name: Checking if Node Modules directory was created after installing NPM
+
+      run: |
+        if [ ! -d "node_modules" ]; then
+        
+          echo "Error: node_modules directory does not exist."
+          
+          exit 1
+        fi
