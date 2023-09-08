@@ -1,5 +1,5 @@
 # Command to configure the base image (official Node.js base image)
-FROM node
+FROM node:18.16
 
 # Command to update the base image
 RUN apt update
