@@ -1,0 +1,14 @@
+version: "3"
+services:
+  webserver:
+    build:
+      dockerfile: Dockerfile
+      context: ./backend
+    container_name: webserver
+    ports:
+      - 3000:3000
+    restart: on-failure
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
