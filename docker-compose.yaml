@@ -3,7 +3,7 @@ services:
   webserver:
     build:
       dockerfile: Dockerfile
-      context: ./backend
+      context: ./
     container_name: webserver
     ports:
       - 3000:3000
