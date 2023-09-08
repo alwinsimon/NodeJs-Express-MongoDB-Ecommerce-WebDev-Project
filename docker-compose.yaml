@@ -1,0 +1,15 @@
+version: "3"
+services:
+  webserver:
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    image: webserver-image:v1 # This will set the image name and tag while building the image from dockerfile using docker compose
+    container_name: webserver # This will set the container name while starting it from docker compose
+    ports:
+      - 3000:3000
+    restart: on-failure
+    # volumes:
+    #   - .:/app
+    env_file:
+      - ./.env
