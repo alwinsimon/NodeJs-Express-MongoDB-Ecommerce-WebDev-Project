@@ -25,6 +25,10 @@ const multerUploadBannerImage = multer.uploadBannerImage.single('banner-image');
 /*=================================================ADMIN ROUTES=================================================*/
 
 
+/* ========================HEALTH CHECK ROUTE======================== */
+
+router.get('/health', adminController.healthStatusGET);
+
 /* ========================LOGIN & LOGOUT ROUTES======================== */
 
 router.get('/login', adminController.logInGET);

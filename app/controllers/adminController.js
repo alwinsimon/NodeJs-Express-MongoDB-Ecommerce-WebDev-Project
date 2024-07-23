@@ -7,8 +7,30 @@ const userHelpers = require('../../helpers/user-helpers');
 require('dotenv').config(); // Module to Load environment variables from .env file
 
 
-const PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal"
+const PLATFORM_NAME = process.env.PLATFORM_NAME || "GetMyDeal";
 
+/* ============================================= HEALTH STATUS CONTROLLER ============================================= */
+
+const healthStatusGET = (req, res) => {
+  const currentDate = new Date();
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    timeZone: "UTC",
+  };
+  const formattedDate = currentDate.toLocaleString("en-US", options);
+
+  res.status(200).json({
+    status: `${process.env.APPLICATION_NAME} and Systems are Up & Running.`,
+    dateTime: formattedDate,
+  });
+
+};
 
 /* ============================================= LOGIN & LOGOUT CONTROLLERS ============================================= */
 
@@ -576,6 +598,7 @@ const adminErrorHandlerPageGET = (req,res)=>{
 
 module.exports = {
 
+  healthStatusGET,
   logInGET,
   logInPOST,
   logOutPOST,
